@@ -1,0 +1,14 @@
+services:
+  mindsim:
+    build: .
+    container_name: mindsim
+    network_mode: host          # 直接绑宿主机 80 端口，少一层网络
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data        # 持久化 personas / factors / jobs / outcomes
+      - ./.env:/app/.env        # DeepSeek 配置（运行时覆盖镜像内 .env.example）
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

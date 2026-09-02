@@ -1,0 +1,33 @@
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# IDE / 编辑器
+.idea/
+.vscode/
+*.swp
+
+# 临时调试文件（workspace 里历史遗留）
+_deep.py
+_test20.py
+_audit2.py
+_simsrc.py
+_dbg.py
+_mindsim_verify.py
+_mindsim_home.png
+_gen_viewer.py
+_*.tmp
+
+# 文档/大文件（不需要进镜像）
+*.log
+*.md
+!README.md
+!DEPLOY.md
+.DS_Store
