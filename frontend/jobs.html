@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>任务后台 · MindSim</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=20260901c" />
+</head>
+<body>
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <a class="brand" href="/">
+        <div class="brand-icon">MS</div>
+        <div class="brand-text">
+          <strong>消费者心智模拟</strong>
+          <span>JTBD 任务后台</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="/">工作台</a>
+        <a class="nav-link active admin" href="/jobs">任务后台</a>
+        <a class="nav-link admin" href="/admin">维度后台</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="page-title">
+      <h1>JTBD 任务后台</h1>
+      <p>查看主任务（Job）与子任务（Step）的从属关系；同一子任务可被多个主任务共用。</p>
+    </div>
+
+    <section class="card card-accent">
+      <div class="card-header">
+        <h2><span class="dot"></span>任务地图 · 主任务 → 子任务</h2>
+        <span class="status" id="job-count"></span>
+      </div>
+      <div id="jtbd-map" class="jtbd-map-body"></div>
+    </section>
+  </div>
+
+  <script src="/static/js/app.js?v=20260901c"></script>
+  <script>
+    loadOutcomes().then(async () => {
+      await loadJobsMap({ renderMap: true });
+      const el = document.getElementById('job-count');
+      if (el) el.textContent = `${jobTrees.length} 个主任务`;
+    });
+  </script>
+</body>
+</html>

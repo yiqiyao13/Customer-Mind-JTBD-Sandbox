@@ -1,0 +1,727 @@
+{
+  "version": "2.0",
+  "factors": [
+    {
+      "id": "A1",
+      "group": "A",
+      "name": "伴侣/室友因鼾声睡眠被剥夺，关系濒临崩溃",
+      "weight": 9,
+      "definition": "伴侣/室友/家人因鼾声分房、失眠、冲突，被迫考虑购买",
+      "keywords": [
+        "伴侣",
+        "老公",
+        "老婆",
+        "丈夫",
+        "妻子",
+        "室友",
+        "家人",
+        "另一半",
+        "分床",
+        "分房"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J5",
+        "J1"
+      ],
+      "outcome_ids": [
+        "O4",
+        "O5"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "察觉",
+        "就医确诊",
+        "决策纠结"
+      ]
+    },
+    {
+      "id": "A2",
+      "group": "A",
+      "name": "智能手表/手环健康监测成为就医与购买的第一入口",
+      "weight": 6,
+      "definition": "智能手表/手环提示血氧呼吸异常，成为就医第一入口",
+      "keywords": [
+        "手表",
+        "可穿戴",
+        "手环",
+        "apple watch",
+        "智能手表",
+        "监测提示"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J3",
+        "J1"
+      ],
+      "outcome_ids": [
+        "O1"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "未察觉",
+        "察觉"
+      ]
+    },
+    {
+      "id": "A3",
+      "group": "A",
+      "name": "AHI/血氧等量化确诊数据击穿「打鼾不是病」的侥幸",
+      "weight": 6,
+      "definition": "AHI、最低血氧、呼吸暂停时长等量化指标引发的恐惧",
+      "keywords": [
+        "ahi",
+        "血氧",
+        "呼吸暂停",
+        "监测数据",
+        "指标",
+        "多导"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J3",
+        "J1"
+      ],
+      "outcome_ids": [
+        "O1"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "察觉",
+        "就医确诊"
+      ]
+    },
+    {
+      "id": "A4",
+      "group": "A",
+      "name": "白天嗜睡导致开车/开会危险，迫使正视睡眠问题",
+      "weight": 8,
+      "definition": "白天嗜睡、开车/工作打盹的安全焦虑",
+      "keywords": [
+        "白天",
+        "嗜睡",
+        "犯困",
+        "打盹",
+        "开车",
+        "疲劳"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J2",
+        "J3"
+      ],
+      "outcome_ids": [
+        "O2"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "察觉",
+        "就医确诊"
+      ]
+    },
+    {
+      "id": "A5",
+      "group": "A",
+      "name": "夜间憋醒/呼吸暂停被本人或家人察觉",
+      "weight": 9,
+      "definition": "夜间憋醒、呼吸暂停、担心猝死",
+      "keywords": [
+        "夜间",
+        "窒息",
+        "憋气",
+        "憋醒",
+        "猝死",
+        "缺氧"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J3",
+        "J1",
+        "J5"
+      ],
+      "outcome_ids": [
+        "O1",
+        "O4"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "察觉",
+        "就医确诊"
+      ]
+    },
+    {
+      "id": "A6",
+      "group": "A",
+      "name": "担心打鼾引发的血压/心脏/代谢等共病",
+      "weight": 5,
+      "definition": "高血压/糖尿病/心脏病等合并症与 OSA 关联",
+      "keywords": [
+        "高血压",
+        "糖尿病",
+        "心脏病",
+        "共病",
+        "合并症",
+        "血压",
+        "代谢"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J3"
+      ],
+      "outcome_ids": [
+        "O2"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "就医确诊",
+        "决策纠结"
+      ]
+    },
+    {
+      "id": "A7",
+      "group": "A",
+      "name": "医保/国补/以旧换新等制度差异直接塑造购买决策",
+      "weight": 6,
+      "definition": "医保、政府补贴、以旧换新等政策红利",
+      "keywords": [
+        "国补",
+        "以旧换新",
+        "补贴",
+        "医保",
+        "惠民",
+        "政府",
+        "15%",
+        "政策"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3",
+        "J7"
+      ],
+      "outcome_ids": [
+        "O6"
+      ],
+      "force_default": "pull",
+      "stage_scope": [
+        "决策纠结",
+        "购买"
+      ]
+    },
+    {
+      "id": "A8",
+      "group": "A",
+      "name": "给长辈/孩子的孝心与隔代亲驱动，决策快比价弱",
+      "weight": 6,
+      "definition": "子女为父母购买、隔代亲推动",
+      "keywords": [
+        "父母",
+        "父亲",
+        "母亲",
+        "老人",
+        "长辈",
+        "孝心",
+        "爸妈"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J7"
+      ],
+      "outcome_ids": [
+        "O5"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "察觉",
+        "决策纠结",
+        "购买"
+      ]
+    },
+    {
+      "id": "A9",
+      "group": "A",
+      "name": "二手低价/闲置转让充当低门槛试用渠道",
+      "weight": 6,
+      "definition": "二手市场降低试错门槛，作为入门渠道",
+      "keywords": [
+        "二手",
+        "闲置",
+        "翻新",
+        "回收",
+        "以租代买"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3"
+      ],
+      "outcome_ids": [
+        "O6",
+        "O8"
+      ],
+      "force_default": "habit_or_alternative",
+      "stage_scope": [
+        "决策纠结",
+        "购买"
+      ]
+    },
+    {
+      "id": "A10",
+      "group": "A",
+      "name": "ALS/DMD/慢阻肺等需呼吸支持，与治打鼾是两类需求",
+      "weight": 10,
+      "definition": "ALS/DMD/慢阻肺等需呼吸支持，与「治打鼾」是两类需求（新 Job）",
+      "keywords": [
+        "渐冻症",
+        "als",
+        "dmd",
+        "慢阻肺",
+        "肌营养不良",
+        "呼吸衰竭",
+        "呼吸支持",
+        "无创通气"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "独立 J4 分支",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J4"
+      ],
+      "outcome_ids": [
+        "O9"
+      ],
+      "force_default": "push",
+      "stage_scope": [
+        "就医确诊",
+        "长期依从"
+      ]
+    },
+    {
+      "id": "A11",
+      "group": "A",
+      "name": "更年期/孕期/女性身份羞耻触发就医与购买",
+      "weight": 7,
+      "definition": "更年期雌激素下降/孕期体重/身份羞耻触发就医与购买",
+      "keywords": [
+        "孕期",
+        "孕晚期",
+        "更年期",
+        "雌激素",
+        "女生",
+        "女性"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J6",
+        "J3"
+      ],
+      "outcome_ids": [
+        "O1"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "察觉",
+        "就医确诊"
+      ]
+    },
+    {
+      "id": "B1",
+      "group": "B",
+      "name": "能否直观看到治疗效果数据，获得「确认感」",
+      "weight": 7,
+      "definition": "小程序同步睡眠数据、AHI 下降可视化带来的确认感",
+      "keywords": [
+        "数据",
+        "报告",
+        "同步",
+        "app",
+        "小程序",
+        "可视",
+        "监测记录"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "outcome_ids": [
+        "O2"
+      ],
+      "force_default": "pull",
+      "stage_scope": [
+        "适应",
+        "依从习惯"
+      ]
+    },
+    {
+      "id": "B2",
+      "group": "B",
+      "name": "面罩/头带等耗材适配度，决定能否坚持使用",
+      "weight": 9,
+      "definition": "面罩/头带舒适度与适配成本，决定依从/弃用",
+      "keywords": [
+        "面罩",
+        "头带",
+        "鼻枕",
+        "贴合",
+        "漏气",
+        "舒适",
+        "佩戴"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3",
+        "J5",
+        "J7"
+      ],
+      "outcome_ids": [
+        "O3"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "启动适应",
+        "长期依从"
+      ]
+    },
+    {
+      "id": "B3",
+      "group": "B",
+      "name": "售后口碑与召回事件是品牌信任的放大器/摧毁者",
+      "weight": 8,
+      "definition": "售后口碑、召回事件的信任影响",
+      "keywords": [
+        "售后",
+        "质保",
+        "保修",
+        "召回",
+        "维修",
+        "上门"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J3",
+        "J7"
+      ],
+      "outcome_ids": [
+        "O7"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "决策纠结",
+        "长期依从"
+      ]
+    },
+    {
+      "id": "B4",
+      "group": "B",
+      "name": "租赁/免费试戴显著降低决策风险与心理门槛",
+      "weight": 7,
+      "definition": "试戴、租赁、睡眠中心试戴（可医保）",
+      "keywords": [
+        "试戴",
+        "免费试",
+        "试用",
+        "租赁",
+        "可退",
+        "30天",
+        "无理由",
+        "体验"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3",
+        "J5"
+      ],
+      "outcome_ids": [
+        "O3",
+        "O8"
+      ],
+      "force_default": "pull",
+      "stage_scope": [
+        "决策纠结",
+        "购买"
+      ]
+    },
+    {
+      "id": "B5",
+      "group": "B",
+      "name": "进口价格锚定与国产替代之间的信任博弈",
+      "weight": 10,
+      "definition": "价格锚定 + 品牌信任博弈，品牌选择第一变量",
+      "keywords": [
+        "进口",
+        "国产",
+        "瑞思迈",
+        "resmed",
+        "飞利浦",
+        "伟康",
+        "鱼跃",
+        "瑞迈特",
+        "品牌"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3"
+      ],
+      "outcome_ids": [
+        "O6"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "决策纠结",
+        "购买"
+      ]
+    },
+    {
+      "id": "B6",
+      "group": "B",
+      "name": "名人公开使用呼吸机，降低「戴机丢人」心理门槛",
+      "weight": 4,
+      "definition": "名人/社会去污名化，降低心理门槛",
+      "keywords": [
+        "体面",
+        "小巧",
+        "隐形",
+        "好看",
+        "不丢人",
+        "颜值",
+        "名人",
+        "明星"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J6"
+      ],
+      "outcome_ids": [
+        "O5"
+      ],
+      "force_default": "pull",
+      "stage_scope": [
+        "察觉",
+        "决策纠结"
+      ]
+    },
+    {
+      "id": "B7",
+      "group": "B",
+      "name": "海淘/水货靠第三方工具+同侪验证建立渠道信任",
+      "weight": 6,
+      "definition": "官方/医院/水货/陌生渠道的信任差异",
+      "keywords": [
+        "三甲",
+        "医院",
+        "呼吸科",
+        "睡眠中心",
+        "挂号",
+        "医生",
+        "专家",
+        "睡眠门诊",
+        "海淘",
+        "代购"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J3",
+        "J7"
+      ],
+      "outcome_ids": [
+        "O7"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "决策纠结",
+        "购买"
+      ]
+    },
+    {
+      "id": "B8",
+      "group": "B",
+      "name": "预算约束与价格敏感度直接框定可选品牌",
+      "weight": 7,
+      "definition": "价格作为核心决策变量",
+      "keywords": [
+        "价格",
+        "原价",
+        "实付",
+        "降价",
+        "优惠",
+        "便宜",
+        "半价",
+        "包邮",
+        "特价",
+        "性价比",
+        "省钱",
+        "预算"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3",
+        "J7"
+      ],
+      "outcome_ids": [
+        "O6"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "决策纠结",
+        "购买"
+      ]
+    },
+    {
+      "id": "B9",
+      "group": "B",
+      "name": "无泡棉/消音棉老化等机器与耗材长期健康顾虑",
+      "weight": 8,
+      "definition": "无泡棉/消音棉老化/滤棉/纯净水/痘痘等机器与耗材长期健康顾虑",
+      "keywords": [
+        "泡棉",
+        "消音棉",
+        "无泡棉",
+        "滤棉",
+        "纯净水",
+        "痘痘",
+        "粉化",
+        "卫生"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3"
+      ],
+      "outcome_ids": [
+        "O3"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "长期依从"
+      ]
+    },
+    {
+      "id": "B10",
+      "group": "B",
+      "name": "出差/旅行/宿舍等移动场景对体积/续航/可托运的要求",
+      "weight": 6,
+      "definition": "出差/旅行/宿舍等移动场景对体积、续航、可托运的要求",
+      "keywords": [
+        "出差",
+        "旅行",
+        "托运",
+        "便携",
+        "mini",
+        "小巧",
+        "宿舍",
+        "飞机"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J2"
+      ],
+      "outcome_ids": [
+        "O3"
+      ],
+      "force_default": "pull",
+      "stage_scope": [
+        "决策纠结",
+        "长期依从"
+      ]
+    },
+    {
+      "id": "B11",
+      "group": "B",
+      "name": "担心「买了不用/戴不惯」闲置浪费，倾向先试后买/二手对冲",
+      "weight": 8,
+      "definition": "担心「买了不用/戴不惯」闲置浪费，倾向先试后买/租赁/二手对冲",
+      "keywords": [
+        "闲置",
+        "落灰",
+        "砸手里",
+        "买了不用",
+        "转卖",
+        "退货"
+      ],
+      "enabled": true,
+      "source": "语料提炼",
+      "note": "",
+      "jtbd_type": "outcome_evidence",
+      "job_ids": [
+        "J1",
+        "J3"
+      ],
+      "outcome_ids": [
+        "O8"
+      ],
+      "force_default": "anxiety",
+      "stage_scope": [
+        "决策纠结",
+        "购买"
+      ]
+    }
+  ]
+}

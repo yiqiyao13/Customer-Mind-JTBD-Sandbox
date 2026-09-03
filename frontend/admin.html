@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>维度后台 · MindSim</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=20260901c" />
+</head>
+<body>
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <a class="brand" href="/">
+        <div class="brand-icon">MS</div>
+        <div class="brand-text">
+          <strong>消费者心智模拟</strong>
+          <span>维度数据库后台</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="/">工作台</a>
+        <a class="nav-link admin" href="/jobs">任务后台</a>
+        <a class="nav-link active admin" href="/admin">维度后台</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="page-title">
+      <h1>决策维度后台</h1>
+      <p>管理购买触发 / 品牌选择维度：启停、权重、关键词。变更后工作台生成与识别自动生效。</p>
+    </div>
+
+    <section class="card card-accent">
+      <div class="card-header">
+        <h2><span class="dot"></span>维度列表</h2>
+        <span class="status" id="factor-count"></span>
+      </div>
+      <div id="factor-list"></div>
+    </section>
+
+    <section class="card" style="margin-top:1rem">
+      <div class="card-header">
+        <h2><span class="dot"></span>新增维度</h2>
+      </div>
+      <div class="factor-form">
+        <input id="f-id" placeholder="编码，如 A10" />
+        <input id="f-group" placeholder="组别 A / B" />
+        <input id="f-name" placeholder="名称" />
+        <input id="f-weight" type="number" min="1" max="10" placeholder="权重 1-10" />
+        <input id="f-def" placeholder="定义说明" style="grid-column: span 2" />
+        <input id="f-kw" placeholder="关键词，逗号分隔" style="grid-column: span 2" />
+        <button class="btn btn-primary" id="btn-add-factor" style="grid-column: span 2;justify-self:start">添加维度</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="/static/js/app.js?v=20260901c"></script>
+  <script>
+    const _renderFactors = renderFactors;
+    renderFactors = function() {
+      _renderFactors();
+      const el = document.getElementById('factor-count');
+      if (el) el.textContent = `${factors.length} 个维度 · ${factors.filter(f=>f.enabled).length} 个启用`;
+    };
+
+    document.getElementById('btn-add-factor').addEventListener('click', async () => {
+      const id = document.getElementById('f-id').value.trim();
+      const group = document.getElementById('f-group').value.trim();
+      const name = document.getElementById('f-name').value.trim();
+      const weight = parseInt(document.getElementById('f-weight').value, 10) || 5;
+      const definition = document.getElementById('f-def').value.trim();
+      const keywords = document.getElementById('f-kw').value.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+      if (!id || !group || !name) return alert('请填写编码、组别、名称');
+      try {
+        await api('/api/factors', {
+          method: 'POST',
+          body: JSON.stringify({ id, group, name, weight, definition, keywords }),
+        });
+        ['f-id','f-group','f-name','f-weight','f-def','f-kw'].forEach(i => document.getElementById(i).value = '');
+        await loadFactors();
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    loadOutcomes().then(() => loadJobsMap({ renderMap: false }));
+    loadFactors();
+  </script>
+</body>
+</html>

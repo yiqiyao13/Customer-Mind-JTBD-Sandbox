@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>消费者心智模拟 · MindSim</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=20260901c" />
+</head>
+<body>
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <a class="brand" href="/">
+        <div class="brand-icon">MS</div>
+        <div class="brand-text">
+          <strong>消费者心智模拟</strong>
+          <span>MindSim for Sleep Health</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link active" href="/">工作台</a>
+        <a class="nav-link admin" href="/jobs">任务后台</a>
+        <a class="nav-link admin" href="/admin">维度后台</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="page-title">
+      <h1>Campaign 与消费者心智</h1>
+      <p>JTBD 任务驱动：从起点情境识别 Job / Step / Outcome，测试话术是否推动任务进展</p>
+    </div>
+
+    <!-- 生成栏 -->
+    <div class="gen-bar">
+      <div class="row">
+        <label>生成数量 <input type="number" id="gen-count" value="10" min="1" max="200" /></label>
+        <label class="toggle-label" style="color:rgba(255,255,255,0.85)">
+          <input type="checkbox" id="use-llm" /> LLM 生成
+        </label>
+      </div>
+      <div class="filter-label" style="color:rgba(255,255,255,0.75);margin:0.6rem 0 0.35rem">从什么问题开始（可多选）</div>
+      <div id="entry-themes" class="chips entry-themes"></div>
+      <div class="row">
+        <button class="btn btn-primary" id="btn-generate">生成消费者心智</button>
+        <span id="gen-status"></span>
+      </div>
+      <div class="memory-toolbar">
+        <span class="status">记忆管理</span>
+        <button class="btn btn-outline btn-sm" id="btn-export-memories" style="background:rgba(255,255,255,0.95)">下载记忆</button>
+        <button class="btn btn-outline btn-sm" id="btn-import-memories" style="background:rgba(255,255,255,0.95)">上传记忆</button>
+        <input type="file" id="memory-file" accept=".json,application/json" hidden />
+        <button class="btn btn-danger btn-sm" id="btn-reset-all-memories" title="清除全部经历，阶段恢复为「察觉」">清除全部记忆</button>
+        <span class="status" id="memory-io-status"></span>
+      </div>
+    </div>
+
+    <!-- Campaign -->
+    <section class="card card-accent" style="margin-bottom:1rem">
+      <div class="card-header">
+        <h2><span class="dot"></span>Campaign 测试</h2>
+        <button class="btn btn-ghost" id="btn-sample">填入示例</button>
+      </div>
+      <textarea id="campaign-text" placeholder="输入营销话术，测试各消费者的第一人称反馈与决策…"></textarea>
+      <div class="row" style="margin-top:0.85rem">
+        <label class="toggle-label"><input type="checkbox" id="use-llm-simulate" checked /> 独立思考（LLM）</label>
+        <label class="toggle-label"><input type="checkbox" id="use-memory" /> 消费者有记忆</label>
+        <button class="btn btn-primary" id="btn-simulate">运行测试</button>
+      </div>
+      <div class="hint-box" id="sim-mode-hint">静态 + 独立思考：每次独立判断，不积累记忆。</div>
+      <p class="status" id="campaign-hits" style="margin-top:0.5rem"></p>
+    </section>
+
+    <!-- 心智 + 详情 -->
+    <div class="layout-main">
+      <aside class="card">
+        <div class="card-header">
+          <h2><span class="dot"></span>消费者列表</h2>
+          <span class="status" id="persona-count"></span>
+        </div>
+        <div class="filter-label">分群</div>
+        <div id="filter-segments" class="chips"></div>
+        <div class="filter-label">决策阶段</div>
+        <div id="filter-stages" class="chips"></div>
+        <div id="persona-list" style="margin-top:0.5rem;max-height:420px;overflow-y:auto"></div>
+      </aside>
+
+      <section class="card" id="persona-detail">
+        <div class="empty">← 选择一位消费者查看完整画像</div>
+      </section>
+    </div>
+
+    <!-- 结果 -->
+    <section class="card" style="margin-top:1rem">
+      <div class="card-header">
+        <h2><span class="dot"></span>测试结果</h2>
+        <span class="status" id="result-count"></span>
+      </div>
+      <div id="result-heatmap" class="heatmap-wrap"></div>
+      <div id="result-grid" class="result-grid">
+        <div class="empty">运行 Campaign 测试后，逐人反馈将显示在这里</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/static/js/app.js?v=20260901c"></script>
+  <script>
+    function updatePersonaCount() {
+      const el = document.getElementById('persona-count');
+      if (el) el.textContent = personas.length ? `${personas.length} 人` : '';
+    }
+
+    const _renderPersonaList = renderPersonaList;
+    renderPersonaList = function() {
+      _renderPersonaList();
+      updatePersonaCount();
+    };
+
+    document.getElementById('btn-generate').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-generate');
+      const status = document.getElementById('gen-status');
+      btn.disabled = true;
+      status.textContent = '生成中…';
+      try {
+        const count = parseInt(document.getElementById('gen-count').value, 10);
+        const use_llm = document.getElementById('use-llm').checked;
+        const entry_themes = [...selectedEntryThemes];
+        personas = await api('/api/generate', {
+          method: 'POST',
+          body: JSON.stringify({ count, use_llm, options: { entry_themes } }),
+        });
+        selectedId = personas[0]?.id || null;
+        status.textContent = `✓ ${personas.length} 人 · 请重新运行测试`;
+        clearResults(`已生成 ${personas.length} 人，请点击「运行测试」看全部反馈`);
+        renderPersonaList();
+        renderDetail();
+        initFilters();
+        renderFactorFilters();
+      } catch (e) {
+        status.textContent = '失败';
+        alert(e.message);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('use-memory').addEventListener('change', updateSimModeHint);
+    document.getElementById('use-llm-simulate').addEventListener('change', updateSimModeHint);
+
+    document.getElementById('btn-simulate').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-simulate');
+      btn.disabled = true;
+      btn.textContent = '推演中…';
+      try {
+        // 与服务端同步，避免页面上的旧列表/旧结果造成「生成了40人却只测了10人」的错觉
+        personas = await api('/api/personas');
+        renderPersonaList();
+        const n = personas.length;
+        btn.textContent = `推演中（${n} 人）…`;
+        const data = await api('/api/simulate', {
+          method: 'POST',
+          body: JSON.stringify({
+            campaign: document.getElementById('campaign-text').value,
+            use_llm: document.getElementById('use-llm-simulate').checked,
+            use_memory: document.getElementById('use-memory').checked,
+          }),
+        });
+        renderResults(data);
+        if (selectedId && document.getElementById('use-memory').checked) {
+          renderDetail();
+          renderPersonaList();
+        }
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '运行测试';
+      }
+    });
+
+    document.getElementById('btn-sample').addEventListener('click', () => {
+      document.getElementById('campaign-text').value =
+        '瑞思迈 AirSense 11 限时优惠，支持30天试戴体验，医院睡眠中心同款，面罩免费适配，还有国补15%补贴，进口品质值得信赖。';
+    });
+
+    document.getElementById('btn-reset-all-memories').addEventListener('click', async () => {
+      if (!confirm('确定清除全部消费者的记忆？\n经历时间线将被清空，决策阶段恢复为「察觉」。')) return;
+      try {
+        const res = await api('/api/memories/reset', { method: 'POST' });
+        personas = await api('/api/personas');
+        renderPersonaList();
+        renderDetail();
+        const st = document.getElementById('memory-io-status');
+        if (st) { st.textContent = res.message || '已清除'; setTimeout(() => st.textContent = '', 4000); }
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    document.getElementById('btn-export-memories').addEventListener('click', async () => {
+      const st = document.getElementById('memory-io-status');
+      try {
+        await downloadMemories();
+        if (st) { st.textContent = '✓ 记忆已下载'; setTimeout(() => st.textContent = '', 3000); }
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    document.getElementById('btn-import-memories').addEventListener('click', () => {
+      document.getElementById('memory-file').click();
+    });
+
+    document.getElementById('memory-file').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      e.target.value = '';
+      if (!file) return;
+      if (!confirm('上传将覆盖当前全部记忆（含阶段快照）。是否继续？')) return;
+      const st = document.getElementById('memory-io-status');
+      try {
+        const form = new FormData();
+        form.append('file', file);
+        const res = await fetch('/api/memories/import?replace=true', { method: 'POST', body: form });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || res.statusText);
+        }
+        const data = await res.json();
+        personas = await api('/api/personas');
+        renderPersonaList();
+        renderDetail();
+        if (st) { st.textContent = data.message || '✓ 已导入'; setTimeout(() => st.textContent = '', 5000); }
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    initFilters();
+    initEntryThemes();
+    updateSimModeHint();
+    loadFactors();
+    loadPersonas();
+    loadOutcomes().then(() => loadJobsMap({ renderMap: false }));
+  </script>
+</body>
+</html>
