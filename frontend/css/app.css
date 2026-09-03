@@ -222,7 +222,14 @@ textarea { width: 100%; min-height: 110px; resize: vertical; }
   transition: all 0.15s;
 }
 .chip:hover { border-color: var(--resmed-teal); color: var(--resmed-teal); }
-.chip.active { background: var(--resmed-teal-light); border-color: var(--resmed-teal); color: var(--resmed-teal-dark); font-weight: 500; }
+.chip.active {
+  background: var(--resmed-teal-light);
+  border-color: var(--resmed-teal);
+  color: var(--resmed-teal-dark);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--resmed-teal);
+}
+.chip.active::before { content: "✓ "; }
 
 .badge { font-size: 0.68rem; padding: 0.15rem 0.45rem; border-radius: 4px; color: #fff; font-weight: 600; }
 .badge.A { background: var(--group-a); }
@@ -403,8 +410,63 @@ textarea { width: 100%; min-height: 110px; resize: vertical; }
 .filter-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.3rem; font-weight: 500; }
 
 .entry-themes { width: 100%; }
-.gen-bar .chip { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.25); }
-.gen-bar .chip.active { background: var(--resmed-teal); border-color: var(--resmed-teal); }
+.gen-bar .chip {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+  font: inherit;
+  font-size: 0.72rem;
+}
+.gen-bar .chip.active,
+.gen-bar .chip.is-selected,
+.gen-bar .chip[aria-pressed="true"] {
+  background: #fff !important;
+  color: #0b3d4a !important;
+  border-color: #2bbbad !important;
+  box-shadow: 0 0 0 2px #2bbbad !important;
+  font-weight: 700 !important;
+}
+
+.taxonomy-hint { margin: 0.5rem 0 0.75rem; font-size: 0.78rem; }
+.taxonomy-hint ul { margin: 0.35rem 0 0; padding-left: 1.1rem; }
+.taxonomy-hint li { margin-bottom: 0.25rem; }
+.filter-help {
+  display: inline-flex;
+  width: 1rem; height: 1rem;
+  align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  font-size: 0.65rem;
+  color: var(--muted);
+  cursor: help;
+}
+.demo-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: #f7fafb;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.highlight-note {
+  background: #fff8e6;
+  border-left: 3px solid #e6a817;
+  padding: 0.45rem 0.65rem;
+  margin: 0 0 0.65rem;
+  border-radius: 0 4px 4px 0;
+}
+.kol-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: #e8f0fe;
+  color: #1a56db;
+  vertical-align: middle;
+}
 
 .task-card {
   background: linear-gradient(180deg, #f4fafb 0%, #fff 100%);

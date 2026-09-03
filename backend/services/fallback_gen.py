@@ -112,7 +112,7 @@ EXTRA_SEEDS: List[Dict] = [
     {"name": "小马", "emoji": "👨", "gender": "男", "age_range": (30, 38), "city": "一线城市", "occupation": "外卖站长", "income": "个人月入约9千", "family": "合租"},
     {"name": "邓先生", "emoji": "👨‍💼", "gender": "男", "age_range": (44, 54), "city": "一线城市", "occupation": "公务员", "income": "家庭月入约2.2万", "family": "已婚一子"},
     {"name": "周姐", "emoji": "👩‍💼", "gender": "女", "age_range": (35, 45), "city": "一线城市", "occupation": "行政主管", "income": "个人月入约1.3万", "family": "已婚"},
-    {"name": "小徐2", "emoji": "🧑", "gender": "女", "age_range": (26, 33), "city": "一线城市", "occupation": "设计师", "income": "个人月入约1.4万", "family": "独居"},
+    {"name": "小薇", "emoji": "🧑", "gender": "女", "age_range": (26, 33), "city": "一线城市", "occupation": "平面设计师", "income": "个人月入约1.4万", "family": "独居"},
     # —— 老人自用 ——
     {"name": "老周", "emoji": "👴", "gender": "男", "age_range": (65, 74), "city": "四线城市", "occupation": "退休司机", "income": "退休金约4千", "family": "与老伴同住"},
     {"name": "刘叔", "emoji": "👨", "gender": "男", "age_range": (55, 65), "city": "三线城市", "occupation": "社区保安", "income": "个人月入约5千", "family": "子女同城"},
@@ -132,7 +132,11 @@ EXTRA_SEEDS: List[Dict] = [
     {"name": "沈女士", "emoji": "👩", "gender": "女", "age_range": (38, 48), "city": "二线城市", "occupation": "药房主管", "income": "家庭月入约1.9万", "family": "父亲患渐冻症，需夜间呼吸支持"},
     {"name": "崔女士", "emoji": "👩", "gender": "女", "age_range": (35, 45), "city": "三线城市", "occupation": "小学老师", "income": "家庭月入约1.5万", "family": "已婚；母亲高血压打鼾需照护"},
     {"name": "姚先生", "emoji": "👨", "gender": "男", "age_range": (40, 50), "city": "二线城市", "occupation": "建筑项目员", "income": "家庭月入约1.6万", "family": "已婚一女；父亲慢阻肺需呼吸支持"},
-    {"name": "韩女士2", "emoji": "👩", "gender": "女", "age_range": (36, 44), "city": "二线城市", "occupation": "银行柜员", "income": "家庭月入约2万", "family": "父母异地需照护"},
+    {"name": "温女士", "emoji": "👩", "gender": "女", "age_range": (36, 44), "city": "二线城市", "occupation": "银行客户经理", "income": "家庭月入约2万", "family": "父母异地需照护"},
+    {"name": "邱女士", "emoji": "👩", "gender": "女", "age_range": (32, 40), "city": "一线城市", "occupation": "内容运营", "income": "个人月入约1.6万", "family": "合租"},
+    {"name": "黎姐", "emoji": "👩", "gender": "女", "age_range": (41, 49), "city": "二线城市", "occupation": "保险顾问", "income": "家庭月入约2.1万", "family": "丈夫打鼾+一女"},
+    {"name": "宋先生", "emoji": "👨", "gender": "男", "age_range": (34, 42), "city": "一线城市", "occupation": "产品经理", "income": "家庭月入约2.6万", "family": "已婚"},
+    {"name": "万阿姨", "emoji": "👵", "gender": "女", "age_range": (60, 68), "city": "三线城市", "occupation": "退休护士", "income": "退休金约4.5千", "family": "与老伴同住"},
 ]
 
 SEED_BY_NAME: Dict[str, Dict] = {s["name"]: s for s in PERSONA_SEEDS}
@@ -155,11 +159,13 @@ def _arch_kind(arch: Dict) -> str:
     key = arch.get("key", "")
     role = arch.get("role", "")
     job = (arch.get("jtbd") or {}).get("job_id", "")
+    if key == "nurse_caregiver":
+        return "nurse_care"
     if key == "als_caregiver" or job == "J4" or "重症" in arch.get("subject", ""):
         return "als_care"
     if key.startswith("filial") or job == "J7" or "子女" in role:
         return "filial"
-    if key.startswith("spouse") or "伴侣" in role:
+    if key.startswith("spouse") or role in ("家人推动者(伴侣)", "伴侣(推动者)"):
         return "spouse"
     if key in ("elderly_self", "retiree_struggle") or (
         arch.get("role") == "本人" and _age_mid(SEED_BY_NAME.get(arch.get("seed_name", ""), {})) >= 60
@@ -233,6 +239,18 @@ def _seed_fit_score(arch: Dict, seed: Dict) -> int:
     return score
 
 
+def _unique_clone_name(base_name: str, used_names: set) -> str:
+    """避免「小徐2」脏数据感：用城市后缀或乙丙丁。"""
+    for mark in ("乙", "丙", "丁", "戊", "己", "庚", "辛"):
+        cand = f"{base_name}（{mark}）"
+        if cand not in used_names:
+            return cand
+    n = 2
+    while f"{base_name}·{n}" in used_names:
+        n += 1
+    return f"{base_name}·{n}"
+
+
 def _pick_unique_seed(
     preferred_name: str,
     used_names: set,
@@ -260,11 +278,8 @@ def _pick_unique_seed(
         base = primary or next(
             (s for s in PERSONA_SEEDS if s["gender"] == gender), PERSONA_SEEDS[0]
         )
-        n = 2
-        while f"{base['name']}{n}" in used_names:
-            n += 1
         seed = dict(base)
-        seed["name"] = f"{base['name']}{n}"
+        seed["name"] = _unique_clone_name(base["name"], used_names)
         used_names.add(seed["name"])
         return seed
 
@@ -276,13 +291,10 @@ def _pick_unique_seed(
         good = [s for s in scored if _seed_fit_score(arch, s) >= 0]
         if good:
             seed = dict(good[0])
-        elif _arch_kind(arch) in ("filial", "als_care", "spouse") and primary:
+        elif _arch_kind(arch) in ("filial", "als_care", "spouse", "nurse_care") and primary:
             # 无合适备选时克隆主种子人口学，绝不硬套老人/错性别故事
-            n = 2
-            while f"{primary['name']}{n}" in used_names:
-                n += 1
             seed = dict(primary)
-            seed["name"] = f"{primary['name']}{n}"
+            seed["name"] = _unique_clone_name(primary["name"], used_names)
         else:
             seed = dict(scored[0])
     else:
@@ -330,6 +342,15 @@ def _align_role_subject_family(arch: Dict, seed: Dict) -> tuple[str, str, str]:
             subject = "丈夫(患者)"
             if not any(x in family for x in ("丈夫", "老公")):
                 family = "丈夫打鼾严重，快要分房" + (f"；{family}" if family else "")
+
+    elif kind == "nurse_care":
+        # 保留「伴侣照护者 / 护士」身份，不改写成普通推动者
+        role = arch.get("role") or "伴侣照护者"
+        subject = arch.get("subject") or ("丈夫(患者)" if gender != "男" else "妻子(患者)")
+        if not any(x in family for x in ("丈夫", "老婆", "妻子", "老公")):
+            family = ("妻子需规范治疗与夜间照护" if gender == "男" else "丈夫需规范治疗与夜间照护") + (
+                f"；{family}" if family else ""
+            )
 
     elif kind in ("filial", "als_care"):
         role = "子女(为父母)"
@@ -513,11 +534,16 @@ def _build_factor_weights(
 def _react_from_archetype(arch: Dict, primary_name: str) -> ReactTemplates:
     job = get_job((arch.get("jtbd") or {}).get("job_id", ""))
     job_label = job.name if job else arch.get("segment", "这件事")
+    step_id = (arch.get("jtbd") or {}).get("current_step_id", "")
+    sub_map = {s.id: s for s in load_sub_jobs()}
+    step = sub_map[step_id].name if step_id in sub_map else "当前步骤"
+    # 用动机短句，避免把维度名（可能含「室友」）原样塞进所有人的反应模板
+    motive = ((arch.get("mindset") or {}).get("core_motive") or primary_name)[:28]
     return ReactTemplates(
-        advance=f"听到{{{{topic}}}}，这正好推进我在「{job_label}」上的任务，尤其是{primary_name}，想深入了解。",
-        hesitate=f"{{{{topic}}}}有点相关，但我还卡在当前步骤，得再想想。",
-        reject=f"推广没解开我真正卡点（{primary_name}），不太信。",
-        na=f"跟我现在的任务关系不大。",
+        advance=f"听到{{{{topic}}}}，这正好推进我在「{job_label}」上的任务（我卡在{step}），尤其是{motive}…想深入了解。",
+        hesitate=f"{{{{topic}}}}有点相关，但我还卡在「{step}」，得再想想。",
+        reject=f"推广没解开我真正卡点（{step} / {motive}…），不太信。",
+        na=f"跟我现在的任务「{job_label}」关系不大。",
     )
 
 

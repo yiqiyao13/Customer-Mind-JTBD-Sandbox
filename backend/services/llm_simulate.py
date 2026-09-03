@@ -127,6 +127,65 @@ def _looks_generic(reaction: str) -> bool:
     return any(reaction.startswith(b) or b in reaction[:20] for b in _BANNED_OPENERS)
 
 
+def _looks_positive(text: str) -> bool:
+    markers = ("想了解", "可以试试", "正好", "推进", "靠谱", "愿意", "心动", "不错")
+    return any(m in (text or "") for m in markers)
+
+
+def _sanitize_llm_result(
+    *,
+    decision: str,
+    willingness: int,
+    reaction: str,
+    reasoning: str,
+    improved: List[str],
+    unresolved: List[str],
+    next_step: str,
+    rule_decision: str,
+    rule_reaction: str,
+    rule_w: int,
+    rule_improved: List[str],
+    rule_unresolved: List[str],
+    rule_next: str,
+) -> tuple[str, int, str, str, List[str], List[str], str]:
+    """对齐意愿分/标签/字段，消除自相矛盾。"""
+    # 1) improved ∩ unresolved 互斥：优先保留 improved
+    improved = list(dict.fromkeys(improved))
+    unresolved = [x for x in dict.fromkeys(unresolved) if x not in set(improved)]
+    if not improved and not unresolved:
+        improved, unresolved = list(rule_improved), list(rule_unresolved)
+
+    # 2) 关键 Outcome 门控：规则判不能推进时，LLM 不得硬判 advance
+    if rule_decision in ("hesitate", "reject", "na") and decision == "advance":
+        decision = rule_decision
+
+    # 3) 意愿分与标签绑定（统一阈值，避免同分不同标签）
+    bands = {
+        "advance": (6, 10),
+        "hesitate": (3, 7),
+        "na": (1, 5),
+        "reject": (1, 3),
+    }
+    lo, hi = bands.get(decision, (1, 10))
+    willingness = max(lo, min(hi, int(willingness)))
+    # 与规则分靠近，降低同人两次大跳
+    willingness = int(round((willingness * 0.4) + (rule_w * 0.6)))
+    willingness = max(lo, min(hi, willingness))
+
+    # 4) 文案与意愿不得打架
+    if willingness <= 2 and _looks_positive(reaction):
+        reaction = rule_reaction
+        if not reasoning:
+            reasoning = f"意愿很低（{willingness}/10），按规则侧「{rule_decision}」口径重述。"
+    if decision == "reject" and _looks_positive(reaction) and willingness <= 3:
+        reaction = rule_reaction
+
+    if not next_step:
+        next_step = rule_next
+
+    return decision, willingness, reaction, reasoning, improved, unresolved, next_step
+
+
 def _persona_seed(persona: Persona) -> int:
     return sum(ord(c) for c in (persona.id + persona.name)) % 1000
 
@@ -147,8 +206,9 @@ def _simulate_one_sync(
     prompt = _build_simulate_prompt(
         persona, campaign, factors, campaign_hit_ids, rule_hint, memory_context
     )
-    # 每人略不同温度，降低「全员同款」概率
-    temp = 0.78 + (_persona_seed(persona) % 20) / 100.0
+    # 低温度 + 固定种子：降低同人两次漂移；文案仍可由人设细节区分
+    seed = _persona_seed(persona)
+    temp = 0.35
     resp = client.chat.completions.create(
         model=get_model_name(),
         messages=[
@@ -157,12 +217,15 @@ def _simulate_one_sync(
                 "content": (
                     f"你只扮演{persona.name}，用其职业与家庭口吻说话。"
                     "禁止套话模板，禁止和其他客户说一样的开场。"
+                    "willingness 必须与 decision 一致：advance≥6，hesitate 3-7，reject≤3。"
+                    "outcome_improved 与 unresolved_outcomes 不得出现同一项。"
                 ),
             },
             {"role": "user", "content": prompt},
         ],
         temperature=temp,
         max_tokens=1024,
+        seed=seed,
         extra_body={"thinking": {"type": "disabled"}},
     )
     content = resp.choices[0].message.content or ""
@@ -204,14 +267,47 @@ def _simulate_one_sync(
             )
         decision = rule_decision
 
-    improved = [str(x) for x in raw.get("outcome_improved", [])] or rule_improved
-    unresolved = [str(x) for x in raw.get("unresolved_outcomes", [])] or rule_unresolved
+    improved = [str(x) for x in raw.get("outcome_improved", [])] or list(rule_improved)
+    unresolved = [str(x) for x in raw.get("unresolved_outcomes", [])] or list(rule_unresolved)
     next_step = str(raw.get("next_step") or rule_next or persona.jtbd.current_step)
 
     try:
         willingness = int(raw.get("willingness", rule_w or 5))
     except (TypeError, ValueError):
         willingness = rule_w or 5
+
+    decision, willingness, reaction, reasoning, improved, unresolved, next_step = _sanitize_llm_result(
+        decision=decision,
+        willingness=willingness,
+        reaction=reaction,
+        reasoning=reasoning,
+        improved=improved,
+        unresolved=unresolved,
+        next_step=next_step,
+        rule_decision=rule_decision,
+        rule_reaction=rule_reaction,
+        rule_w=rule_w,
+        rule_improved=rule_improved,
+        rule_unresolved=rule_unresolved,
+        rule_next=rule_next,
+    )
+
+    # 去掉业务界面不该出现的内部编码
+    if (not reasoning) or any(
+        x in reasoning
+        for x in ("Force balance", "Outcome 门控", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9")
+    ):
+        from services.simulate import _human_reasoning
+
+        try:
+            reasoning = _human_reasoning(
+                persona, decision, improved, unresolved, next_step, load_outcomes()
+            )
+        except Exception:
+            reasoning = (
+                f"话术对上了部分顾虑；"
+                f"{'仍有未解开心结，先观望。' if unresolved else '可以先往下一步走。'}"
+            )
 
     return SimulateResult(
         persona_id=persona.id,
@@ -328,4 +424,7 @@ async def simulate_campaign_llm(
     summary = {"advance": 0, "hesitate": 0, "na": 0, "reject": 0}
     for r in results:
         summary[r.decision] = summary.get(r.decision, 0) + 1
-    return list(results), summary, hit_names, active_global
+    from services.simulate import intervention_label
+
+    active_labels = [intervention_label(k) for k in active_global]
+    return list(results), summary, hit_names, active_labels

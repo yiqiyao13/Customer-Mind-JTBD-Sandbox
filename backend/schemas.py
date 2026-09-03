@@ -180,6 +180,7 @@ class SimulateRequest(BaseModel):
     use_memory: bool = False
     interventions: Optional[List[str]] = None
     objective: Optional[str] = None
+    reproducible: bool = False  # True 时强制走规则引擎，保证同输入同输出
 
 
 class SimulateResult(BaseModel):

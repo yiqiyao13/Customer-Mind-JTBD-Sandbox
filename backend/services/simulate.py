@@ -6,16 +6,17 @@ from typing import Dict, List, Optional, Tuple
 from schemas import Factor, Outcome, Persona, SimulateResult
 from services.job_store import load_outcomes, next_step_name
 
-# 阈值：保留关键 Outcome 门控；弱功能词不能仅凭 soft 大面积推进
-ADVANCE_THRESHOLD = 8
-HESITATE_THRESHOLD = 3
-SOFT_ADVANCE_THRESHOLD = 7
+# 阈值：抬高推进门槛，避免「试戴+国补」人人满分
+ADVANCE_THRESHOLD = 14
+HESITATE_THRESHOLD = 5
+SOFT_ADVANCE_THRESHOLD = 11
 # 单独出现时偏弱、不宜只靠 soft 大面积 advance
 WEAK_INTERVENTIONS = frozenset({
     "financing",
     "mask_fit_support",
     "material_hygiene",
     "trade_in",
+    "trial",  # 试戴很香，但不能单独撑起全员推进
 })
 
 INTERVENTION_MAP: Dict[str, dict] = {
@@ -41,9 +42,14 @@ INTERVENTION_MAP: Dict[str, dict] = {
     },
     "family_participation": {
         # O4：伴侣关系；孝道冲突风险 O5 由 filial_care 单独覆盖，避免「夫妻话术」误推 J7
+        # 禁止用「一起」「家庭」等泛词，否则「一起去爬山」会误触发
         "outcomes": ["O4"],
         "forces": [("A1", "push", 2)],
-        "keywords": ["伴侣", "家人", "分房", "夫妻", "老公", "老婆", "一起", "家庭"],
+        "keywords": [
+            "伴侣", "分房", "夫妻", "老公", "老婆",
+            "一起选", "一起试戴", "一起看设备", "全家一起选",
+            "家人陪同", "家人陪着", "家庭方案", "夫妻共同",
+        ],
     },
     "filial_care": {
         "outcomes": ["O5"],
@@ -101,6 +107,40 @@ ENTRY_THEME_TO_JOBS = {
     "社交羞耻": ["J6"],
 }
 
+# 劝阻 / 反向话术信号：与「跑题无关」区分，命中则倾向「拒绝」
+NEGATIVE_SIGNAL_KEYWORDS = [
+    "不用买", "不要买", "别买", "不买也行", "没必要买", "没必要花",
+    "用不着", "不需要呼吸机", "不用花", "别花这个钱", "省省吧",
+    "冤枉钱", "浪费钱", "智商税", "忽悠", "坑人",
+    "不是大毛病", "不是病", "小题大做", "忍忍就行", "忍一忍",
+    "戴了也没用", "治不治无所谓", "打呼噜正常", "打鼾正常",
+]
+
+# 较强正向干预：即使话术里夹杂负面词，仍可能被这些拉回犹豫/推进
+STRONG_POSITIVE_INTERVENTIONS = frozenset({
+    "hospital_endorsement",
+    "trial",
+    "data_visibility",
+    "life_support",
+    "after_sales",
+    "mask_fit_support",
+})
+
+INTERVENTION_LABELS = {
+    "hospital_endorsement": "医院/专家背书",
+    "data_visibility": "数据可见",
+    "trial": "试戴/试用",
+    "mask_fit_support": "面罩适配支持",
+    "family_participation": "家庭共同参与",
+    "filial_care": "孝道照护",
+    "financing": "分期/补贴/优惠",
+    "trade_in": "以旧换新",
+    "after_sales": "售后保障",
+    "life_support": "重症呼吸支持",
+    "shame_relief": "减轻社交压力",
+    "material_hygiene": "材质与卫生",
+}
+
 
 def identify_factors(campaign: str, factors: List[Factor]) -> List[str]:
     text = campaign.lower()
@@ -129,6 +169,15 @@ def detect_interventions(
                 active.append(key)
                 break
     return active
+
+
+def detect_negative_signals(campaign: str) -> List[str]:
+    text = (campaign or "").lower()
+    return [kw for kw in NEGATIVE_SIGNAL_KEYWORDS if kw.lower() in text]
+
+
+def intervention_label(key: str) -> str:
+    return INTERVENTION_LABELS.get(key, key)
 
 
 def _interventions_for_persona(active: List[str], persona: Persona) -> List[str]:
@@ -172,60 +221,165 @@ def _force_deltas(active: List[str]) -> List[Tuple[str, str, int]]:
 
 
 def _required_outcome(persona: Persona):
+    """最该先被话术回应的 Outcome = 缺口最大（在乎−满意），而非随便一个低满意项。"""
     dos = persona.jtbd.desired_outcomes
     if not dos:
         return None
-    return min(dos, key=lambda d: (d.satisfaction / max(d.importance, 1), -d.importance))
+    return max(dos, key=lambda d: (d.importance - d.satisfaction, d.importance))
+
+
+def _outcome_short(oid: str, outcomes: List[Outcome]) -> str:
+    for o in outcomes:
+        if o.id == oid:
+            if o.label:
+                return o.label
+            m = None
+            if "「" in (o.name or ""):
+                try:
+                    m = o.name.split("「", 1)[1].split("」", 1)[0]
+                except Exception:
+                    m = None
+            return m or o.name or oid
+    return oid
+
+
+def _high_importance_coverage(persona: Persona, improved_set: set[str]) -> bool:
+    """高重要度 Outcome 至少半数被回应，才允许推进。"""
+    high = [d for d in persona.jtbd.desired_outcomes if d.importance >= 7]
+    if not high:
+        return True
+    hit = sum(1 for d in high if d.id in improved_set)
+    need = max(1, (len(high) + 1) // 2)
+    return hit >= need
+
+
+def _human_reasoning(
+    persona: Persona,
+    decision: str,
+    improved: List[str],
+    unresolved: List[str],
+    next_step: str,
+    outcomes: List[Outcome],
+) -> str:
+    """市场可读的内心独白，禁止 O编码 / Force balance 等实现术语。"""
+    imp = "、".join(_outcome_short(i, outcomes) for i in improved) or "还没有真正打到点上"
+    unr = "、".join(_outcome_short(i, outcomes) for i in unresolved)
+    step = next_step or persona.jtbd.current_step or "下一步"
+    if decision == "advance":
+        extra = f"还挂着：{unr}。" if unr else "关键顾虑这轮基本对上了。"
+        return f"这句话里，「{imp}」对我有用。{extra}我可以先往「{step}」走一步。"
+    if decision == "hesitate":
+        return (
+            f"有听到「{imp}」，但我最卡的「{unr or persona.jtbd.current_step}」还没说透。"
+            f"暂时还在「{persona.jtbd.current_step or '纠结'}」，不会立刻下单。"
+        )
+    if decision == "reject":
+        return f"我真正在乎的是「{unr or persona.jtbd.core_job}」，这段推广几乎没碰到，倾向先放放。"
+    return f"跟我现在在忙的「{persona.jtbd.core_job or '这件事'}」关系不大。"
+
+
+def _scene_phrase(persona: Persona) -> str:
+    """口语场景，禁止把「丈夫42岁(中度OSA)+一子」原样塞进反馈。"""
+    role = persona.role or ""
+    if "子女" in role:
+        return "给长辈选设备这件事"
+    if "室友" in role:
+        return "被室友鼾声吵醒这件事"
+    if "伴侣" in role or "家人" in role or "照护" in role:
+        return "家里推动治疗这件事"
+    return "我自己的睡眠治疗这件事"
 
 
 def _pick_reaction(persona: Persona, decision: str, topic: str) -> str:
-    """按角色/Job/障碍拼差异化口语，避免全员同一句。"""
+    """按角色/家庭/恐惧拼口语，避免全员同一机器人句式。"""
     j = persona.jtbd
     job = j.core_job or persona.segment
     step = j.current_step or "当前这步"
     blocker = (persona.blockers or ["心里没底"])[0]
-    quote_bit = (persona.mindset.quote or "").strip("「」")
+    fear = (persona.mindset.fear or "").strip()
+    quote_bit = (persona.mindset.quote or "").strip().strip("「」")
     role = persona.role
+    occ = persona.occupation or ""
+    scene = _scene_phrase(persona)
 
     if "子女" in role:
-        identity = f"我给长辈选设备"
-    elif "伴侣" in role or "家人" in role:
-        identity = f"我是家里在推动这件事的人"
+        identity = f"我是{occ or '子女'}，在给长辈盯设备"
     elif "室友" in role:
-        identity = f"我被室友鼾声折磨够了"
+        identity = f"我是被室友鼾声折磨的{occ or '合租党'}"
+    elif "伴侣" in role or "家人" in role or "照护" in role:
+        identity = f"我是家里在推动这件事的人（{occ or '家属'}）"
     else:
-        identity = f"我自己是当事人（{persona.occupation}）"
+        identity = f"我自己（{occ or '患者'}）"
 
+    # 人格模板若是「听到…这正好推进」机器人句，一律不用
     tpl = getattr(persona.react, decision, "") or ""
-    # 模板若仍是笼统句，改用人设拼装
-    generic = (not tpl) or ("有点相关" in tpl) or ("J" in tpl and "任务" in tpl)
-    if tpl and "{{topic}}" in tpl and not generic:
-        return tpl.replace("{{topic}}", topic)
-    if tpl and "{topic}" in tpl and not generic:
-        return tpl.format(topic=topic)
+    robotic = any(
+        x in tpl
+        for x in ("这正好推进", "想深入了解", "有点相关", "跟我现在的任务关系不大")
+    )
+    if tpl and ("{{topic}}" in tpl or "{topic}" in tpl) and not robotic:
+        return tpl.replace("{{topic}}", topic).replace("{topic}", topic)
+
+    fear_bit = _fear_clause(fear, blocker)
+    quote_tail = f"我心里那句一直是：「{quote_bit}」。" if quote_bit else ""
+    discourage = any(x in (topic or "") for x in ("不用买", "忍忍", "别买", "劝阻"))
 
     by_decision = {
         "advance": (
-            f"{identity}。卡在「{step}」好久了，"
-            f"听到「{topic}」总算对上我在做的「{job}」。"
-            f"我最怕的是{blocker}，这一点要是能落地，我就愿意往下走。"
-            + (f"说实话，我一直觉得「{quote_bit}」。" if quote_bit else "")
+            f"{identity}。就{scene}，我卡在「{step}」好久了。"
+            f"你们提到的「{topic}」算对上了我在做的「{job}」——"
+            f"{fear_bit}，这点要是能落地，我愿意先往下走。{quote_tail}"
         ),
         "hesitate": (
-            f"{identity}，现在卡在「{step}」。"
-            f"「{topic}」沾边，但没解开我的顾虑——{blocker}。"
-            f"对「{job}」来说，还差一口气。"
+            f"{identity}。{scene}还搁在「{step}」。"
+            f"「{topic}」听着沾边，但{fear_bit}，这话没解开。"
+            f"对「{job}」来说，还差一口气，我得再想想。{quote_tail}"
         ),
         "reject": (
-            f"{identity}。你们讲的「{topic}」跟我真正卡的「{step}」不是一回事。"
-            f"我操心的是{blocker}，这个没答到。"
+            (
+                f"{identity}。你们这是在劝我「{topic}」，等于否定我正在做的「{job}」。"
+                f"{fear_bit}，这种说法我听着抵触，更不会往下走。{quote_tail}"
+            )
+            if discourage
+            else (
+                f"{identity}。你们讲的「{topic}」跟我真正卡的「{step}」不是一回事。"
+                f"{fear_bit}，这段几乎没答到。{quote_tail}"
+            )
         ),
         "na": (
-            f"{identity}，我在忙的是「{job}」，"
-            f"这段推广跟我的「{step}」关系不大。"
+            f"{identity}。这段话跟我正在忙的「{job}」基本不沾边，"
+            f"我还是卡在「{step}」，先当没听到。"
         ),
     }
     return by_decision.get(decision, by_decision["hesitate"])
+
+
+def _fear_clause(fear: str, blocker: str) -> str:
+    """拼恐惧短句：避免「我最怕」+「最怕…」叠成「最怕最怕」，并去掉句末标点以免「。，」。"""
+    f = (fear or "").strip().strip("「」\"'")
+    f = f.rstrip("。．.，,；;！!？?")
+    prefixes = (
+        "我最怕", "我怕", "我最担心", "我担心",
+        "最怕", "很怕", "特怕", "有点怕", "怕",
+        "最担心", "担心",
+    )
+    # 可叠多层「最怕最怕」
+    changed = True
+    while changed and f:
+        changed = False
+        for prefix in prefixes:
+            if f.startswith(prefix):
+                f = f[len(prefix):].lstrip("的了，, ")
+                changed = True
+                break
+    f = f.strip().rstrip("。．.，,；;！!？?")
+    if not f:
+        b = (blocker or "心里没底").strip().rstrip("。．.，,；;")
+        for prefix in ("最怕", "怕"):
+            if b.startswith(prefix):
+                b = b[len(prefix):].lstrip("的了，, ")
+        return f"我顾虑的是{b or '心里没底'}"
+    return f"我最怕{f}"
 
 
 def decide_for(
@@ -251,6 +405,12 @@ def decide_for(
         detect_interventions(campaign, interventions),
         persona,
     )
+    negative_hits = detect_negative_signals(campaign)
+    has_strong_positive = any(k in STRONG_POSITIVE_INTERVENTIONS for k in active)
+    # 劝阻话术主导时，清掉可能误触发的「改善」，避免爬山式误匹配又把关系算改善
+    if negative_hits and not has_strong_positive:
+        active = []
+
     improved_set = _outcomes_improved_by(active)
     force_deltas = _force_deltas(active)
 
@@ -309,12 +469,23 @@ def decide_for(
         else:
             score -= weight_map.get(fid, 3) * 0.35
 
-    if not active and not hit_ids:
+    if negative_hits and not has_strong_positive:
+        # 劝阻 / 反向宣传 → 拒绝（不是无关）
+        decision = "reject"
+        next_step = persona.jtbd.current_step
+        topic = "不用买、忍忍就行这类说法"
+        # 负面话术下不记「已改善」
+        improved = []
+        unresolved = [do.id for do in persona.jtbd.desired_outcomes]
+        score = -5
+    elif not active and not hit_ids:
+        # 完全跑题、没提产品与痛点 → 无关
         decision = "na"
         next_step = persona.jtbd.current_step
         topic = "这个活动"
     else:
         required_addressed = True if not required else required.id in improved
+        coverage_ok = _high_importance_coverage(persona, improved_set)
 
         anxiety_eased = any(
             f == fid and force == "anxiety" and delta < 0
@@ -323,51 +494,85 @@ def decide_for(
         )
         pull_hit = any(fid in activated_force_ids for fid in forces.pull)
         push_hit = any(fid in activated_force_ids for fid in forces.push)
-        # 功能话术：虽未打中「最渴」Outcome，但改善了高重要度 desired 且对症缓解 anxiety
-        feature_pull = (
-            anxiety_eased
-            and any(
-                do.id in improved and do.importance >= 7
-                for do in persona.jtbd.desired_outcomes
-            )
-        )
         only_weak = bool(active) and set(active).issubset(WEAK_INTERVENTIONS)
-        hard_advance = score >= ADVANCE_THRESHOLD and required_addressed
-        # soft：关键 Outcome 对上即可；但「仅弱干预」还需 push/对症消焦虑/多 Outcome，防「便宜」「面罩」刷屏
-        soft_ok = required_addressed or feature_pull or life_critical
-        if only_weak and required_addressed and not (push_hit or anxiety_eased or pull_hit or len(improved) >= 2):
-            soft_ok = False
-        soft_advance = score >= SOFT_ADVANCE_THRESHOLD and soft_ok
+
+        # 推进必须：关键缺口被回应 + 高重要度覆盖过半 + 分数够；弱干预组合不能单独撑推进
+        hard_advance = (
+            score >= ADVANCE_THRESHOLD
+            and required_addressed
+            and coverage_ok
+            and not only_weak
+        )
+        soft_advance = (
+            score >= SOFT_ADVANCE_THRESHOLD
+            and required_addressed
+            and coverage_ok
+            and (push_hit or pull_hit or anxiety_eased or len(improved) >= 2)
+            and not only_weak
+        )
+        # 生命危急特例：重症保命话术仍可 soft
+        if life_critical and required_addressed and score >= SOFT_ADVANCE_THRESHOLD:
+            soft_advance = True
+
+        # 夹杂劝阻词时，即使有弱命中也不给推进
+        if negative_hits:
+            hard_advance = False
+            soft_advance = False
 
         if hard_advance or soft_advance:
             decision = "advance"
             next_step = next_step_name(persona.jtbd.current_step, persona.jtbd.job_id)
-        elif score >= HESITATE_THRESHOLD:
-            decision = "hesitate"
+        elif score >= HESITATE_THRESHOLD or (active or hit_ids):
+            # 有命中但没过推进门 → 犹豫（而不是轻易无关）
+            decision = "hesitate" if (score >= HESITATE_THRESHOLD or required_addressed or improved) else "reject"
+            if score < HESITATE_THRESHOLD and not improved:
+                decision = "reject"
+            if negative_hits:
+                decision = "reject"
             next_step = persona.jtbd.current_step
         else:
             decision = "reject"
             next_step = persona.jtbd.current_step
 
         if improved:
-            topic = "、".join(outcome_names.get(i, i) for i in improved[:2])
+            topic = "、".join(_outcome_short(i, outcomes) for i in improved[:2])
         elif hit_ids:
             topic = "、".join(name_map.get(h, h) for h in hit_ids[:2])
         else:
-            topic = "、".join(active[:2]) if active else "这个活动"
+            topic = "、".join(intervention_label(a) for a in active[:2]) if active else "这个活动"
 
     reaction = _pick_reaction(persona, decision, topic)
 
     dom_codes = [d.code for d in persona.dominant_features]
     hit_dom = [h for h in hit_ids if h in dom_codes]
 
-    willingness = 2
+    # 意愿分：与决策绑定，并对「高重要度未解决」扣分，禁止核心顾虑未解却 10 分
+    unresolved_high = [
+        d for d in persona.jtbd.desired_outcomes
+        if d.id in unresolved and d.importance >= 7
+    ]
     if decision == "advance":
-        willingness = min(10, 6 + int(score // 4))
+        willingness = 6 + min(3, int(score // 6))
+        willingness -= len(unresolved_high)
+        willingness = max(6, min(9, willingness))  # 推进最高 9，满分留给几乎无未解
+        if not unresolved:
+            willingness = min(10, willingness + 1)
     elif decision == "hesitate":
-        willingness = min(7, 3 + int(score // 5))
-    elif decision == "reject":
-        willingness = max(1, 2)
+        willingness = 4 + min(2, int(score // 6))
+        willingness -= len(unresolved_high)
+        willingness = max(3, min(6, willingness))
+    elif decision == "na":
+        willingness = max(1, min(4, 2 + int(score // 8)))
+    else:
+        willingness = max(1, min(3, 2 - len(unresolved_high) // 2))
+
+    # 最关键 Outcome 未解 → 绝不能显示高意愿推进感
+    if required and required.id in unresolved:
+        willingness = min(willingness, 5)
+        if decision == "advance":
+            decision = "hesitate"
+            reaction = _pick_reaction(persona, decision, topic)
+            next_step = persona.jtbd.current_step
 
     return (
         decision,
@@ -437,12 +642,12 @@ def simulate_campaign(
                 unresolved_outcomes=unresolved,
                 next_step=next_step,
                 interventions=active,
-                reasoning=(
-                    f"关键 Outcome 门控 + Force balance；"
-                    f"改善 {improved or '无'}；未解 {unresolved or '无'}；"
-                    f"下一步「{next_step}」"
+                reasoning=_human_reasoning(
+                    persona, decision, improved, unresolved, next_step, outcomes
                 ),
             )
         )
 
-    return results, summary, hit_names, active_global
+    # 对外返回中文干预名，避免 family_participation 等内部键
+    active_labels = [intervention_label(k) for k in active_global]
+    return results, summary, hit_names, active_labels

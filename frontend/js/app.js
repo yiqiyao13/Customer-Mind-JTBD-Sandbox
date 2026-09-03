@@ -145,6 +145,37 @@ function jobLabel(id) {
   return j ? `${j.name}` : id;
 }
 
+/** 把研发用的证据码转成市场可读文案 */
+function evidenceLabel(refs) {
+  if (!refs?.length) return '合成消费者原型';
+  const KEY_MAP = {
+    synthetic: '合成消费者原型',
+    hypothesis: '假设样本',
+    spouse_pusher_liu: '伴侣推动原型',
+    spouse_shopkeeper: '伴侣推动·预算敏感',
+    nurse_caregiver: '医护照护原型',
+    filial_daughter: '子女照护原型',
+    roommate_young: '室友影响原型',
+    shame_self: '社交羞耻原型',
+    doctor_self: '专业KOL样本',
+    exec_self: '职场自用原型',
+    retiree_struggle: '依从挣扎原型',
+    elderly_self: '老年自用原型',
+    als_caregiver: '重症照护原型',
+  };
+  const parts = refs.map(r => {
+    if (KEY_MAP[r]) return KEY_MAP[r];
+    if (/^[A-Za-z0-9_]+$/.test(r)) return '合成原型';
+    return r;
+  });
+  return [...new Set(parts)].join(' · ');
+}
+
+function isKolPersona(p) {
+  const occ = p?.occupation || '';
+  return /医生|主治|呼吸科|睡眠科/.test(occ) || (p?.evidence_refs || []).includes('doctor_self');
+}
+
 function renderJobMap() {
   const el = document.getElementById('jtbd-map');
   if (!el) return;
@@ -197,9 +228,9 @@ function renderPersonaJobPath(p) {
   return `
     <div class="persona-job-path">
       <div class="persona-job-path-label">
-        <span class="k">任务路径</span>
-        <strong>${tree.id} ${tree.name}</strong>
-        ${current ? `<span class="status">· 当前：${current}</span>` : ''}
+        <span class="k">TA 要完成的任务</span>
+        <strong>${tree.name}</strong>
+        ${current ? `<span class="status">· 当前卡在：${current}</span>` : ''}
       </div>
       <div class="persona-job-steps">
         ${flat.map((s, i) => {
@@ -213,18 +244,24 @@ function renderPersonaJobPath(p) {
   `;
 }
 
-async function loadPersonas() {
-  personas = await api('/api/personas');
-  if (typeof renderPersonaList === 'function') renderPersonaList();
-  if (selectedId && typeof renderDetail === 'function') renderDetail();
+function fillSampleCampaign() {
+  const el = document.getElementById('campaign-text');
+  if (!el) {
+    alert('找不到话术输入框');
+    return;
+  }
+  el.value = '瑞思迈 AirSense 11 限时优惠，支持30天试戴体验，医院睡眠中心同款，面罩免费适配，还有国补15%补贴，进口品质值得信赖。';
+  el.focus();
+  el.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function initEntryThemes() {
   const el = document.getElementById('entry-themes');
   if (!el) return;
-  el.innerHTML = ENTRY_THEMES.map(t => `
-    <span class="chip ${selectedEntryThemes.has(t) ? 'active' : ''}" data-theme="${t}">${t}</span>
-  `).join('');
+  el.innerHTML = ENTRY_THEMES.map(t => {
+    const on = selectedEntryThemes.has(t);
+    return `<button type="button" class="chip ${on ? 'active is-selected' : ''}" data-theme="${t}" aria-pressed="${on ? 'true' : 'false'}">${t}</button>`;
+  }).join('');
   el.querySelectorAll('.chip').forEach(c => {
     c.addEventListener('click', () => {
       const t = c.dataset.theme;
@@ -324,35 +361,69 @@ function renderPersonaList() {
     const simTag = sim
       ? `<span class="list-sim-tag ${sim.decision}">${decisionLabel(sim.decision)}</span>`
       : '';
+    const kol = isKolPersona(p) ? '<span class="kol-tag">专业样本</span>' : '';
     return `
-    <div class="persona-item ${p.id === selectedId ? 'active' : ''}" data-id="${p.id}">
+    <div class="persona-item ${p.id === selectedId ? 'active' : ''}" data-id="${p.id}" title="点击查看完整画像">
       <div class="persona-item-top">
         <strong>${p.emoji} ${p.name}</strong>
+        ${kol}
         ${simTag}
       </div>
-      <div class="meta">${p.id} · ${p.occupation || ''} · ${p.jtbd?.core_job || p.segment}</div>
-      <div class="meta">当前：${p.jtbd?.current_step || p.osa?.stage || '—'}</div>
+      <div class="meta">${p.occupation || '—'} · ${p.jtbd?.core_job || p.segment}</div>
+      <div class="meta">${p.role || ''} · 卡在「${p.jtbd?.current_step || p.osa?.stage || '—'}」</div>
     </div>`;
   }).join('');
   el.querySelectorAll('.persona-item').forEach(item => {
     item.addEventListener('click', () => {
-      selectPersona(item.dataset.id, { scrollTo: lastSimResults.length ? 'result' : 'detail' });
+      selectPersona(item.dataset.id, { scrollTo: 'detail' });
     });
   });
 }
 
+/** 兜底短名：即使 /api/outcomes 尚未加载，也绝不把 O3 亮给市场部 */
+const OUTCOME_LABELS = {
+  O1: '搞清严不严重',
+  O2: '疗效有确认感',
+  O3: '戴得住用不下去',
+  O4: '伴侣睡眠/关系',
+  O5: '照护不伤感情',
+  O6: '总花费心里有数',
+  O7: '售后渠道靠得住',
+  O8: '别买了闲置',
+  O9: '重症呼吸支持到位',
+};
+
+const INTERVENTION_LABELS = {
+  hospital_endorsement: '医院/专家背书',
+  data_visibility: '数据可见',
+  trial: '试戴/试用',
+  mask_fit_support: '面罩适配支持',
+  family_participation: '家庭共同参与',
+  filial_care: '孝道照护',
+  financing: '分期/补贴/优惠',
+  trade_in: '以旧换新',
+  after_sales: '售后保障',
+  life_support: '重症呼吸支持',
+  shame_relief: '减轻社交压力',
+  material_hygiene: '材质与卫生',
+};
+
 function outcomeName(id) {
-  return outcomes.find(o => o.id === id)?.name || id;
+  return outcomes.find(o => o.id === id)?.name || OUTCOME_LABELS[id] || id;
 }
 
 /** 面向用户的短名：热力图列头、结果卡片用，避免只显示 O1/O2 */
 function outcomeLabel(id) {
-  const o = outcomes.find(x => x.id === id);
-  if (!o) return id;
-  if (o.label) return o.label;
-  // 无 label 时从正式名里抽「」内短语，仍失败则退回 id
-  const m = String(o.name || '').match(/「([^」]+)」/);
-  return m ? m[1] : (o.name || id);
+  const key = String(id || '').trim();
+  // 已知 ID 一律优先用中文短名，避免 outcomes 未加载或字段异常时露出 O3
+  if (OUTCOME_LABELS[key]) return OUTCOME_LABELS[key];
+  const o = outcomes.find(x => x.id === key);
+  if (o?.label) return o.label;
+  if (o?.name) {
+    const m = String(o.name).match(/「([^」]+)」/);
+    return m ? m[1] : o.name;
+  }
+  return key || id;
 }
 
 function formatOutcomeList(ids) {
@@ -365,16 +436,16 @@ function renderDetail() {
   const el = document.getElementById('persona-detail');
   if (!el) return;
   if (!p) {
-    el.innerHTML = '<div class="empty">← 从左侧选择一位消费者查看画像</div>';
+    el.innerHTML = '<div class="empty">← 点击左侧消费者，立刻查看画像（不必先跑 Campaign）</div>';
     return;
   }
   const j = p.jtbd || {};
   const dos = (j.desired_outcomes || []).slice(0, 3);
   const forces = j.forces || {};
-  const domHtml = p.dominant_features.map(d => {
+  const domHtml = (p.dominant_features || []).map(d => {
     const f = factors.find(x => x.id === d.code);
     return `<div style="margin-bottom:0.4rem">${badgeGroup(f?.group || 'A')} ${f?.name || d.code} ${weightBar(d.weight)}</div>`;
-  }).join('');
+  }).join('') || '<p class="status">暂无维度权重</p>';
 
   const sim = getSimResult(p.id);
   const simPanel = sim ? `
@@ -385,6 +456,7 @@ function renderDetail() {
       </div>
       <p class="sim-link-reaction">${sim.reaction}</p>
       <p class="status" style="margin-top:0.4rem">
+        意愿 <strong>${sim.willingness}/10</strong> ·
         已改善：${formatOutcomeList(sim.outcome_improved)} ·
         未解决：${formatOutcomeList(sim.unresolved_outcomes)}
         ${sim.next_step ? ` · 下一步：<strong>${sim.next_step}</strong>` : ''}
@@ -395,23 +467,41 @@ function renderDetail() {
     <div class="sim-link-panel muted">
       <p class="status">此人未出现在最近一次测试结果中。</p>
     </div>
-  ` : '');
+  ` : `
+    <div class="sim-link-panel muted">
+      <p class="status">画像可直接查看。运行上方「Campaign 测试」后，这里会显示对此人的话术反馈。</p>
+    </div>
+  `);
+
+  const roommateNote = /室友/.test(p.role || '') || /室友/.test(p.subject || '')
+    ? `<p class="status highlight-note">情境说明：TA 是被室友鼾声影响的<strong>被动受害者</strong>，任务是恢复自己的睡眠，并非本人打鼾求治。</p>`
+    : '';
+  const kolNote = isKolPersona(p)
+    ? `<p class="status highlight-note">样本说明：这是<strong>专业 KOL 型样本</strong>（${p.occupation}），用于测专业话术，不宜当作普通消费者占比。</p>`
+    : '';
 
   el.innerHTML = `
     <div class="card-header" style="border:none;padding:0;margin-bottom:0.75rem">
-      <h2><span class="dot"></span>${p.emoji} ${p.name}</h2>
+      <h2><span class="dot"></span>${p.emoji} ${p.name}${isKolPersona(p) ? ' <span class="kol-tag">专业样本</span>' : ''}</h2>
       <div class="row" style="gap:0.5rem">
-        <span class="status">${p.id}</span>
         <button class="btn btn-danger btn-sm" id="btn-reset-one-memory" data-id="${p.id}">清除记忆</button>
       </div>
     </div>
 
+    <div class="demo-summary">
+      <strong>${p.age}岁 · ${p.gender} · ${p.city} · ${p.occupation || '—'}</strong>
+      <span class="status">${p.segment} · ${p.role} · 对象 ${p.subject || '本人'}</span>
+      <span class="status">家庭：${p.family || '—'} · 阶段 ${p.osa?.stage || '—'} / ${p.osa?.severity || '—'}</span>
+    </div>
+
+    ${roommateNote}
+    ${kolNote}
     ${simPanel}
 
     <div class="task-card">
-      <div class="task-label">任务卡 · JTBD</div>
+      <div class="task-label">任务卡</div>
       <p><span class="k">起点情境</span> ${j.entry_situation || '—'}</p>
-      <p><span class="k">谁在推动</span> ${j.job_owner || p.role} · <span class="k">正在做的事</span> ${j.core_job || j.job_id || '—'}</p>
+      <p><span class="k">谁在推动</span> ${j.job_owner || p.role} · <span class="k">正在做的事</span> ${j.core_job || jobLabel(j.job_id) || '—'}</p>
       <p><span class="k">当前卡在</span> <strong>${j.current_step || '—'}</strong></p>
       ${renderPersonaJobPath(p)}
       <p class="job-statement">${j.job_statement || p.mindset?.core_motive || ''}</p>
@@ -438,20 +528,18 @@ function renderDetail() {
         ${forceChip('anxiety', forces.anxiety)}
         ${forceChip('alt', forces.habit_or_alternative)}
       </div>
-      <p class="status" style="margin-top:0.5rem">证据：${(p.evidence_refs || ['synthetic']).join(' · ')}</p>
+      <p class="status" style="margin-top:0.5rem">样本来源：${evidenceLabel(p.evidence_refs)}</p>
       ${p.mindset?.quote ? `<p class="quote">「${p.mindset.quote}」</p>` : ''}
     </div>
 
-    <details class="demo-layer">
-      <summary>人口学与维度权重（第二层）</summary>
-      <p class="status" style="margin-top:0.5rem">${p.age}岁 · ${p.gender} · ${p.city} · ${p.occupation}</p>
-      <p class="status">分群 ${p.segment} · 角色 ${p.role} · 对象 ${p.subject || '本人'}</p>
-      <p class="status">家庭：${p.family || '—'} · OSA ${p.osa?.stage} / ${p.osa?.severity}</p>
+    <details class="demo-layer" open>
+      <summary>动机、恐惧与维度权重</summary>
       <div class="mind-box" style="margin-top:0.5rem">
-        <p><strong>动机</strong> ${p.mindset?.core_motive}</p>
-        <p style="margin-top:0.4rem"><strong>恐惧</strong> ${p.mindset?.fear}</p>
+        <p><strong>动机</strong> ${p.mindset?.core_motive || '—'}</p>
+        <p style="margin-top:0.4rem"><strong>恐惧</strong> ${p.mindset?.fear || '—'}</p>
+        <p style="margin-top:0.4rem"><strong>决策逻辑</strong> ${p.mindset?.decision_logic || '—'}</p>
       </div>
-      <p style="font-size:0.85rem;margin-top:0.75rem"><strong>主导关注</strong></p>
+      <p style="font-size:0.85rem;margin-top:0.75rem"><strong>主导关注维度</strong></p>
       ${domHtml}
     </details>
 
@@ -578,7 +666,10 @@ function renderResults(data) {
   if (hitsEl) {
     const parts = [];
     if (data.campaign_hits?.length) parts.push(`维度：${data.campaign_hits.join('、')}`);
-    if (data.interventions?.length) parts.push(`干预：${data.interventions.join('、')}`);
+    if (data.interventions?.length) {
+      const labels = data.interventions.map(k => INTERVENTION_LABELS[k] || k);
+      parts.push(`识别到的助力点：${labels.join('、')}`);
+    }
     hitsEl.textContent = parts.join(' · ') || '点击下方卡片或热力图行，可联动打开画像';
   }
   renderHeatmap(lastSimResults);
@@ -667,11 +758,19 @@ function updateSimModeHint() {
   const el = document.getElementById('sim-mode-hint');
   if (!el) return;
   const mem = document.getElementById('use-memory')?.checked;
-  const llm = document.getElementById('use-llm-simulate')?.checked;
-  if (mem && llm) el.textContent = '记忆 + 独立思考：参考过往经历，测后写入 JTBD 时间线。';
-  else if (mem) el.textContent = '记忆 + 规则：写入时间线，按 Outcome/Force 推演。';
-  else if (llm) el.textContent = '静态 + 独立思考：每次独立判断，不积累记忆。';
-  else el.textContent = '静态 + 规则：以「是否推动任务进展」判定。';
+  const repro = document.getElementById('reproducible-mode')?.checked;
+  const llm = document.getElementById('use-llm-simulate')?.checked && !repro;
+  if (repro) {
+    el.innerHTML = '<strong>可复现模式</strong>：同一话术 + 同一批人，判定与意愿分锁定为规则引擎结果（推进需关键缺口被回应且分数达标）。适合做 campaign 对比决策。';
+  } else if (mem && llm) {
+    el.textContent = '记忆 + 独立思考：参考过往经历；LLM 文案可能略有波动，判定已与规则门控对齐。';
+  } else if (mem) {
+    el.textContent = '记忆 + 规则：写入时间线，按 Outcome/Force 推演，结果可复现。';
+  } else if (llm) {
+    el.textContent = '独立思考：反馈文案更口语；若需完全一致的分数/标签，请勾选「可复现模式」。';
+  } else {
+    el.textContent = '规则模式：以「是否推动任务进展」判定，同一输入结果稳定。';
+  }
 }
 
 async function downloadMemories() {

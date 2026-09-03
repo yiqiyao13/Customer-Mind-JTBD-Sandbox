@@ -46,9 +46,10 @@ async def run_simulate(req: SimulateRequest):
         raise HTTPException(status_code=400, detail="campaign 不能为空")
 
     factors = load_factors_db().factors
+    use_llm = bool(req.use_llm) and not bool(getattr(req, "reproducible", False))
 
     try:
-        if req.use_llm:
+        if use_llm:
             results, summary, campaign_hits, interventions = await simulate_campaign_llm(
                 req.campaign,
                 personas,
