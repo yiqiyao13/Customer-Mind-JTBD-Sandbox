@@ -119,12 +119,19 @@ async function loadFactors() {
   if (typeof renderFactorFilters === 'function') renderFactorFilters();
 }
 
+async function loadPersonas() {
+  personas = await api('/api/personas');
+  return personas;
+}
+
 async function loadOutcomes() {
   try {
     outcomes = await api('/api/outcomes');
   } catch {
     outcomes = [];
   }
+  // outcomes 晚到时补刷详情，避免标题/描述用短名 fallback 后卡住
+  if (selectedId) renderDetail();
 }
 
 async function loadJobsMap(opts = {}) {
@@ -393,6 +400,19 @@ const OUTCOME_LABELS = {
   O9: '重症呼吸支持到位',
 };
 
+/** 完整描述兜底：outcomes 尚未加载时不能回退到短名，否则标题/描述会重复 */
+const OUTCOME_NAMES = {
+  O1: '最小化「不确定是否生病/多严重」的不确定性',
+  O2: '最大化「治疗能改善健康/白天状态」的确认感',
+  O3: '最小化「设备不适/漏气/噪音用不下去」的风险',
+  O4: '最大化「伴侣睡眠与家庭关系改善」的可预期性',
+  O5: '最小化「照护变成催促/冲突」的风险',
+  O6: '最小化「首次投入+长期维护总成本」的不确定性',
+  O7: '最小化「长期无人指导/渠道不可信」的风险',
+  O8: '最小化「买了闲置浪费」的风险',
+  O9: '最小化「重症呼吸支持不到位危及生命」的风险',
+};
+
 const INTERVENTION_LABELS = {
   hospital_endorsement: '医院/专家背书',
   data_visibility: '数据可见',
@@ -409,7 +429,7 @@ const INTERVENTION_LABELS = {
 };
 
 function outcomeName(id) {
-  return outcomes.find(o => o.id === id)?.name || OUTCOME_LABELS[id] || id;
+  return outcomes.find(o => o.id === id)?.name || OUTCOME_NAMES[id] || id;
 }
 
 /** 面向用户的短名：热力图列头、结果卡片用，避免只显示 O1/O2 */

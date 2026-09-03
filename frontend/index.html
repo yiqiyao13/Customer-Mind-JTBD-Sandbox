@@ -119,7 +119,7 @@
     </section>
   </div>
 
-  <script src="/static/js/app.js?v=20260903f"></script>
+  <script src="/static/js/app.js?v=20260903h"></script>
   <script>
     function updatePersonaCount() {
       const el = document.getElementById('persona-count');
@@ -292,11 +292,12 @@
     initEntryThemes();
     updateSimModeHint();
     loadFactors();
-    loadPersonas().then(() => {
+    // personas + outcomes 都就绪后再选中画像，避免 outcome 描述落到短名重复
+    Promise.all([loadPersonas(), loadOutcomes()]).then(() => {
       updatePersonaCount();
       if (!selectedId && personas[0]) selectPersona(personas[0].id, { scrollTo: 'detail' });
+      return loadJobsMap({ renderMap: false });
     });
-    loadOutcomes().then(() => loadJobsMap({ renderMap: false }));
   </script>
 </body>
 </html>

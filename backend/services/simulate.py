@@ -321,7 +321,12 @@ def _pick_reaction(persona: Persona, decision: str, topic: str) -> str:
         return tpl.replace("{{topic}}", topic).replace("{topic}", topic)
 
     fear_bit = _fear_clause(fear, blocker)
-    quote_tail = f"我心里那句一直是：「{quote_bit}」。" if quote_bit else ""
+    # 引号内已带句末标点时不再在」外补「。」，避免「。」。」
+    if quote_bit:
+        qb = quote_bit.rstrip("。！？.!?")
+        quote_tail = f"我心里那句一直是：「{qb}」。"
+    else:
+        quote_tail = ""
     discourage = any(x in (topic or "") for x in ("不用买", "忍忍", "别买", "劝阻"))
 
     by_decision = {
