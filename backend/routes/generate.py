@@ -76,16 +76,24 @@ def generate_personas(req: GenerateRequest):
 
     try:
         if use_llm:
+            if not llm_available():
+                raise HTTPException(
+                    status_code=400,
+                    detail="未配置 DEEPSEEK_API_KEY，无法使用 LLM 生成。请配置 .env 或取消勾选 LLM 生成。",
+                )
             personas = generate_personas_llm(req.count, factors, **kwargs)
         else:
             personas = generate_personas_fallback(req.count, factors, **kwargs)
         personas = _validate_personas(personas, factors)
+    except HTTPException:
+        raise
     except Exception as e:
         if use_llm:
-            personas = generate_personas_fallback(req.count, factors, **kwargs)
-            personas = _validate_personas(personas, factors)
-        else:
-            raise HTTPException(status_code=500, detail=str(e))
+            raise HTTPException(
+                status_code=500,
+                detail=f"LLM 生成失败（已逐人质检）：{e}",
+            )
+        raise HTTPException(status_code=500, detail=str(e))
 
     if len(personas) != req.count:
         raise HTTPException(

@@ -265,8 +265,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "母亲有高血压，医生提醒要查睡眠，我作为女儿得帮她把关。",
@@ -757,8 +757,8 @@
     "osa": {
       "severity": "重度",
       "ahi": "35",
-      "diagnosed": true,
-      "stage": "就医确诊"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。",
@@ -875,8 +875,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。",
@@ -1001,8 +1001,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "适应"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "以前买过一台，面罩勒得难受就闲置了，想再试更合适的。",
@@ -1125,8 +1125,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "就医确诊"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "父亲体检提示睡眠呼吸问题，我人在外地，得远程把设备与售后安排好。",
@@ -1248,8 +1248,8 @@
     "osa": {
       "severity": "重度",
       "ahi": "35",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "开会打瞌睡太危险，体检也提示重度OSA，必须解决。",
@@ -1373,8 +1373,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "自己AHI不低，知道规范治疗重要；纠结的是哪套算法和报告更可信，而非「要不要治」。",
@@ -1618,8 +1618,8 @@
     "osa": {
       "severity": "重度",
       "ahi": "35",
-      "diagnosed": true,
-      "stage": "就医确诊"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "父亲需要夜间呼吸支持，这是保命设备，不能省。",
@@ -1736,8 +1736,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "我是护士，原理我懂，难的是下班带娃还要盯他戴住、面罩合不合适。",
@@ -1862,7 +1862,7 @@
       "severity": "未确诊",
       "ahi": "—",
       "diagnosed": false,
-      "stage": "未察觉"
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "合租室友鼾声如雷，我整夜睡不着，想推动他去筛查或自己想办法睡好。",
@@ -1985,8 +1985,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "母亲有睡眠呼吸问题，我作为子女得帮她把关，别把照护变成催促冲突。",
@@ -2233,8 +2233,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "就医确诊"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "有高血压，医生说要治打鼾，儿子也催我去配机。",
@@ -2475,8 +2475,8 @@
     "osa": {
       "severity": "重度",
       "ahi": "35",
-      "diagnosed": true,
-      "stage": "就医确诊"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "母亲需要夜间呼吸支持，这是保命设备，不能省。",
@@ -2843,8 +2843,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "就医确诊"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "父亲有睡眠呼吸问题，我作为子女得帮他把关，别把照护变成催促冲突。",
@@ -2966,8 +2966,8 @@
     "osa": {
       "severity": "重度",
       "ahi": "35",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "开会打瞌睡太危险，体检也提示重度OSA，必须解决。",
@@ -3335,8 +3335,8 @@
     "osa": {
       "severity": "重度",
       "ahi": "35",
-      "diagnosed": true,
-      "stage": "就医确诊"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "父亲需要夜间呼吸支持，这是保命设备，不能省。",
@@ -3453,8 +3453,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "决策纠结"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。",
@@ -3579,8 +3579,8 @@
     "osa": {
       "severity": "中度",
       "ahi": "22",
-      "diagnosed": true,
-      "stage": "适应"
+      "diagnosed": false,
+      "stage": "察觉"
     },
     "mindset": {
       "core_motive": "以前买过一台，面罩勒得难受就闲置了，想再试更合适的。",

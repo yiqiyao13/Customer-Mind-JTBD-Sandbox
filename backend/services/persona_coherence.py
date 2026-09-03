@@ -1,9 +1,15 @@
 """生成结果逻辑一致性校验。"""
 from __future__ import annotations
 
-from typing import List, Tuple
+from typing import List, Optional, Set
 
 from schemas import Factor, Persona
+
+# 14 个预设原型种子名 — LLM 生成时应避免直接复用
+ARCHETYPE_SEED_NAMES: Set[str] = {
+    "刘女士", "吴姐", "林姐", "孙女士", "小李", "韩女士", "王叔", "小陈",
+    "周医生", "张先生", "老马", "小杨", "小徐", "赵大爷", "陈女士",
+}
 
 
 def factor_fits_persona(
@@ -102,6 +108,21 @@ def validate_persona(persona: Persona, factors: List[Factor]) -> List[str]:
         if persona.osa.stage in ("未察觉", "察觉"):
             issues.append("未确诊/察觉阶段不应有精确 AHI")
 
+    return issues
+
+
+def validate_persona_uniqueness(
+    persona: Persona,
+    *,
+    used_names: Optional[Set[str]] = None,
+) -> List[str]:
+    """批次内姓名唯一 + 不得与 14 原型种子名完全相同。"""
+    issues: List[str] = []
+    base_name = persona.name.split("·")[0].split("（")[0].strip()
+    if base_name in ARCHETYPE_SEED_NAMES:
+        issues.append(f"姓名「{persona.name}」与预设原型重名，请创造全新姓名")
+    if used_names and persona.name in used_names:
+        issues.append(f"姓名「{persona.name}」与本批已生成结果重复")
     return issues
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>消费者心智模拟 · MindSim</title>
-  <link rel="stylesheet" href="/static/css/app.css?v=20260903c" />
+  <link rel="stylesheet" href="/static/css/app.css?v=20260901c" />
 </head>
 <body>
   <nav class="topnav">
@@ -32,20 +32,13 @@
 
     <!-- 生成栏 -->
     <div class="gen-bar">
-      <div class="row" style="width:100%;justify-content:space-between;align-items:flex-end;gap:1rem">
-        <div>
-          <div class="filter-label" style="color:rgba(255,255,255,0.65);margin:0">库中已有消费者</div>
-          <div id="library-count" style="font-size:1.1rem;font-weight:600;color:#fff">—</div>
-          <div class="status" style="color:rgba(255,255,255,0.55);margin-top:0.15rem">打开页面看到的人来自上次生成，不是这次要生成的数量</div>
-        </div>
-        <div class="row">
-          <label>下次生成人数 <input type="number" id="gen-count" value="10" min="1" max="200" /></label>
-          <label class="toggle-label" style="color:rgba(255,255,255,0.85)">
-            <input type="checkbox" id="use-llm" /> LLM 生成
-          </label>
-        </div>
+      <div class="row">
+        <label>生成数量 <input type="number" id="gen-count" value="10" min="1" max="200" /></label>
+        <label class="toggle-label" style="color:rgba(255,255,255,0.85)">
+          <input type="checkbox" id="use-llm" /> LLM 生成
+        </label>
       </div>
-      <div class="filter-label" style="color:rgba(255,255,255,0.75);margin:0.6rem 0 0.35rem">从什么问题开始（可多选，点选后高亮）</div>
+      <div class="filter-label" style="color:rgba(255,255,255,0.75);margin:0.6rem 0 0.35rem">从什么问题开始（可多选）</div>
       <div id="entry-themes" class="chips entry-themes"></div>
       <div class="row">
         <button class="btn btn-primary" id="btn-generate">生成消费者心智</button>
@@ -65,12 +58,11 @@
     <section class="card card-accent" style="margin-bottom:1rem">
       <div class="card-header">
         <h2><span class="dot"></span>Campaign 测试</h2>
-        <button class="btn btn-ghost" id="btn-sample" type="button" onclick="fillSampleCampaign()">填入示例</button>
+        <button class="btn btn-ghost" id="btn-sample">填入示例</button>
       </div>
       <textarea id="campaign-text" placeholder="输入营销话术，测试各消费者的第一人称反馈与决策…"></textarea>
       <div class="row" style="margin-top:0.85rem">
         <label class="toggle-label"><input type="checkbox" id="use-llm-simulate" checked /> 独立思考（LLM）</label>
-        <label class="toggle-label"><input type="checkbox" id="reproducible-mode" /> 可复现模式</label>
         <label class="toggle-label"><input type="checkbox" id="use-memory" /> 消费者有记忆</label>
         <button class="btn btn-primary" id="btn-simulate">运行测试</button>
       </div>
@@ -85,24 +77,15 @@
           <h2><span class="dot"></span>消费者列表</h2>
           <span class="status" id="persona-count"></span>
         </div>
-        <p class="status" style="margin:0 0 0.65rem">点击人名即可查看右侧画像，无需先跑测试。</p>
-        <div class="filter-label">分群 <span class="filter-help" title="按购买动机归类">?</span></div>
+        <div class="filter-label">分群</div>
         <div id="filter-segments" class="chips"></div>
-        <div class="filter-label">决策阶段 <span class="filter-help" title="TA 现在走到哪一步">?</span></div>
+        <div class="filter-label">决策阶段</div>
         <div id="filter-stages" class="chips"></div>
-        <div class="hint-box taxonomy-hint">
-          <strong>怎么读这几套标签</strong>
-          <ul>
-            <li><strong>分群</strong>：为什么买（关系/羞耻压力、自己健康焦虑、预算紧、照护家人、戴不住挣扎）。「关系驱动」含伴侣冲突与社交形象压力。</li>
-            <li><strong>决策阶段</strong>：买到哪一步了（未察觉→确诊→纠结→购买→适应…）。</li>
-            <li><strong>上方起点情境</strong>：生成时偏重哪类触发问题；与左侧筛选是两套东西。</li>
-          </ul>
-        </div>
         <div id="persona-list" style="margin-top:0.5rem;max-height:420px;overflow-y:auto"></div>
       </aside>
 
       <section class="card" id="persona-detail">
-        <div class="empty">← 点击左侧消费者，立刻查看画像（不必先跑 Campaign）</div>
+        <div class="empty">← 选择一位消费者查看完整画像</div>
       </section>
     </div>
 
@@ -119,29 +102,11 @@
     </section>
   </div>
 
-  <script src="/static/js/app.js?v=20260903h"></script>
+  <script src="/static/js/app.js?v=20260901c"></script>
   <script>
     function updatePersonaCount() {
       const el = document.getElementById('persona-count');
-      const lib = document.getElementById('library-count');
-      const filtered = typeof filteredPersonas === 'function' ? filteredPersonas() : personas;
-      const shown = filtered.length;
-      const total = personas.length;
-      if (el) {
-        if (!total) el.textContent = '';
-        else if (shown !== total) el.textContent = `显示 ${shown} / 共 ${total} 人`;
-        else el.textContent = `共 ${total} 人`;
-      }
-      if (lib) lib.textContent = total ? `${total} 人` : '暂无（请先生成）';
-    }
-
-    function startProgress(el, baseText) {
-      const t0 = Date.now();
-      el.textContent = `${baseText} 0s`;
-      return setInterval(() => {
-        const s = Math.round((Date.now() - t0) / 1000);
-        el.textContent = `${baseText} ${s}s · 请稍候`;
-      }, 500);
+      if (el) el.textContent = personas.length ? `${personas.length} 人` : '';
     }
 
     const _renderPersonaList = renderPersonaList;
@@ -156,7 +121,9 @@
       btn.disabled = true;
       const count = parseInt(document.getElementById('gen-count').value, 10);
       const use_llm = document.getElementById('use-llm').checked;
-      const timer = startProgress(status, use_llm ? `LLM 生成 ${count} 人中…` : `规则生成 ${count} 人中…`);
+      status.textContent = use_llm
+        ? `LLM 逐人生成+质检 ${count} 人中…（较慢，请看启动窗口进度）`
+        : '规则生成中…';
       try {
         const entry_themes = [...selectedEntryThemes];
         personas = await api('/api/generate', {
@@ -164,15 +131,14 @@
           body: JSON.stringify({ count, use_llm, options: { entry_themes } }),
         });
         selectedId = personas[0]?.id || null;
-        clearInterval(timer);
-        status.textContent = `✓ 已生成 ${personas.length} 人（覆盖库中旧名单）· 点左侧人名可看画像`;
-        clearResults(`已生成 ${personas.length} 人。点左侧人名看画像，或点「运行测试」看话术反馈`);
+        const llmNote = use_llm ? '（LLM 原创人格）' : '（规则原型）';
+        status.textContent = `✓ ${personas.length} 人 ${llmNote} · 请重新运行测试`;
+        clearResults(`已生成 ${personas.length} 人，请点击「运行测试」看全部反馈`);
         renderPersonaList();
         renderDetail();
         initFilters();
         renderFactorFilters();
       } catch (e) {
-        clearInterval(timer);
         status.textContent = '失败';
         alert(e.message);
       } finally {
@@ -181,43 +147,26 @@
     });
 
     document.getElementById('use-memory').addEventListener('change', updateSimModeHint);
-    document.getElementById('use-llm-simulate').addEventListener('change', () => {
-      const repro = document.getElementById('reproducible-mode');
-      if (document.getElementById('use-llm-simulate').checked === false && repro) {
-        // 规则模式本身可复现
-      }
-      updateSimModeHint();
-    });
-    document.getElementById('reproducible-mode').addEventListener('change', (e) => {
-      if (e.target.checked) {
-        document.getElementById('use-llm-simulate').checked = false;
-      }
-      updateSimModeHint();
-    });
+    document.getElementById('use-llm-simulate').addEventListener('change', updateSimModeHint);
 
     document.getElementById('btn-simulate').addEventListener('click', async () => {
       const btn = document.getElementById('btn-simulate');
-      const hitsEl = document.getElementById('campaign-hits');
       btn.disabled = true;
+      btn.textContent = '推演中…';
       try {
+        // 与服务端同步，避免页面上的旧列表/旧结果造成「生成了40人却只测了10人」的错觉
         personas = await api('/api/personas');
-        if (!outcomes.length) await loadOutcomes();
         renderPersonaList();
         const n = personas.length;
-        const useLlm = document.getElementById('use-llm-simulate').checked
-          && !document.getElementById('reproducible-mode').checked;
-        const timer = startProgress(hitsEl || btn, useLlm ? `推演中（${n} 人，LLM）` : `推演中（${n} 人，规则）`);
         btn.textContent = `推演中（${n} 人）…`;
         const data = await api('/api/simulate', {
           method: 'POST',
           body: JSON.stringify({
             campaign: document.getElementById('campaign-text').value,
-            use_llm: useLlm,
+            use_llm: document.getElementById('use-llm-simulate').checked,
             use_memory: document.getElementById('use-memory').checked,
-            reproducible: document.getElementById('reproducible-mode').checked,
           }),
         });
-        clearInterval(timer);
         renderResults(data);
         if (selectedId && document.getElementById('use-memory').checked) {
           renderDetail();
@@ -231,9 +180,9 @@
       }
     });
 
-    document.getElementById('btn-sample')?.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      fillSampleCampaign();
+    document.getElementById('btn-sample').addEventListener('click', () => {
+      document.getElementById('campaign-text').value =
+        '瑞思迈 AirSense 11 限时优惠，支持30天试戴体验，医院睡眠中心同款，面罩免费适配，还有国补15%补贴，进口品质值得信赖。';
     });
 
     document.getElementById('btn-reset-all-memories').addEventListener('click', async () => {
@@ -292,12 +241,8 @@
     initEntryThemes();
     updateSimModeHint();
     loadFactors();
-    // personas + outcomes 都就绪后再选中画像，避免 outcome 描述落到短名重复
-    Promise.all([loadPersonas(), loadOutcomes()]).then(() => {
-      updatePersonaCount();
-      if (!selectedId && personas[0]) selectPersona(personas[0].id, { scrollTo: 'detail' });
-      return loadJobsMap({ renderMap: false });
-    });
+    loadPersonas();
+    loadOutcomes().then(() => loadJobsMap({ renderMap: false }));
   </script>
 </body>
 </html>
