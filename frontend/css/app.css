@@ -287,6 +287,129 @@ textarea { width: 100%; min-height: 110px; resize: vertical; }
 .result-reaction { font-size: 0.88rem; line-height: 1.45; }
 .link-hint { color: var(--resmed-teal-dark); font-weight: 600; }
 
+/* 紧凑结果名单：替代密集卡片墙 */
+.result-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  margin: 0.35rem 0 0.75rem;
+}
+.result-summary .rs-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: #eef2f5;
+  color: var(--text);
+}
+.result-summary .rs-chip strong { margin-left: 0.15rem; }
+.result-summary .rs-chip.advance { background: #e5f6ec; color: #1e6b3a; }
+.result-summary .rs-chip.hesitate { background: #fff3e0; color: #9a5b00; }
+.result-summary .rs-chip.reject { background: #fde8e8; color: #8a1f2b; }
+.result-summary .rs-chip.na { background: #e8eef2; color: #4a5a68; }
+.result-summary .rs-hint { font-size: 0.75rem; color: var(--muted); }
+
+.result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: min(62vh, 520px);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fafcfd;
+  padding: 0.35rem;
+}
+.result-row {
+  background: #fff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.result-row:hover { background: #f3f9fc; border-color: #d5e6ee; }
+.result-row.linked-active,
+.result-row.is-open {
+  border-color: var(--resmed-teal, #009fda);
+  background: #f3fbfe;
+}
+.result-row-main {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 7.5rem) auto minmax(3.8rem, 4.5rem) 1fr auto;
+  gap: 0.55rem 0.75rem;
+  align-items: center;
+  padding: 0.55rem 0.65rem;
+}
+.result-row-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  font-weight: 700;
+}
+.result-row-id:hover .rr-name { color: var(--resmed-teal-dark); text-decoration: underline; }
+.rr-emoji { font-size: 1rem; }
+.rr-name { white-space: nowrap; }
+.rr-will { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.rr-will-num { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+.rr-will-num small { font-weight: 500; color: var(--muted); }
+.rr-will-track {
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: #e4e9ed;
+  overflow: hidden;
+}
+.rr-will-fill { display: block; height: 100%; border-radius: inherit; background: #6b7c8a; }
+.rr-will-fill.advance { background: var(--advance, #1f8a4c); }
+.rr-will-fill.hesitate { background: var(--hesitate, #c47a12); }
+.rr-will-fill.reject { background: var(--reject, #c0392b); }
+.rr-will-fill.na { background: var(--na, #6b7c8a); }
+.rr-snip {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.rr-toggle { flex-shrink: 0; }
+.result-row-detail {
+  padding: 0 0.75rem 0.75rem 0.75rem;
+  border-top: 1px dashed var(--border);
+  margin: 0 0.35rem 0.35rem;
+}
+.rr-reason {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.4;
+}
+@media (max-width: 900px) {
+  .result-row-main {
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas:
+      "id dec tog"
+      "will will will"
+      "snip snip snip";
+  }
+  .result-row-id { grid-area: id; }
+  .result-row-main .decision { grid-area: dec; }
+  .rr-will { grid-area: will; }
+  .rr-snip { grid-area: snip; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .rr-toggle { grid-area: tog; }
+}
+
 .persona-item-top {
   display: flex;
   justify-content: space-between;
@@ -312,8 +435,9 @@ textarea { width: 100%; min-height: 110px; resize: vertical; }
   border-radius: var(--radius-sm);
   padding: 0.85rem 1rem;
   margin-bottom: 0.75rem;
+  box-shadow: 0 1px 0 rgba(15, 60, 80, 0.04);
 }
-.sim-link-panel.muted { background: #f5f7f9; border-color: var(--border); }
+.sim-link-panel.muted { background: #f5f7f9; border-color: var(--border); box-shadow: none; }
 .sim-link-head {
   display: flex;
   justify-content: space-between;
@@ -322,6 +446,15 @@ textarea { width: 100%; min-height: 110px; resize: vertical; }
   margin-bottom: 0.45rem;
 }
 .sim-link-reaction { font-size: 0.9rem; line-height: 1.45; color: var(--resmed-navy); }
+.sim-link-reason {
+  margin: 0.45rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  font-style: italic;
+  color: var(--muted);
+}
+.sim-link-verify { margin-top: 0.55rem; }
+#btn-jump-result { margin-top: 0.45rem; }
 
 .outcome-card-tags {
   display: flex;
@@ -652,6 +785,38 @@ textarea { width: 100%; min-height: 110px; resize: vertical; }
   z-index: 2;
 }
 .heatmap tbody th.hm-name { background: #fff; font-weight: 600; }
+.heatmap th.hm-decision-h,
+.heatmap td.hm-decision {
+  position: sticky;
+  left: 4.5rem;
+  z-index: 2;
+  min-width: 4.8rem;
+  white-space: nowrap;
+  background: #f5f8fa;
+  font-weight: 600;
+}
+.heatmap tbody td.hm-decision { background: #fff; }
+.heatmap tr.hm-row:hover td.hm-decision,
+.heatmap tr.hm-row.linked-active td.hm-decision { background: #eef8fb; }
+.heatmap .hm-dec-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  color: #fff;
+}
+.heatmap .hm-dec-tag.advance { background: var(--advance, #1f8a4c); }
+.heatmap .hm-dec-tag.hesitate { background: var(--hesitate, #c47a12); }
+.heatmap .hm-dec-tag.na { background: var(--na, #6b7c8a); }
+.heatmap .hm-dec-tag.reject { background: var(--reject, #c0392b); }
+.heatmap .hm-w {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--muted);
+}
 .heatmap .hm-yes { background: #d4edda; color: #1e6b3a; font-weight: 600; }
 .heatmap .hm-no { background: #f8d7da; color: #8a1f2b; }
 .heatmap .hm-na { color: var(--muted); }

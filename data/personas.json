@@ -1,754 +1,12 @@
 [
   {
     "id": "P01",
-    "name": "刘女士",
-    "emoji": "👩‍💼",
-    "segment": "关系驱动型",
-    "role": "家人推动者(伴侣)",
-    "subject": "丈夫(患者)",
-    "age": 46,
-    "gender": "女",
-    "city": "三线城市",
-    "occupation": "全职主妇",
-    "family": "丈夫42岁(中度OSA)+一子(小学)",
-    "income": "家庭月入约1.2万",
-    "osa": {
-      "severity": "中度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、面罩合适的机器。",
-      "fear": "最怕买了他戴不住，家里人更埋怨我瞎折腾。",
-      "decision_logic": "先确认他愿意试，再比面罩和售后，价格要在家庭预算内。",
-      "price_sensitivity": 6,
-      "brand_anchor": "听朋友提过瑞思迈，但没实地比过",
-      "channel_preference": "医院睡眠中心或能试戴的门店",
-      "quote": "我不是不想买，是得先让他愿意戴，别又白花钱。"
-    },
-    "dominant_features": [
-      {
-        "code": "A1",
-        "weight": 9
-      },
-      {
-        "code": "B2",
-        "weight": 9
-      },
-      {
-        "code": "B4",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 9,
-      "A2": 0,
-      "A3": 1,
-      "A4": 0,
-      "A5": 0,
-      "A6": 0,
-      "A7": 2,
-      "A8": 0,
-      "A9": 2,
-      "A10": 0,
-      "A11": 2,
-      "B1": 2,
-      "B2": 9,
-      "B3": 1,
-      "B4": 7,
-      "B5": 2,
-      "B6": 0,
-      "B7": 1,
-      "B8": 1,
-      "B9": 0,
-      "B10": 2,
-      "B11": 2
-    },
-    "blockers": [
-      "丈夫怕戴不住就放弃",
-      "担心买贵被说乱花钱"
-    ],
-    "drivers": [
-      "分房压力",
-      "先试后买",
-      "面罩适配"
-    ],
-    "decision_style": "从众",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「修复/维系亲密关系」上的任务（我卡在确认能适应），尤其是丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「确认能适应」，得再想想。",
-      "reject": "推广没解开我真正卡点（确认能适应 / 丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、…），不太信。",
-      "na": "跟我现在的任务「修复/维系亲密关系」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "伴侣分房",
-      "job_id": "J5",
-      "job_owner": "伴侣",
-      "core_job": "修复/维系亲密关系",
-      "job_statement": "当伴侣的打鼾长期破坏我的睡眠、情绪和关系时，我需要帮助我们恢复安静且能持续的夜间生活，又不让照护变成冲突。",
-      "current_step": "确认能适应",
-      "desired_outcomes": [
-        {
-          "id": "O3",
-          "importance": 9,
-          "satisfaction": 2
-        },
-        {
-          "id": "O4",
-          "importance": 10,
-          "satisfaction": 3
-        },
-        {
-          "id": "O8",
-          "importance": 7,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A1"
-        ],
-        "pull": [
-          "B4"
-        ],
-        "anxiety": [
-          "B2",
-          "B11"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "spouse_pusher_liu"
-    ]
-  },
-  {
-    "id": "P02",
-    "name": "林姐",
-    "emoji": "👩",
-    "segment": "关系驱动型",
-    "role": "家人推动者(伴侣)",
-    "subject": "丈夫(患者)",
-    "age": 46,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "超市店长",
-    "family": "丈夫(打鼾严重)+一女(高中)",
-    "income": "家庭月入约1.5万",
-    "osa": {
-      "severity": "重度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "他夜间憋醒好几次，我也睡不踏实，再拖下去全家崩溃。",
-      "fear": "最怕突然出事，也怕买了他坚持不了。",
-      "decision_logic": "先让他承认问题严重，再选面罩舒适度口碑好的款。",
-      "price_sensitivity": 5,
-      "brand_anchor": "倾向进口大牌",
-      "channel_preference": "医院推荐或旗舰店",
-      "quote": "这事不能再拖了，但得选对才能戴得住。"
-    },
-    "dominant_features": [
-      {
-        "code": "A1",
-        "weight": 9
-      },
-      {
-        "code": "A5",
-        "weight": 9
-      },
-      {
-        "code": "B2",
-        "weight": 9
-      }
-    ],
-    "factor_weights": {
-      "A1": 9,
-      "A2": 2,
-      "A3": 2,
-      "A4": 2,
-      "A5": 9,
-      "A6": 0,
-      "A7": 1,
-      "A8": 0,
-      "A9": 1,
-      "A10": 0,
-      "A11": 2,
-      "B1": 1,
-      "B2": 9,
-      "B3": 1,
-      "B4": 2,
-      "B5": 1,
-      "B6": 2,
-      "B7": 1,
-      "B8": 2,
-      "B9": 2,
-      "B10": 2,
-      "B11": 2
-    },
-    "blockers": [
-      "丈夫抵触戴机",
-      "女儿也被吵到"
-    ],
-    "drivers": [
-      "夜间窒息恐惧",
-      "关系危机",
-      "面罩舒适"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复连续无扰的睡眠」上的任务（我卡在被数据击穿侥幸），尤其是他夜间憋醒好几次，我也睡不踏实，再拖下去全家崩溃。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「被数据击穿侥幸」，得再想想。",
-      "reject": "推广没解开我真正卡点（被数据击穿侥幸 / 他夜间憋醒好几次，我也睡不踏实，再拖下去全家崩溃。…），不太信。",
-      "na": "跟我现在的任务「恢复连续无扰的睡眠」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "夜间憋醒",
-      "job_id": "J1",
-      "job_owner": "伴侣",
-      "core_job": "恢复连续无扰的睡眠",
-      "job_statement": "当我整夜被鼾声和憋醒打断、第二天疲惫不堪时，我需要恢复连续、安静的睡眠，让自己和家人睡个整觉。",
-      "current_step": "被数据击穿侥幸",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 3
-        },
-        {
-          "id": "O4",
-          "importance": 10,
-          "satisfaction": 5
-        },
-        {
-          "id": "O3",
-          "importance": 7,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A1",
-          "A5"
-        ],
-        "pull": [
-          "B4"
-        ],
-        "anxiety": [
-          "B2"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "spouse_lin"
-    ]
-  },
-  {
-    "id": "P03",
-    "name": "小李",
-    "emoji": "👩",
-    "segment": "长期照护型",
-    "role": "子女(为父母)",
-    "subject": "母亲(患者)",
-    "age": 41,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "中学语文老师",
-    "family": "已婚一子；母亲同城独居(中度OSA)",
-    "income": "家庭月入约1.6万",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "母亲有高血压，医生提醒要查睡眠，我作为女儿得帮她把关。",
-      "fear": "最怕老人坚持不了，买回去落灰。",
-      "decision_logic": "先陪去医院确诊，选操作简单、售后上门的。",
-      "price_sensitivity": 5,
-      "brand_anchor": "医生推荐什么就倾向什么",
-      "channel_preference": "三甲医院或官方门店",
-      "quote": "给妈买东西，合适比便宜重要。"
-    },
-    "dominant_features": [
-      {
-        "code": "A8",
-        "weight": 6
-      },
-      {
-        "code": "A6",
-        "weight": 5
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 1,
-      "A3": 2,
-      "A4": 1,
-      "A5": 0,
-      "A6": 6,
-      "A7": 1,
-      "A8": 6,
-      "A9": 0,
-      "A10": 1,
-      "A11": 1,
-      "B1": 2,
-      "B2": 2,
-      "B3": 2,
-      "B4": 0,
-      "B5": 0,
-      "B6": 2,
-      "B7": 6,
-      "B8": 2,
-      "B9": 1,
-      "B10": 1,
-      "B11": 2
-    },
-    "blockers": [
-      "老人怕麻烦",
-      "担心操作复杂"
-    ],
-    "drivers": [
-      "孝心",
-      "共病担忧",
-      "医院渠道"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「履行对亲人的照护责任（孝道）」上的任务（我卡在预算内选对），尤其是母亲有高血压，医生提醒要查睡眠，我作为女儿得帮她把关。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「预算内选对」，得再想想。",
-      "reject": "推广没解开我真正卡点（预算内选对 / 母亲有高血压，医生提醒要查睡眠，我作为女儿得帮她把关。…），不太信。",
-      "na": "跟我现在的任务「履行对亲人的照护责任（孝道）」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "父母打鼾憋气",
-      "job_id": "J7",
-      "job_owner": "子女",
-      "core_job": "履行对亲人的照护责任（孝道）",
-      "job_statement": "当我担心父母因打鼾/呼吸问题睡不好、出健康风险时，我需要为他们找到能坚持使用的方案，尽到照护责任。",
-      "current_step": "预算内选对",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 7,
-          "satisfaction": 2
-        },
-        {
-          "id": "O5",
-          "importance": 10,
-          "satisfaction": 3
-        },
-        {
-          "id": "O2",
-          "importance": 9,
-          "satisfaction": 6
-        }
-      ],
-      "forces": {
-        "push": [
-          "A8",
-          "A6"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B7",
-          "B3"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "filial_daughter"
-    ]
-  },
-  {
-    "id": "P04",
-    "name": "王叔",
-    "emoji": "👨",
-    "segment": "经济受限型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 45,
-    "gender": "男",
-    "city": "二线城市",
-    "occupation": "货车司机",
-    "family": "妻子同城，无子女",
-    "income": "个人月入约8千",
-    "osa": {
-      "severity": "轻度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "开车犯困太危险，但新机太贵，想看看二手或租赁。",
-      "fear": "怕花大钱买了用不住，耽误跑活。",
-      "decision_logic": "能试戴、总价低、售后清楚才考虑。",
-      "price_sensitivity": 9,
-      "brand_anchor": "国产性价比",
-      "channel_preference": "二手平台或租赁",
-      "quote": "我知道要重视，可也得看兜里有多少。"
-    },
-    "dominant_features": [
-      {
-        "code": "A4",
-        "weight": 8
-      },
-      {
-        "code": "A9",
-        "weight": 6
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 1,
-      "A4": 8,
-      "A5": 2,
-      "A6": 0,
-      "A7": 1,
-      "A8": 0,
-      "A9": 6,
-      "A10": 0,
-      "A11": 2,
-      "B1": 0,
-      "B2": 2,
-      "B3": 2,
-      "B4": 0,
-      "B5": 0,
-      "B6": 0,
-      "B7": 1,
-      "B8": 7,
-      "B9": 0,
-      "B10": 0,
-      "B11": 2
-    },
-    "blockers": [
-      "跑长途赚钱紧",
-      "觉得戴机麻烦"
-    ],
-    "drivers": [
-      "白天嗜睡安全",
-      "二手低门槛",
-      "价格敏感"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复白天的精力与清醒」上的任务（我卡在预算内选对），尤其是开车犯困太危险，但新机太贵，想看看二手或租赁。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「预算内选对」，得再想想。",
-      "reject": "推广没解开我真正卡点（预算内选对 / 开车犯困太危险，但新机太贵，想看看二手或租赁。…），不太信。",
-      "na": "跟我现在的任务「恢复白天的精力与清醒」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "开车等红灯睡着",
-      "job_id": "J2",
-      "job_owner": "本人",
-      "core_job": "恢复白天的精力与清醒",
-      "job_statement": "当疲劳和嗜睡开始影响我开车、工作或照顾家人时，我需要恢复可靠的白天状态，并确认投入能带来实际改善。",
-      "current_step": "预算内选对",
-      "desired_outcomes": [
-        {
-          "id": "O6",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O2",
-          "importance": 10,
-          "satisfaction": 3
-        },
-        {
-          "id": "O8",
-          "importance": 6,
-          "satisfaction": 6
-        }
-      ],
-      "forces": {
-        "push": [
-          "A4"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": [
-          "A9"
-        ]
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "trucker_self"
-    ]
-  },
-  {
-    "id": "P05",
-    "name": "小陈",
-    "emoji": "🧑",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 35,
-    "gender": "男",
-    "city": "一线城市",
-    "occupation": "互联网产品经理",
-    "family": "独居，父母异地",
-    "income": "个人月入约1.8万",
-    "osa": {
-      "severity": "未确诊",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "手表提示血氧异常，查资料越查越怕，想确认要不要上呼吸机。",
-      "fear": "怕延误治疗，也怕买错型号被割韭菜。",
-      "decision_logic": "先做多导睡眠监测，再选数据口碑好的品牌。",
-      "price_sensitivity": 5,
-      "brand_anchor": "瑞思迈",
-      "channel_preference": "互联网医疗+京东自营",
-      "quote": "数据都红了，不能再当没事。"
-    },
-    "dominant_features": [
-      {
-        "code": "A2",
-        "weight": 6
-      },
-      {
-        "code": "A3",
-        "weight": 6
-      },
-      {
-        "code": "B5",
-        "weight": 10
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 6,
-      "A3": 6,
-      "A4": 0,
-      "A5": 2,
-      "A6": 0,
-      "A7": 0,
-      "A8": 0,
-      "A9": 1,
-      "A10": 0,
-      "A11": 1,
-      "B1": 2,
-      "B2": 1,
-      "B3": 1,
-      "B4": 1,
-      "B5": 10,
-      "B6": 0,
-      "B7": 2,
-      "B8": 2,
-      "B9": 1,
-      "B10": 0,
-      "B11": 2
-    },
-    "blockers": [
-      "还没正式确诊",
-      "信息过载"
-    ],
-    "drivers": [
-      "手表预警",
-      "医学数据恐惧",
-      "品牌信任"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除睡梦中出事的健康风险」上的任务（我卡在搞清楚是不是病），尤其是手表提示血氧异常，查资料越查越怕，想确认要不要上呼吸机。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞清楚是不是病」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞清楚是不是病 / 手表提示血氧异常，查资料越查越怕，想确认要不要上呼吸机。…），不太信。",
-      "na": "跟我现在的任务「消除睡梦中出事的健康风险」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "AHI/血氧确诊",
-      "job_id": "J3",
-      "job_owner": "本人",
-      "core_job": "消除睡梦中出事的健康风险",
-      "job_statement": "当我确认 OSA 可能与心脏病复发或恶化有关时，我需要建立一项能坚持的夜间管理方式，以更有把握地控制长期健康风险。",
-      "current_step": "搞清楚是不是病",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 1
-        },
-        {
-          "id": "O2",
-          "importance": 8,
-          "satisfaction": 4
-        },
-        {
-          "id": "O7",
-          "importance": 6,
-          "satisfaction": 6
-        }
-      ],
-      "forces": {
-        "push": [
-          "A2",
-          "A3"
-        ],
-        "pull": [
-          "B1"
-        ],
-        "anxiety": [
-          "B5"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "young_pm"
-    ]
-  },
-  {
-    "id": "P06",
-    "name": "小徐",
-    "emoji": "🧑",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 30,
-    "gender": "女",
-    "city": "一线城市",
-    "occupation": "设计师",
-    "family": "合租，自己打呼被室友吐槽",
-    "income": "个人月入约1.4万",
-    "osa": {
-      "severity": "轻度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知。",
-      "fear": "最怕戴机更丢人，同事出差看见。",
-      "decision_logic": "选小巧不显眼、有名人背书的入门方案。",
-      "price_sensitivity": 7,
-      "brand_anchor": "外观与口碑",
-      "channel_preference": "线上匿名下单",
-      "quote": "我不是不想治，是不想被当成笑话。"
-    },
-    "dominant_features": [
-      {
-        "code": "A11",
-        "weight": 7
-      },
-      {
-        "code": "B6",
-        "weight": 4
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 2,
-      "A3": 2,
-      "A4": 1,
-      "A5": 1,
-      "A6": 1,
-      "A7": 1,
-      "A8": 0,
-      "A9": 0,
-      "A10": 0,
-      "A11": 7,
-      "B1": 0,
-      "B2": 0,
-      "B3": 0,
-      "B4": 1,
-      "B5": 2,
-      "B6": 6,
-      "B7": 0,
-      "B8": 7,
-      "B9": 1,
-      "B10": 2,
-      "B11": 0
-    },
-    "blockers": [
-      "觉得戴机丢人",
-      "不想被同事知道"
-    ],
-    "drivers": [
-      "社交尊严",
-      "体面外观",
-      "入门价"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除打呼丢人的羞耻感」上的任务（我卡在被数据击穿侥幸），尤其是自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「被数据击穿侥幸」，得再想想。",
-      "reject": "推广没解开我真正卡点（被数据击穿侥幸 / 自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…），不太信。",
-      "na": "跟我现在的任务「消除打呼丢人的羞耻感」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "宿舍/合租尴尬",
-      "job_id": "J6",
-      "job_owner": "本人",
-      "core_job": "消除打呼丢人的羞耻感",
-      "job_statement": "当打呼让我在社交中丢脸、被疏远时，我需要恢复体面和社交尊严，又不显得过度在意。",
-      "current_step": "被数据击穿侥幸",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O5",
-          "importance": 6,
-          "satisfaction": 3
-        }
-      ],
-      "forces": {
-        "push": [
-          "A11"
-        ],
-        "pull": [
-          "B6"
-        ],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "shame_self"
-    ]
-  },
-  {
-    "id": "P07",
     "name": "陈女士",
     "emoji": "👩",
     "segment": "长期照护型",
     "role": "子女(为父母)",
     "subject": "父亲(重症)",
-    "age": 48,
+    "age": 41,
     "gender": "女",
     "city": "二线城市",
     "occupation": "会计",
@@ -757,8 +15,8 @@
     "osa": {
       "severity": "重度",
       "ahi": "35",
-      "diagnosed": false,
-      "stage": "察觉"
+      "diagnosed": true,
+      "stage": "就医确诊"
     },
     "mindset": {
       "core_motive": "父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。",
@@ -785,27 +43,27 @@
     ],
     "factor_weights": {
       "A1": 0,
-      "A2": 1,
-      "A3": 0,
-      "A4": 0,
-      "A5": 2,
-      "A6": 2,
-      "A7": 0,
-      "A8": 2,
+      "A2": 0,
+      "A3": 2,
+      "A4": 1,
+      "A5": 0,
+      "A6": 1,
+      "A7": 1,
+      "A8": 1,
       "A9": 1,
       "A10": 10,
-      "A11": 0,
-      "B1": 1,
-      "B2": 2,
+      "A11": 1,
+      "B1": 0,
+      "B2": 0,
       "B3": 8,
-      "B4": 1,
-      "B5": 0,
+      "B4": 2,
+      "B5": 1,
       "B6": 1,
       "B7": 6,
-      "B8": 0,
-      "B9": 0,
+      "B8": 1,
+      "B9": 2,
       "B10": 0,
-      "B11": 2
+      "B11": 1
     },
     "blockers": [
       "设备可靠性要求极高",
@@ -832,14 +90,14 @@
       "current_step": "坚持每天戴",
       "desired_outcomes": [
         {
-          "id": "O9",
-          "importance": 10,
-          "satisfaction": 2
+          "id": "O7",
+          "importance": 8,
+          "satisfaction": 1
         },
         {
-          "id": "O7",
-          "importance": 9,
-          "satisfaction": 4
+          "id": "O9",
+          "importance": 10,
+          "satisfaction": 3
         }
       ],
       "forces": {
@@ -855,125 +113,121 @@
       }
     },
     "evidence_refs": [
+      "archetype_fallback",
       "synthetic",
       "als_caregiver"
     ]
   },
   {
-    "id": "P08",
-    "name": "吴姐",
-    "emoji": "👩‍🦰",
-    "segment": "经济受限型",
-    "role": "家人推动者(伴侣)",
-    "subject": "丈夫(患者)",
-    "age": 46,
-    "gender": "女",
-    "city": "四线城市",
-    "occupation": "个体户(小超市)",
-    "family": "丈夫(患者)+三代同堂",
-    "income": "家庭月入约6千",
+    "id": "P02",
+    "name": "老周",
+    "emoji": "😤",
+    "segment": "专业验证型",
+    "role": "本人",
+    "subject": "本人",
+    "age": 44,
+    "gender": "男",
+    "city": "深圳",
+    "occupation": "电子制造厂质量经理",
+    "family": "已婚，妻子是初中教师，儿子读寄宿高中（两周回一次家）",
+    "income": "家庭年收入约60万（个人税后约35万/年）",
     "osa": {
       "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
+      "ahi": "AHI 36.7（睡眠监测报告）",
+      "diagnosed": true,
+      "stage": "决策纠结"
     },
     "mindset": {
-      "core_motive": "老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。",
-      "fear": "怕贪便宜买到翻新机，更怕隐藏费用超预算。",
-      "decision_logic": "先算总账（机器+面罩+耗材），有补贴或试用才敢下单。",
-      "price_sensitivity": 9,
-      "brand_anchor": "国产也行，只要靠谱",
-      "channel_preference": "京东自营或二手平台比价",
-      "quote": "不是不买，是每一分钱都得花在刀刃上。"
+      "core_motive": "把设备参数和报告数据彻底搞明白，像做质量检验一样验证呼吸机有没有效，再决定掏钱。",
+      "fear": "花了大几千块，结果数据是机器算出来的花架子，或者漏气、压疮导致戴不住，最后闲置吃灰，在老婆面前丢脸。",
+      "decision_logic": "先看算法和报告逻辑，再看品牌临床背书，然后锁定有「免费试戴+数据对比」服务的渠道。国补能省一笔是一笔。",
+      "price_sensitivity": 6,
+      "brand_anchor": "瑞思迈（进口标杆）做参照，国产的瑞迈特是不错的备选，觉得鱼跃在睡眠呼吸机领域不够专注。",
+      "channel_preference": "倾向于京东自营/官方旗舰店，但一定要有线下服务点或工程师上门校准，特别看重能拉出详细数据报告的服务。",
+      "quote": "别跟我说这机器多牛，把你那个效果数据拿出来，逻辑能让我信服，我就买。"
     },
     "dominant_features": [
       {
-        "code": "A1",
+        "code": "A3",
         "weight": 9
       },
       {
-        "code": "B8",
+        "code": "A5",
         "weight": 7
       },
       {
-        "code": "A9",
-        "weight": 6
+        "code": "B1",
+        "weight": 10
       }
     ],
     "factor_weights": {
-      "A1": 9,
-      "A2": 2,
-      "A3": 2,
-      "A4": 1,
-      "A5": 0,
+      "A3": 9,
+      "A5": 7,
+      "B1": 10,
+      "B3": 8,
+      "A1": 0,
+      "A2": 0,
+      "A4": 0,
       "A6": 0,
-      "A7": 2,
+      "A7": 0,
       "A8": 0,
-      "A9": 6,
+      "A9": 0,
       "A10": 0,
-      "A11": 1,
-      "B1": 0,
-      "B2": 2,
-      "B3": 1,
-      "B4": 2,
-      "B5": 1,
-      "B6": 1,
-      "B7": 1,
-      "B8": 7,
-      "B9": 1,
-      "B10": 1,
-      "B11": 2
+      "A11": 0,
+      "B2": 0,
+      "B4": 0,
+      "B5": 0,
+      "B6": 0,
+      "B7": 0,
+      "B8": 0,
+      "B9": 0,
+      "B10": 0,
+      "B11": 0
     },
-    "blockers": [
-      "总预算有限",
-      "怕后续耗材贵"
-    ],
-    "drivers": [
-      "国补/优惠",
-      "二手或租赁入门",
-      "关系危机"
-    ],
-    "decision_style": "谨慎",
+    "blockers": [],
+    "drivers": [],
+    "decision_style": "理性",
     "react": {
-      "advance": "听到{{topic}}，这正好推进我在「修复/维系亲密关系」上的任务（我卡在预算内选对），尤其是老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「预算内选对」，得再想想。",
-      "reject": "推广没解开我真正卡点（预算内选对 / 老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。…），不太信。",
-      "na": "跟我现在的任务「修复/维系亲密关系」关系不大。"
+      "advance": "如果你能直接演示一下小程序后台的数据报告长啥样，或者告诉我这个算法跟多导睡眠监测报告的差异在哪，在{{topic}}上我愿意深入了解。",
+      "hesitate": "这个牌子我没听过，你先给我说说它的电机是哪的？数据算法有没有论文支持？不然我怕买了就是交智商税。",
+      "reject": "又是来给我推销“万能”机器的吧？连个第三方验证的临床数据都没有，就敢对标瑞思迈。没空听这些。",
+      "na": ""
     },
     "jtbd": {
-      "entry_situation": "关系冲突/濒临破裂",
-      "job_id": "J5",
-      "job_owner": "伴侣",
-      "core_job": "修复/维系亲密关系",
-      "job_statement": "当伴侣的打鼾长期破坏我的睡眠、情绪和关系时，我需要帮助我们恢复安静且能持续的夜间生活，又不让照护变成冲突。",
-      "current_step": "预算内选对",
+      "entry_situation": "确诊后拿到睡眠监测报告，显示最长呼吸暂停47秒，最低血氧71%，伴有高血压，最近换新工作后压力巨大，害怕夜里一口气上不来。",
+      "job_id": "J3",
+      "job_owner": "本人",
+      "core_job": "消除睡梦中出事的健康风险",
+      "job_statement": "当我确认 OSA 可能与心脏病复发或恶化有关时，我需要建立一项能坚持的夜间管理方式，以更有把握地控制长期健康风险。",
+      "current_step": "核对数据与报告口径",
       "desired_outcomes": [
         {
-          "id": "O6",
+          "id": "O2",
           "importance": 10,
-          "satisfaction": 2
+          "satisfaction": 3
         },
         {
-          "id": "O4",
-          "importance": 10,
+          "id": "O3",
+          "importance": 8,
           "satisfaction": 4
         },
         {
-          "id": "O8",
-          "importance": 6,
-          "satisfaction": 5
+          "id": "O7",
+          "importance": 7,
+          "satisfaction": 3
         }
       ],
       "forces": {
         "push": [
-          "A1"
+          "A3",
+          "A5"
         ],
         "pull": [
-          "A7"
+          "B1"
         ],
         "anxiety": [
-          "B8"
+          "B3",
+          "B5"
         ],
         "habit_or_alternative": [
           "A9"
@@ -981,360 +235,114 @@
       }
     },
     "evidence_refs": [
-      "synthetic",
-      "spouse_shopkeeper"
+      "llm_generated",
+      "synthetic"
     ]
   },
   {
-    "id": "P09",
-    "name": "老马",
-    "emoji": "👴",
-    "segment": "依从挣扎型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 64,
-    "gender": "男",
-    "city": "四线城市",
-    "occupation": "退休工人",
-    "family": "与老伴同住，子女异地",
-    "income": "退休金+子女补贴",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "以前买过一台，面罩勒得难受就闲置了，想再试更合适的。",
-      "fear": "怕又是买了落灰，浪费儿女的钱。",
-      "decision_logic": "必须试戴成功+有人跟进售后，否则不买。",
-      "price_sensitivity": 6,
-      "brand_anchor": "无所谓品牌，舒服第一",
-      "channel_preference": "能上门调试的门店",
-      "quote": "不是不想戴，是上次那面罩真要命。"
-    },
-    "dominant_features": [
-      {
-        "code": "B2",
-        "weight": 9
-      },
-      {
-        "code": "B4",
-        "weight": 7
-      },
-      {
-        "code": "B3",
-        "weight": 8
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 2,
-      "A3": 2,
-      "A4": 2,
-      "A5": 2,
-      "A6": 1,
-      "A7": 1,
-      "A8": 0,
-      "A9": 1,
-      "A10": 0,
-      "A11": 1,
-      "B1": 2,
-      "B2": 9,
-      "B3": 8,
-      "B4": 7,
-      "B5": 0,
-      "B6": 2,
-      "B7": 1,
-      "B8": 2,
-      "B9": 2,
-      "B10": 2,
-      "B11": 2
-    },
-    "blockers": [
-      "之前戴过不舒服",
-      "面罩漏气"
-    ],
-    "drivers": [
-      "先试后买",
-      "面罩适配",
-      "售后保障"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复连续无扰的睡眠」上的任务（我卡在解决面罩适配），尤其是以前买过一台，面罩勒得难受就闲置了，想再试更合适的。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「解决面罩适配」，得再想想。",
-      "reject": "推广没解开我真正卡点（解决面罩适配 / 以前买过一台，面罩勒得难受就闲置了，想再试更合适的。…），不太信。",
-      "na": "跟我现在的任务「恢复连续无扰的睡眠」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "睡眠碎片化",
-      "job_id": "J1",
-      "job_owner": "本人",
-      "core_job": "恢复连续无扰的睡眠",
-      "job_statement": "当我整夜被鼾声和憋醒打断、第二天疲惫不堪时，我需要恢复连续、安静的睡眠，让自己和家人睡个整觉。",
-      "current_step": "解决面罩适配",
-      "desired_outcomes": [
-        {
-          "id": "O3",
-          "importance": 10,
-          "satisfaction": 1
-        },
-        {
-          "id": "O7",
-          "importance": 6,
-          "satisfaction": 3
-        },
-        {
-          "id": "O8",
-          "importance": 7,
-          "satisfaction": 5
-        }
-      ],
-      "forces": {
-        "push": [],
-        "pull": [
-          "B4"
-        ],
-        "anxiety": [
-          "B2",
-          "B3",
-          "B11"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "retiree_struggle"
-    ]
-  },
-  {
-    "id": "P10",
-    "name": "韩女士",
-    "emoji": "👩",
-    "segment": "长期照护型",
-    "role": "子女(为父母)",
-    "subject": "父亲(患者)",
-    "age": 39,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "银行柜员",
-    "family": "已婚；父亲异地需睡眠照护",
-    "income": "家庭月入约2万",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "父亲体检提示睡眠呼吸问题，我人在外地，得远程把设备与售后安排好。",
-      "fear": "怕催得太紧伤感情，也怕买了没人教他用。",
-      "decision_logic": "优先医院渠道+能上门/远程指导的售后。",
-      "price_sensitivity": 4,
-      "brand_anchor": "医院推荐",
-      "channel_preference": "三甲+官方售后",
-      "quote": "孝心不是买最贵，是买他能坚持用的。"
-    },
-    "dominant_features": [
-      {
-        "code": "A8",
-        "weight": 6
-      },
-      {
-        "code": "B3",
-        "weight": 8
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 2,
-      "A4": 2,
-      "A5": 2,
-      "A6": 1,
-      "A7": 2,
-      "A8": 6,
-      "A9": 1,
-      "A10": 2,
-      "A11": 2,
-      "B1": 0,
-      "B2": 1,
-      "B3": 8,
-      "B4": 1,
-      "B5": 0,
-      "B6": 0,
-      "B7": 6,
-      "B8": 2,
-      "B9": 0,
-      "B10": 1,
-      "B11": 1
-    },
-    "blockers": [
-      "父亲倔强不愿戴",
-      "两地奔波"
-    ],
-    "drivers": [
-      "孝心",
-      "售后上门",
-      "医院渠道"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「履行对亲人的照护责任（孝道）」上的任务（我卡在搞懂呼吸机），尤其是父亲体检提示睡眠呼吸问题，我人在外地，得远程把设备与售后…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞懂呼吸机」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞懂呼吸机 / 父亲体检提示睡眠呼吸问题，我人在外地，得远程把设备与售后…），不太信。",
-      "na": "跟我现在的任务「履行对亲人的照护责任（孝道）」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "老人健康担忧",
-      "job_id": "J7",
-      "job_owner": "子女",
-      "core_job": "履行对亲人的照护责任（孝道）",
-      "job_statement": "当我担心父母因打鼾/呼吸问题睡不好、出健康风险时，我需要为他们找到能坚持使用的方案，尽到照护责任。",
-      "current_step": "搞懂呼吸机",
-      "desired_outcomes": [
-        {
-          "id": "O7",
-          "importance": 9,
-          "satisfaction": 3
-        },
-        {
-          "id": "O5",
-          "importance": 10,
-          "satisfaction": 4
-        },
-        {
-          "id": "O1",
-          "importance": 6,
-          "satisfaction": 6
-        }
-      ],
-      "forces": {
-        "push": [
-          "A8"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B3",
-          "B7"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "filial_son"
-    ]
-  },
-  {
-    "id": "P11",
-    "name": "张先生",
-    "emoji": "👨‍💼",
+    "id": "P03",
+    "name": "老郑",
+    "emoji": "🧢",
     "segment": "健康焦虑自用型",
     "role": "本人",
     "subject": "本人",
-    "age": 45,
+    "age": 49,
     "gender": "男",
-    "city": "一线城市",
-    "occupation": "企业中层管理",
-    "family": "妻子+一子(初中)",
-    "income": "家庭月入约3万",
+    "city": "湖南衡阳",
+    "occupation": "县城家电城合伙人",
+    "family": "妻子在广东佛山打工，一年回来两三次；儿子在省会长沙读大学，平时一个人住店里的阁楼",
+    "income": "月入不稳定，平均 7000 左右，但货款压得紧，现金常要周转",
     "osa": {
       "severity": "重度",
-      "ahi": "35",
-      "diagnosed": false,
-      "stage": "察觉"
+      "ahi": "38.7",
+      "diagnosed": true,
+      "stage": "决策纠结"
     },
     "mindset": {
-      "core_motive": "开会打瞌睡太危险，体检也提示重度OSA，必须解决。",
-      "fear": "怕影响工作和形象，也怕设备噪音大。",
-      "decision_logic": "选进口旗舰+便携，出差也能用。",
-      "price_sensitivity": 3,
-      "brand_anchor": "瑞思迈",
-      "channel_preference": "品牌官网或高端门店",
-      "quote": "健康和工作，我都不想牺牲。"
+      "core_motive": "白天撑得住，别在客户面前丢人，更别在开车时出事",
+      "fear": "花钱买了国产的没效果，进口的太贵又怕戴不惯，最后砸手里",
+      "decision_logic": "先看数据准不准、能不能验证效果的机器，再看价格能不能承受，最怕的是买了之后没人管、自己又不会调",
+      "price_sensitivity": 7,
+      "brand_anchor": "瑞思迈是金标准，但一万多太贵；鱼跃、瑞迈特便宜，但不知道数据算法靠不靠谱，怕效果打折",
+      "channel_preference": "最好能在市里三甲医院旁边那种正规医疗器械店买，或者有厂家授权的网店，能开医疗发票、有上门指导的",
+      "quote": "贵不是最大问题，怕的是花了钱戴不进去，或者戴了没感觉，那才是真冤枉。"
     },
     "dominant_features": [
       {
         "code": "A4",
-        "weight": 8
-      },
-      {
-        "code": "A5",
         "weight": 9
       },
       {
+        "code": "A5",
+        "weight": 8
+      },
+      {
         "code": "B5",
-        "weight": 10
+        "weight": 9
       }
     ],
     "factor_weights": {
+      "A4": 9,
+      "A5": 8,
+      "B5": 9,
+      "B1": 8,
+      "B2": 7,
+      "A9": 6,
+      "B8": 7,
+      "B10": 6,
       "A1": 0,
-      "A2": 1,
+      "A2": 0,
       "A3": 0,
-      "A4": 8,
-      "A5": 9,
-      "A6": 1,
-      "A7": 2,
+      "A6": 0,
+      "A7": 0,
       "A8": 0,
-      "A9": 1,
       "A10": 0,
       "A11": 0,
-      "B1": 0,
-      "B2": 0,
       "B3": 0,
-      "B4": 2,
-      "B5": 10,
-      "B6": 1,
-      "B7": 2,
-      "B8": 2,
-      "B9": 2,
-      "B10": 1,
-      "B11": 2
+      "B4": 0,
+      "B6": 0,
+      "B7": 0,
+      "B9": 0,
+      "B11": 0
     },
     "blockers": [
-      "出差多",
-      "担心便携性"
+      "县城本地买不到，只能网上看，怕买到水货或翻新机",
+      "瑞思迈太贵，国产的促销员吹得天花乱坠，但不知道真实效果",
+      "自己一个人住，晚上试戴如果憋醒或者漏气，连个商量的人都没有"
     ],
     "drivers": [
-      "白天安全",
-      "进口品牌",
-      "静音"
+      "开车等红灯睡着的次数越来越多，有一次差点追尾，后怕得不行",
+      "店里盘点时对着进货单打盹，被店员偷偷拍下来发群里，太丢人了",
+      "视频里看到老婆在佛山工厂宿舍晚上也睡不好，老担心我一个人在店里出事"
     ],
-    "decision_style": "理性",
+    "decision_style": "纠结型，极其依赖数据反馈和他人实例验证，价格必须算总账",
     "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复白天的精力与清醒」上的任务（我卡在搞懂呼吸机），尤其是开会打瞌睡太危险，体检也提示重度OSA，必须解决。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞懂呼吸机」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞懂呼吸机 / 开会打瞌睡太危险，体检也提示重度OSA，必须解决。…），不太信。",
-      "na": "跟我现在的任务「恢复白天的精力与清醒」关系不大。"
+      "advance": "如果{{topic}}能让我先试戴一两周，而且能把每晚的报告数据直接同步到我手机上，让我亲眼看到AHI降下来，那我咬咬牙也能考虑分期买个好的。",
+      "hesitate": "{{topic}}说的这个算法准不准？跟医院那种大设备的报告能对上吗？别是机器自己编个数据糊弄我，我戴着没效果还浪费时间。",
+      "reject": "这个牌子我听都没听过，网上搜都搜不到几条正经评测，售后点也没有，万一坏了找谁去？算了算了，不冒这个险。",
+      "na": "我主要想解决白天犯困的问题，至于什么智能联动、自动加热这些花哨功能，对我来说没什么用，还得加钱。"
     },
     "jtbd": {
-      "entry_situation": "开会打盹",
+      "entry_situation": "在店里跟供应商开线上会议时打盹，被对方经理在电话里喊了两声才惊醒，场面极其尴尬",
       "job_id": "J2",
       "job_owner": "本人",
       "core_job": "恢复白天的精力与清醒",
-      "job_statement": "当疲劳和嗜睡开始影响我开车、工作或照顾家人时，我需要恢复可靠的白天状态，并确认投入能带来实际改善。",
+      "job_statement": "当疲劳和嗜睡开始影响我看店、开车和工作时，我需要恢复可靠的白天状态，并确认买的设备真能改善我的数据，证明钱没白花。",
       "current_step": "搞懂呼吸机",
       "desired_outcomes": [
         {
           "id": "O2",
           "importance": 10,
-          "satisfaction": 5
-        },
-        {
-          "id": "O3",
-          "importance": 7,
-          "satisfaction": 6
+          "satisfaction": 2
         },
         {
           "id": "O6",
-          "importance": 4,
+          "importance": 8,
+          "satisfaction": 3
+        },
+        {
+          "id": "O3",
+          "importance": 9,
           "satisfaction": 4
         }
       ],
@@ -1353,654 +361,42 @@
       }
     },
     "evidence_refs": [
-      "synthetic",
-      "exec_self"
+      "llm_generated",
+      "synthetic"
     ]
   },
   {
-    "id": "P12",
-    "name": "周医生",
-    "emoji": "👨‍⚕️",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 38,
-    "gender": "男",
-    "city": "一线城市",
-    "occupation": "呼吸科主治医师",
-    "family": "已婚，配偶无OSA",
-    "income": "个人月入约2.5万",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "自己AHI不低，知道规范治疗重要；纠结的是哪套算法和报告更可信，而非「要不要治」。",
-      "fear": "怕设备数据不准，无法评估疗效。",
-      "decision_logic": "参数、算法、报告完整性优先，其次才是价格。",
-      "price_sensitivity": 3,
-      "brand_anchor": "瑞思迈或飞利浦",
-      "channel_preference": "医院渠道或官方",
-      "quote": "治病的事，证据比广告重要——我在挑的是证据链，不是要不要戴。"
-    },
-    "dominant_features": [
-      {
-        "code": "A3",
-        "weight": 6
-      },
-      {
-        "code": "A5",
-        "weight": 9
-      },
-      {
-        "code": "B1",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 6,
-      "A4": 2,
-      "A5": 9,
-      "A6": 0,
-      "A7": 2,
-      "A8": 0,
-      "A9": 0,
-      "A10": 0,
-      "A11": 0,
-      "B1": 7,
-      "B2": 0,
-      "B3": 2,
-      "B4": 0,
-      "B5": 0,
-      "B6": 1,
-      "B7": 2,
-      "B8": 2,
-      "B9": 1,
-      "B10": 0,
-      "B11": 2
-    },
-    "blockers": [
-      "临床指标要求高",
-      "时间少",
-      "各品牌算法口径不一"
-    ],
-    "drivers": [
-      "AHI数据",
-      "疗效可验证",
-      "数据可见性"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除睡梦中出事的健康风险」上的任务（我卡在预算内选对），尤其是自己AHI不低，知道规范治疗重要；纠结的是哪套算法和报告…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「预算内选对」，得再想想。",
-      "reject": "推广没解开我真正卡点（预算内选对 / 自己AHI不低，知道规范治疗重要；纠结的是哪套算法和报告…），不太信。",
-      "na": "跟我现在的任务「消除睡梦中出事的健康风险」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "最长呼吸暂停数十秒",
-      "job_id": "J3",
-      "job_owner": "本人",
-      "core_job": "消除睡梦中出事的健康风险",
-      "job_statement": "当我确认 OSA 可能与心脏病复发或恶化有关时，我需要建立一项能坚持的夜间管理方式，以更有把握地控制长期健康风险。",
-      "current_step": "预算内选对",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 4
-        },
-        {
-          "id": "O2",
-          "importance": 9,
-          "satisfaction": 5
-        },
-        {
-          "id": "O7",
-          "importance": 4,
-          "satisfaction": 3
-        }
-      ],
-      "forces": {
-        "push": [
-          "A3",
-          "A5"
-        ],
-        "pull": [
-          "B1"
-        ],
-        "anxiety": [
-          "B3"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "doctor_self"
-    ]
-  },
-  {
-    "id": "P13",
-    "name": "小薇",
-    "emoji": "🧑",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 29,
-    "gender": "女",
-    "city": "一线城市",
-    "occupation": "平面设计师",
-    "family": "独居",
-    "income": "个人月入约1.4万",
-    "osa": {
-      "severity": "轻度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知。",
-      "fear": "最怕戴机更丢人，同事出差看见。",
-      "decision_logic": "选小巧不显眼、有名人背书的入门方案。",
-      "price_sensitivity": 7,
-      "brand_anchor": "外观与口碑",
-      "channel_preference": "线上匿名下单",
-      "quote": "我不是不想治，是不想被当成笑话。"
-    },
-    "dominant_features": [
-      {
-        "code": "A11",
-        "weight": 7
-      },
-      {
-        "code": "B6",
-        "weight": 4
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 2,
-      "A3": 1,
-      "A4": 1,
-      "A5": 2,
-      "A6": 0,
-      "A7": 1,
-      "A8": 0,
-      "A9": 2,
-      "A10": 0,
-      "A11": 7,
-      "B1": 0,
-      "B2": 0,
-      "B3": 0,
-      "B4": 1,
-      "B5": 1,
-      "B6": 6,
-      "B7": 0,
-      "B8": 7,
-      "B9": 0,
-      "B10": 1,
-      "B11": 0
-    },
-    "blockers": [
-      "觉得戴机丢人",
-      "不想被同事知道"
-    ],
-    "drivers": [
-      "社交尊严",
-      "体面外观",
-      "入门价"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除打呼丢人的羞耻感」上的任务（我卡在被数据击穿侥幸），尤其是自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「被数据击穿侥幸」，得再想想。",
-      "reject": "推广没解开我真正卡点（被数据击穿侥幸 / 自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…），不太信。",
-      "na": "跟我现在的任务「消除打呼丢人的羞耻感」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "宿舍/合租尴尬",
-      "job_id": "J6",
-      "job_owner": "本人",
-      "core_job": "消除打呼丢人的羞耻感",
-      "job_statement": "当打呼让我在社交中丢脸、被疏远时，我需要恢复体面和社交尊严，又不显得过度在意。",
-      "current_step": "被数据击穿侥幸",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 4
-        },
-        {
-          "id": "O5",
-          "importance": 8,
-          "satisfaction": 5
-        }
-      ],
-      "forces": {
-        "push": [
-          "A11"
-        ],
-        "pull": [
-          "B6"
-        ],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "shame_self"
-    ]
-  },
-  {
-    "id": "P14",
-    "name": "沈女士",
-    "emoji": "👩",
-    "segment": "长期照护型",
-    "role": "子女(为父母)",
-    "subject": "父亲(重症)",
-    "age": 45,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "药房主管",
-    "family": "父亲患渐冻症，需夜间呼吸支持",
-    "income": "家庭月入约1.9万",
-    "osa": {
-      "severity": "重度",
-      "ahi": "35",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "父亲需要夜间呼吸支持，这是保命设备，不能省。",
-      "fear": "最怕机器失灵或没人指导，危及他的生命。",
-      "decision_logic": "选医疗级、售后上门、能远程监护的方案。",
-      "price_sensitivity": 2,
-      "brand_anchor": "医院指定机型",
-      "channel_preference": "医院渠道",
-      "quote": "能多陪一天，就值。"
-    },
-    "dominant_features": [
-      {
-        "code": "A10",
-        "weight": 10
-      },
-      {
-        "code": "B3",
-        "weight": 8
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 0,
-      "A4": 2,
-      "A5": 1,
-      "A6": 2,
-      "A7": 0,
-      "A8": 2,
-      "A9": 0,
-      "A10": 10,
-      "A11": 1,
-      "B1": 2,
-      "B2": 0,
-      "B3": 8,
-      "B4": 2,
-      "B5": 0,
-      "B6": 2,
-      "B7": 6,
-      "B8": 1,
-      "B9": 0,
-      "B10": 1,
-      "B11": 2
-    },
-    "blockers": [
-      "设备可靠性要求极高",
-      "长期维护成本"
-    ],
-    "drivers": [
-      "呼吸支持",
-      "远程照护",
-      "售后上门"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「维持呼吸功能保住生命（重症）」上的任务（我卡在坚持每天戴），尤其是父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「坚持每天戴」，得再想想。",
-      "reject": "推广没解开我真正卡点（坚持每天戴 / 父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。…），不太信。",
-      "na": "跟我现在的任务「维持呼吸功能保住生命（重症）」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "ALS/渐冻症",
-      "job_id": "J4",
-      "job_owner": "子女",
-      "core_job": "维持呼吸功能保住生命（重症）",
-      "job_statement": "当呼吸肌无力威胁到我的生命时，我需要可靠的呼吸支持来维持肺功能、避免呼吸衰竭，争取更多时间。",
-      "current_step": "坚持每天戴",
-      "desired_outcomes": [
-        {
-          "id": "O9",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O7",
-          "importance": 8,
-          "satisfaction": 2
-        }
-      ],
-      "forces": {
-        "push": [
-          "A10"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B3",
-          "B7"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "als_caregiver"
-    ]
-  },
-  {
-    "id": "P15",
-    "name": "孙女士",
-    "emoji": "👩",
-    "segment": "长期照护型",
-    "role": "伴侣照护者",
-    "subject": "丈夫(患者)",
-    "age": 38,
-    "gender": "女",
-    "city": "一线城市",
-    "occupation": "护士",
-    "family": "丈夫(疑似OSA)+幼子",
-    "income": "个人月入约1万",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "我是护士，原理我懂，难的是下班带娃还要盯他戴住、面罩合不合适。",
-      "fear": "怕选错渠道买到水货，或面罩不适他又放弃。",
-      "decision_logic": "优先三甲或官方渠道，必须能试戴+有人跟进适配。",
-      "price_sensitivity": 4,
-      "brand_anchor": "瑞思迈或飞利浦",
-      "channel_preference": "医院睡眠中心",
-      "quote": "懂原理是一回事，回家面罩合不合适、能不能坚持是另一回事。"
-    },
-    "dominant_features": [
-      {
-        "code": "A1",
-        "weight": 9
-      },
-      {
-        "code": "B2",
-        "weight": 9
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 9,
-      "A2": 0,
-      "A3": 0,
-      "A4": 2,
-      "A5": 1,
-      "A6": 2,
-      "A7": 1,
-      "A8": 0,
-      "A9": 2,
-      "A10": 0,
-      "A11": 0,
-      "B1": 2,
-      "B2": 9,
-      "B3": 0,
-      "B4": 0,
-      "B5": 0,
-      "B6": 0,
-      "B7": 6,
-      "B8": 0,
-      "B9": 2,
-      "B10": 0,
-      "B11": 2
-    },
-    "blockers": [
-      "工作带娃忙，没时间反复试",
-      "面罩适配要上门跟进"
-    ],
-    "drivers": [
-      "渠道信任",
-      "面罩适配",
-      "医院同款"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「修复/维系亲密关系」上的任务（我卡在解决面罩适配），尤其是我是护士，原理我懂，难的是下班带娃还要盯他戴住、面罩合不…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「解决面罩适配」，得再想想。",
-      "reject": "推广没解开我真正卡点（解决面罩适配 / 我是护士，原理我懂，难的是下班带娃还要盯他戴住、面罩合不…），不太信。",
-      "na": "跟我现在的任务「修复/维系亲密关系」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "伴侣长期失眠",
-      "job_id": "J5",
-      "job_owner": "伴侣",
-      "core_job": "修复/维系亲密关系",
-      "job_statement": "当伴侣的打鼾长期破坏我的睡眠、情绪和关系时，我需要帮助我们恢复安静且能持续的夜间生活，又不让照护变成冲突。",
-      "current_step": "解决面罩适配",
-      "desired_outcomes": [
-        {
-          "id": "O4",
-          "importance": 9,
-          "satisfaction": 3
-        },
-        {
-          "id": "O7",
-          "importance": 5,
-          "satisfaction": 2
-        },
-        {
-          "id": "O3",
-          "importance": 8,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A1"
-        ],
-        "pull": [
-          "B4"
-        ],
-        "anxiety": [
-          "B2",
-          "B7"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "nurse_caregiver"
-    ]
-  },
-  {
-    "id": "P16",
-    "name": "小杨",
-    "emoji": "🧑‍💻",
-    "segment": "关系驱动型",
-    "role": "本人(室友影响)",
-    "subject": "本人(受室友影响)",
-    "age": 31,
-    "gender": "男",
-    "city": "二线城市",
-    "occupation": "程序员",
-    "family": "合租，室友打鼾影响睡眠",
-    "income": "个人月入约1.2万",
-    "osa": {
-      "severity": "未确诊",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "合租室友鼾声如雷，我整夜睡不着，想推动他去筛查或自己想办法睡好。",
-      "fear": "怕看了医生发现自己也要戴机，双重开销。",
-      "decision_logic": "先弄清是他的问题还是我也有，再选低门槛方案。",
-      "price_sensitivity": 8,
-      "brand_anchor": "尚未形成偏好",
-      "channel_preference": "线上比价",
-      "quote": "被吵醒的日子受够了，得有个解决办法。"
-    },
-    "dominant_features": [
-      {
-        "code": "A1",
-        "weight": 9
-      },
-      {
-        "code": "A4",
-        "weight": 8
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 9,
-      "A2": 2,
-      "A3": 2,
-      "A4": 8,
-      "A5": 2,
-      "A6": 0,
-      "A7": 2,
-      "A8": 0,
-      "A9": 0,
-      "A10": 0,
-      "A11": 0,
-      "B1": 2,
-      "B2": 1,
-      "B3": 1,
-      "B4": 1,
-      "B5": 2,
-      "B6": 1,
-      "B7": 1,
-      "B8": 7,
-      "B9": 2,
-      "B10": 2,
-      "B11": 0
-    },
-    "blockers": [
-      "预算有限",
-      "不确定该不该管室友的事"
-    ],
-    "drivers": [
-      "室友打鼾",
-      "睡眠被影响",
-      "价格"
-    ],
-    "decision_style": "冲动",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复连续无扰的睡眠」上的任务（我卡在搞清楚是不是病），尤其是合租室友鼾声如雷，我整夜睡不着，想推动他去筛查或自己想办…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞清楚是不是病」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞清楚是不是病 / 合租室友鼾声如雷，我整夜睡不着，想推动他去筛查或自己想办…），不太信。",
-      "na": "跟我现在的任务「恢复连续无扰的睡眠」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "睡眠碎片化",
-      "job_id": "J1",
-      "job_owner": "本人",
-      "core_job": "恢复连续无扰的睡眠",
-      "job_statement": "当我整夜被鼾声和憋醒打断、第二天疲惫不堪时，我需要恢复连续、安静的睡眠，让自己和家人睡个整觉。",
-      "current_step": "搞清楚是不是病",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 9,
-          "satisfaction": 2
-        },
-        {
-          "id": "O6",
-          "importance": 9,
-          "satisfaction": 3
-        },
-        {
-          "id": "O3",
-          "importance": 7,
-          "satisfaction": 6
-        }
-      ],
-      "forces": {
-        "push": [
-          "A1"
-        ],
-        "pull": [
-          "B4"
-        ],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "roommate_young"
-    ]
-  },
-  {
-    "id": "P17",
-    "name": "许女士",
-    "emoji": "👩",
+    "id": "P04",
+    "name": "老韩",
+    "emoji": "🧑‍🔧",
     "segment": "长期照护型",
     "role": "子女(为父母)",
     "subject": "母亲(患者)",
-    "age": 34,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "人事专员",
-    "family": "已婚一子；母亲同城独居(中度OSA)",
-    "income": "家庭月入约1.7万",
+    "age": 38,
+    "gender": "男",
+    "city": "洛阳",
+    "occupation": "工厂设备维修工",
+    "family": "在洛阳老城区一家机械厂做维修工，三班倒，住在厂区集体宿舍。老家在洛阳下辖的栾川县，父母在老家，父亲有高血压，母亲今年62岁，近年发胖，打呼噜越来越响，最近视频时听她说夜里会憋醒，白天没精神。妹妹嫁到郑州，平时靠我俩打电话商量父母的事。",
+    "income": "月薪6500，加加班能到8000，有房贷（老家县城一套房，父母在住），每月固定给父母1500生活费",
     "osa": {
       "severity": "中度",
-      "ahi": "22",
+      "ahi": "—",
       "diagnosed": false,
       "stage": "察觉"
     },
     "mindset": {
-      "core_motive": "母亲有睡眠呼吸问题，我作为子女得帮她把关，别把照护变成催促冲突。",
-      "fear": "怕催得太紧伤感情，也怕买了没人教她用。",
-      "decision_logic": "先陪去医院确诊，选操作简单、售后上门的。",
-      "price_sensitivity": 5,
-      "brand_anchor": "医生推荐什么就倾向什么",
-      "channel_preference": "三甲医院或官方门店",
-      "quote": "孝心不是买最贵，是买能坚持用的。"
+      "core_motive": "妈在老家，我和妹妹都不在身边，夜里憋气这种事可大可小，我怕万一哪天夜里一口气上不来，我这辈子都过不去。必须给她把这事弄妥了，哪怕她嫌贵嫌麻烦，我也得让她用上。",
+      "fear": "最怕的是我花了五六千买回去，妈嫌戴着不舒服、说像‘猪八戒’，戴两天就扔抽屉里落灰。她一个人在老家，我隔着几百公里，看不见她到底用没用，要是再因为这事跟我急、说我不心疼钱，我可真是两头受气。",
+      "decision_logic": "先得搞清妈到底是啥毛病，严不严重，不能瞎买。带她到县医院做个睡眠监测，拿到报告，我才好跟她说这不是我瞎操心，是大夫说必须治。买的时候要买大牌子、医院里认可的，质量靠谱，售后还得方便——我们洛阳市区有实体店最好，万一妈过来或者我回家路过能调试。预算能省则省，但妈的安全第一，不能图便宜买杂牌。",
+      "price_sensitivity": 4,
+      "brand_anchor": "瑞思迈、飞利浦这种进口大牌，医院里都用，靠谱，但贵。鱼跃是国货里听得多的，价格实在，就是不知道老家的售后行不行。",
+      "channel_preference": "先在老家县医院做检查，看医生推荐啥；要买就找洛阳市区有实体店的经销商，能上门调试、有保修，最好能先免费试戴几天，让妈试试能不能接受。",
+      "quote": "妈在老家，夜里憋气，我在洛阳宿舍里躺着都睡不着——这钱不花，我心里这石头就落不了地。"
     },
     "dominant_features": [
       {
         "code": "A8",
-        "weight": 6
+        "weight": 9
       },
       {
         "code": "A6",
@@ -2008,71 +404,64 @@
       },
       {
         "code": "B7",
-        "weight": 6
+        "weight": 8
       }
     ],
     "factor_weights": {
+      "A8": 9,
+      "A6": 5,
+      "B7": 8,
+      "B3": 7,
       "A1": 0,
       "A2": 0,
       "A3": 0,
       "A4": 0,
-      "A5": 1,
-      "A6": 6,
+      "A5": 0,
       "A7": 0,
-      "A8": 6,
-      "A9": 2,
-      "A10": 2,
-      "A11": 2,
-      "B1": 1,
-      "B2": 2,
-      "B3": 1,
-      "B4": 1,
-      "B5": 2,
-      "B6": 2,
-      "B7": 6,
+      "A9": 0,
+      "A10": 0,
+      "A11": 0,
+      "B1": 0,
+      "B2": 0,
+      "B4": 0,
+      "B5": 0,
+      "B6": 0,
       "B8": 0,
-      "B9": 1,
-      "B10": 2,
+      "B9": 0,
+      "B10": 0,
       "B11": 0
     },
-    "blockers": [
-      "母亲可能不愿戴",
-      "两地奔波或时间不够"
-    ],
-    "drivers": [
-      "孝心",
-      "售后上门",
-      "医院渠道"
-    ],
-    "decision_style": "谨慎",
+    "blockers": [],
+    "drivers": [],
+    "decision_style": "理性",
     "react": {
-      "advance": "听到{{topic}}，这正好推进我在「履行对亲人的照护责任（孝道）」上的任务（我卡在预算内选对），尤其是母亲有高血压，医生提醒要查睡眠，我作为女儿得帮她把关。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「预算内选对」，得再想想。",
-      "reject": "推广没解开我真正卡点（预算内选对 / 母亲有高血压，医生提醒要查睡眠，我作为女儿得帮她把关。…），不太信。",
-      "na": "跟我现在的任务「履行对亲人的照护责任（孝道）」关系不大。"
+      "advance": "跟您聊这个呼吸机{{topic}}，我主要是想弄明白妈那个情况到底算不算严重，县医院大夫说得含糊，就说让减肥、侧着睡。我看网上说打呼噜憋气会引发高血压、心脏病，我爸就有高血压，我特怕妈也这样。您能帮我分析分析，她那夜里憋醒、白天没精神，是不是就说明挺严重了？",
+      "hesitate": "您说的这个型号是不错，可一台七八千，快赶上我一个月工资了。我不是舍不得给妈花这个钱，就是怕她戴不惯。她一辈子要强，觉得睡觉戴个面罩丢人，我之前提过一次，她直接怼我说‘瞎折腾’。您说有没有那种能先拿回家试几天的？让她真试了觉得好，我再掏钱也踏实。",
+      "reject": "那种网上两三千的杂牌我可不敢买，妈在老家，出了事找谁去？还有那种纯靠商家自己宣传、没有医院数据支持的，我也信不过。我得先拿到正规医院的监测报告，再找那种有实体店、能上门服务的牌子，不然花冤枉钱不说，妈更得说我‘乱花钱办不成事’。",
+      "na": ""
     },
     "jtbd": {
       "entry_situation": "父母打鼾憋气",
       "job_id": "J7",
       "job_owner": "子女",
       "core_job": "履行对亲人的照护责任（孝道）",
-      "job_statement": "当我担心父母因打鼾/呼吸问题睡不好、出健康风险时，我需要为他们找到能坚持使用的方案，尽到照护责任。",
+      "job_statement": "当我担心在老家独居的母亲因打鼾憋气睡不好、怕她夜里出风险时，我需要为她找到能让她愿意戴、我远程也能放心、质量靠谱的方案，尽到我的照护责任，不能留下遗憾。",
       "current_step": "预算内选对",
       "desired_outcomes": [
+        {
+          "id": "O5",
+          "importance": 9,
+          "satisfaction": 2
+        },
         {
           "id": "O1",
           "importance": 8,
           "satisfaction": 3
         },
         {
-          "id": "O5",
-          "importance": 10,
-          "satisfaction": 5
-        },
-        {
           "id": "O2",
-          "importance": 9,
-          "satisfaction": 7
+          "importance": 7,
+          "satisfaction": 2
         }
       ],
       "forces": {
@@ -2089,521 +478,37 @@
       }
     },
     "evidence_refs": [
-      "synthetic",
-      "filial_daughter"
+      "llm_generated",
+      "synthetic"
     ]
   },
   {
-    "id": "P18",
-    "name": "邓先生",
-    "emoji": "👨‍💼",
-    "segment": "经济受限型",
-    "role": "本人",
-    "subject": "本人",
+    "id": "P05",
+    "name": "宋桂芳",
+    "emoji": "🙋‍♀️",
+    "segment": "长期照护型",
+    "role": "妻子（伴侣照护者）",
+    "subject": "丈夫（患者）",
     "age": 52,
-    "gender": "男",
-    "city": "一线城市",
-    "occupation": "公务员",
-    "family": "已婚一子",
-    "income": "家庭月入约2.2万",
-    "osa": {
-      "severity": "轻度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "白天犯困太危险（我是公务员），但新机太贵，想看看二手或租赁。",
-      "fear": "怕花大钱买了用不住，耽误跑活。",
-      "decision_logic": "能试戴、总价低、售后清楚才考虑。",
-      "price_sensitivity": 9,
-      "brand_anchor": "国产性价比",
-      "channel_preference": "二手平台或租赁",
-      "quote": "我知道要重视，可也得看兜里有多少。"
-    },
-    "dominant_features": [
-      {
-        "code": "A4",
-        "weight": 8
-      },
-      {
-        "code": "A9",
-        "weight": 6
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 2,
-      "A3": 2,
-      "A4": 8,
-      "A5": 2,
-      "A6": 0,
-      "A7": 2,
-      "A8": 0,
-      "A9": 6,
-      "A10": 0,
-      "A11": 1,
-      "B1": 1,
-      "B2": 1,
-      "B3": 1,
-      "B4": 0,
-      "B5": 1,
-      "B6": 1,
-      "B7": 0,
-      "B8": 7,
-      "B9": 0,
-      "B10": 2,
-      "B11": 1
-    },
-    "blockers": [
-      "预算紧",
-      "觉得戴机麻烦"
-    ],
-    "drivers": [
-      "白天嗜睡安全",
-      "二手低门槛",
-      "价格敏感"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复白天的精力与清醒」上的任务（我卡在预算内选对），尤其是开车犯困太危险，但新机太贵，想看看二手或租赁。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「预算内选对」，得再想想。",
-      "reject": "推广没解开我真正卡点（预算内选对 / 开车犯困太危险，但新机太贵，想看看二手或租赁。…），不太信。",
-      "na": "跟我现在的任务「恢复白天的精力与清醒」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "开车等红灯睡着",
-      "job_id": "J2",
-      "job_owner": "本人",
-      "core_job": "恢复白天的精力与清醒",
-      "job_statement": "当疲劳和嗜睡开始影响我开车、工作或照顾家人时，我需要恢复可靠的白天状态，并确认投入能带来实际改善。",
-      "current_step": "预算内选对",
-      "desired_outcomes": [
-        {
-          "id": "O2",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O6",
-          "importance": 9,
-          "satisfaction": 4
-        },
-        {
-          "id": "O8",
-          "importance": 7,
-          "satisfaction": 7
-        }
-      ],
-      "forces": {
-        "push": [
-          "A4"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": [
-          "A9"
-        ]
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "trucker_self"
-    ]
-  },
-  {
-    "id": "P19",
-    "name": "赵大爷",
-    "emoji": "👴",
-    "segment": "长期照护型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 75,
-    "gender": "男",
-    "city": "三线城市",
-    "occupation": "退休干部",
-    "family": "与老伴同住",
-    "income": "退休金+儿子补贴",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "有高血压，医生说要治打鼾，儿子也催我去配机。",
-      "fear": "怕给儿女添麻烦，也怕设备太复杂不会用。",
-      "decision_logic": "听医生和儿子的，选操作简单、有人教的。",
-      "price_sensitivity": 5,
-      "brand_anchor": "儿子帮选",
-      "channel_preference": "医院或儿子线上下单",
-      "quote": "老了不怕花钱，怕不会用。"
-    },
-    "dominant_features": [
-      {
-        "code": "A6",
-        "weight": 5
-      },
-      {
-        "code": "B2",
-        "weight": 9
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 2,
-      "A3": 1,
-      "A4": 0,
-      "A5": 1,
-      "A6": 6,
-      "A7": 0,
-      "A8": 0,
-      "A9": 1,
-      "A10": 0,
-      "A11": 0,
-      "B1": 2,
-      "B2": 9,
-      "B3": 1,
-      "B4": 2,
-      "B5": 1,
-      "B6": 2,
-      "B7": 6,
-      "B8": 1,
-      "B9": 0,
-      "B10": 0,
-      "B11": 1
-    },
-    "blockers": [
-      "觉得戴机丢人",
-      "操作怕复杂"
-    ],
-    "drivers": [
-      "共病担忧",
-      "医院推荐",
-      "面罩舒适"
-    ],
-    "decision_style": "从众",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除睡梦中出事的健康风险」上的任务（我卡在搞懂呼吸机），尤其是有高血压，医生说要治打鼾，儿子也催我去配机。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞懂呼吸机」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞懂呼吸机 / 有高血压，医生说要治打鼾，儿子也催我去配机。…），不太信。",
-      "na": "跟我现在的任务「消除睡梦中出事的健康风险」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "高血压/心脏等共病",
-      "job_id": "J3",
-      "job_owner": "本人",
-      "core_job": "消除睡梦中出事的健康风险",
-      "job_statement": "当我确认 OSA 可能与心脏病复发或恶化有关时，我需要建立一项能坚持的夜间管理方式，以更有把握地控制长期健康风险。",
-      "current_step": "搞懂呼吸机",
-      "desired_outcomes": [
-        {
-          "id": "O3",
-          "importance": 8,
-          "satisfaction": 2
-        },
-        {
-          "id": "O7",
-          "importance": 7,
-          "satisfaction": 3
-        },
-        {
-          "id": "O2",
-          "importance": 10,
-          "satisfaction": 6
-        }
-      ],
-      "forces": {
-        "push": [
-          "A6"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B2",
-          "B7"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "elderly_self"
-    ]
-  },
-  {
-    "id": "P20",
-    "name": "邱女士",
-    "emoji": "👩",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 33,
     "gender": "女",
-    "city": "一线城市",
-    "occupation": "内容运营",
-    "family": "合租",
-    "income": "个人月入约1.6万",
-    "osa": {
-      "severity": "轻度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知。",
-      "fear": "最怕戴机更丢人，同事出差看见。",
-      "decision_logic": "选小巧不显眼、有名人背书的入门方案。",
-      "price_sensitivity": 7,
-      "brand_anchor": "外观与口碑",
-      "channel_preference": "线上匿名下单",
-      "quote": "我不是不想治，是不想被当成笑话。"
-    },
-    "dominant_features": [
-      {
-        "code": "A11",
-        "weight": 7
-      },
-      {
-        "code": "B6",
-        "weight": 4
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 2,
-      "A3": 1,
-      "A4": 0,
-      "A5": 2,
-      "A6": 0,
-      "A7": 0,
-      "A8": 0,
-      "A9": 0,
-      "A10": 0,
-      "A11": 7,
-      "B1": 0,
-      "B2": 0,
-      "B3": 0,
-      "B4": 2,
-      "B5": 0,
-      "B6": 6,
-      "B7": 1,
-      "B8": 7,
-      "B9": 1,
-      "B10": 1,
-      "B11": 2
-    },
-    "blockers": [
-      "觉得戴机丢人",
-      "不想被同事知道"
-    ],
-    "drivers": [
-      "社交尊严",
-      "体面外观",
-      "入门价"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除打呼丢人的羞耻感」上的任务（我卡在被数据击穿侥幸），尤其是自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「被数据击穿侥幸」，得再想想。",
-      "reject": "推广没解开我真正卡点（被数据击穿侥幸 / 自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…），不太信。",
-      "na": "跟我现在的任务「消除打呼丢人的羞耻感」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "宿舍/合租尴尬",
-      "job_id": "J6",
-      "job_owner": "本人",
-      "core_job": "消除打呼丢人的羞耻感",
-      "job_statement": "当打呼让我在社交中丢脸、被疏远时，我需要恢复体面和社交尊严，又不显得过度在意。",
-      "current_step": "被数据击穿侥幸",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O5",
-          "importance": 6,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A11"
-        ],
-        "pull": [
-          "B6"
-        ],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "shame_self"
-    ]
-  },
-  {
-    "id": "P21",
-    "name": "崔女士",
-    "emoji": "👩",
-    "segment": "长期照护型",
-    "role": "子女(为父母)",
-    "subject": "母亲(重症)",
-    "age": 37,
-    "gender": "女",
-    "city": "三线城市",
-    "occupation": "小学老师",
-    "family": "已婚；母亲需夜间呼吸支持（重症）",
-    "income": "家庭月入约1.5万",
-    "osa": {
-      "severity": "重度",
-      "ahi": "35",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "母亲需要夜间呼吸支持，这是保命设备，不能省。",
-      "fear": "最怕机器失灵或没人指导，危及她的生命。",
-      "decision_logic": "选医疗级、售后上门、能远程监护的方案。",
-      "price_sensitivity": 2,
-      "brand_anchor": "医院指定机型",
-      "channel_preference": "医院渠道",
-      "quote": "能多陪一天，就值。"
-    },
-    "dominant_features": [
-      {
-        "code": "A10",
-        "weight": 10
-      },
-      {
-        "code": "B3",
-        "weight": 8
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 1,
-      "A4": 2,
-      "A5": 1,
-      "A6": 0,
-      "A7": 1,
-      "A8": 2,
-      "A9": 2,
-      "A10": 10,
-      "A11": 1,
-      "B1": 2,
-      "B2": 1,
-      "B3": 8,
-      "B4": 1,
-      "B5": 0,
-      "B6": 0,
-      "B7": 6,
-      "B8": 1,
-      "B9": 2,
-      "B10": 0,
-      "B11": 2
-    },
-    "blockers": [
-      "设备可靠性要求极高",
-      "长期维护成本"
-    ],
-    "drivers": [
-      "呼吸支持",
-      "远程照护",
-      "售后上门"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「维持呼吸功能保住生命（重症）」上的任务（我卡在坚持每天戴），尤其是父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「坚持每天戴」，得再想想。",
-      "reject": "推广没解开我真正卡点（坚持每天戴 / 父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。…），不太信。",
-      "na": "跟我现在的任务「维持呼吸功能保住生命（重症）」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "ALS/渐冻症",
-      "job_id": "J4",
-      "job_owner": "子女",
-      "core_job": "维持呼吸功能保住生命（重症）",
-      "job_statement": "当呼吸肌无力威胁到我的生命时，我需要可靠的呼吸支持来维持肺功能、避免呼吸衰竭，争取更多时间。",
-      "current_step": "坚持每天戴",
-      "desired_outcomes": [
-        {
-          "id": "O7",
-          "importance": 8,
-          "satisfaction": 1
-        },
-        {
-          "id": "O9",
-          "importance": 10,
-          "satisfaction": 2
-        }
-      ],
-      "forces": {
-        "push": [
-          "A10"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B3",
-          "B7"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "als_caregiver"
-    ]
-  },
-  {
-    "id": "P22",
-    "name": "潘姐",
-    "emoji": "👩",
-    "segment": "关系驱动型",
-    "role": "家人推动者(伴侣)",
-    "subject": "丈夫(患者)",
-    "age": 46,
-    "gender": "女",
-    "city": "三线城市",
-    "occupation": "服装店主",
-    "family": "丈夫打鼾严重，快分房",
-    "income": "家庭月入约1.1万",
+    "city": "河南周口（四线城市）",
+    "occupation": "超市生鲜区理货员",
+    "family": "丈夫老郑（55岁，跑货运司机），大儿子在郑州打工，女儿在本地读卫校，一家四口",
+    "income": "家庭月收入约9000元（丈夫货运约6000，自己理货约3000），有房贷无存款压力",
     "osa": {
       "severity": "中度",
       "ahi": "—",
       "diagnosed": false,
-      "stage": "察觉"
+      "stage": "决策纠结"
     },
     "mindset": {
-      "core_motive": "丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、面罩合适的机器。",
-      "fear": "最怕买了他戴不住，家里人更埋怨我瞎折腾。",
-      "decision_logic": "先确认他愿意试，再比面罩和售后，价格要在家庭预算内。",
-      "price_sensitivity": 6,
-      "brand_anchor": "听朋友提过瑞思迈，但没实地比过",
-      "channel_preference": "医院睡眠中心或能试戴的门店",
-      "quote": "我不是不想买，是得先让他愿意戴，别又白花钱。"
+      "core_motive": "想把老郑从客厅拽回卧室，找回两口子躺在一张床上说说话的日子。",
+      "fear": "怕花大几千买个机器回来，老郑嫌麻烦戴两天就扔墙角落灰，钱白花了还吵架。",
+      "decision_logic": "先看能不能免费试戴、能不能退，机器要皮实耐用、声音小，得让老郑在车上也能用。",
+      "price_sensitivity": 8,
+      "brand_anchor": "知道瑞思迈是进口大牌，但觉得国产鱼跃、瑞迈特好像也够用，关键看售后和试戴。",
+      "channel_preference": "相信医院和药店推荐的，网上旗舰店也行但怕买到水货；最好周口本地能有人上门教。",
+      "quote": "我不是心疼钱，我是怕买回去他不用，那才叫真浪费。"
     },
     "dominant_features": [
       {
@@ -2612,75 +517,68 @@
       },
       {
         "code": "B2",
-        "weight": 9
+        "weight": 8
       },
       {
-        "code": "B4",
-        "weight": 7
+        "code": "B7",
+        "weight": 8
       }
     ],
     "factor_weights": {
       "A1": 9,
-      "A2": 1,
-      "A3": 2,
-      "A4": 1,
-      "A5": 0,
-      "A6": 0,
-      "A7": 0,
-      "A8": 0,
-      "A9": 2,
-      "A10": 0,
-      "A11": 1,
-      "B1": 0,
-      "B2": 9,
-      "B3": 2,
+      "B2": 8,
+      "B7": 8,
       "B4": 7,
-      "B5": 1,
-      "B6": 1,
-      "B7": 2,
-      "B8": 2,
-      "B9": 2,
-      "B10": 1,
-      "B11": 0
+      "B5": 7,
+      "B8": 8,
+      "B11": 9,
+      "A2": 0,
+      "A3": 0,
+      "A4": 0,
+      "A5": 0,
+      "A6": 0,
+      "A7": 0,
+      "A8": 0,
+      "A9": 0,
+      "A10": 0,
+      "A11": 0,
+      "B1": 0,
+      "B3": 0,
+      "B6": 0,
+      "B9": 0,
+      "B10": 0
     },
-    "blockers": [
-      "丈夫怕戴不住就放弃",
-      "担心买贵被说乱花钱"
-    ],
-    "drivers": [
-      "分房压力",
-      "先试后买",
-      "面罩适配"
-    ],
-    "decision_style": "从众",
+    "blockers": [],
+    "drivers": [],
+    "decision_style": "感性驱动，理性决策（情感上急需解决分居问题，但理性上非常在意浪费风险）",
     "react": {
-      "advance": "听到{{topic}}，这正好推进我在「修复/维系亲密关系」上的任务（我卡在确认能适应），尤其是丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「确认能适应」，得再想想。",
-      "reject": "推广没解开我真正卡点（确认能适应 / 丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、…），不太信。",
-      "na": "跟我现在的任务「修复/维系亲密关系」关系不大。"
+      "advance": "如果有人说可以先拿回家免费试戴半个月，不习惯能退，我立马就拉着老郑去试试。{{topic}}",
+      "hesitate": "一听要八千上万，我心里就打鼓。他万一戴不惯怎么办？我一个月工资才三千，这可不是小数目。",
+      "reject": "要是卖机器的就知道说进口的好、贵的好，说不出个子丑寅卯，也不管我们这种小地方的人会不会用，那我肯定扭头就走。",
+      "na": ""
     },
     "jtbd": {
-      "entry_situation": "伴侣分房",
+      "entry_situation": "丈夫打呼噜二十多年，最近三年分房睡，上个月老郑跑长途时在服务区睡着差点出事，加上朋友老马刚因睡眠呼吸暂停住院，宋桂芳开始着急。",
       "job_id": "J5",
       "job_owner": "伴侣",
-      "core_job": "修复/维系亲密关系",
-      "job_statement": "当伴侣的打鼾长期破坏我的睡眠、情绪和关系时，我需要帮助我们恢复安静且能持续的夜间生活，又不让照护变成冲突。",
-      "current_step": "确认能适应",
+      "core_job": "让丈夫结束分房睡、晚上能睡个安稳觉，同时不觉得自己被当成病人被管着。",
+      "job_statement": "当丈夫的打鼾越来越严重、我们已经分房快三年、我每天都提心吊胆怕他开车出事时，我需要让他接受治疗又不伤他面子，帮我们找回能躺在一张床上踏实睡觉的日子。",
+      "current_step": "解决面罩适配",
       "desired_outcomes": [
         {
-          "id": "O3",
+          "id": "O4",
           "importance": 10,
           "satisfaction": 2
         },
         {
-          "id": "O4",
-          "importance": 10,
-          "satisfaction": 3
+          "id": "O3",
+          "importance": 9,
+          "satisfaction": 2
         },
         {
-          "id": "O8",
+          "id": "O7",
           "importance": 8,
-          "satisfaction": 5
+          "satisfaction": 3
         }
       ],
       "forces": {
@@ -2692,904 +590,43 @@
         ],
         "anxiety": [
           "B2",
-          "B11"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "spouse_pusher_liu"
-    ]
-  },
-  {
-    "id": "P23",
-    "name": "黎姐",
-    "emoji": "👩",
-    "segment": "关系驱动型",
-    "role": "家人推动者(伴侣)",
-    "subject": "丈夫(患者)",
-    "age": 44,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "保险顾问",
-    "family": "丈夫打鼾+一女",
-    "income": "家庭月入约2.1万",
-    "osa": {
-      "severity": "重度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、面罩合适的机器。",
-      "fear": "最怕突然出事，也怕买了他坚持不了。",
-      "decision_logic": "先让他承认问题严重，再选面罩舒适度口碑好的款。",
-      "price_sensitivity": 5,
-      "brand_anchor": "倾向进口大牌",
-      "channel_preference": "医院推荐或旗舰店",
-      "quote": "这事不能再拖了，但得选对才能戴得住。"
-    },
-    "dominant_features": [
-      {
-        "code": "A1",
-        "weight": 9
-      },
-      {
-        "code": "A5",
-        "weight": 9
-      },
-      {
-        "code": "B2",
-        "weight": 9
-      }
-    ],
-    "factor_weights": {
-      "A1": 9,
-      "A2": 0,
-      "A3": 1,
-      "A4": 2,
-      "A5": 9,
-      "A6": 2,
-      "A7": 1,
-      "A8": 0,
-      "A9": 0,
-      "A10": 0,
-      "A11": 1,
-      "B1": 1,
-      "B2": 9,
-      "B3": 2,
-      "B4": 0,
-      "B5": 0,
-      "B6": 0,
-      "B7": 1,
-      "B8": 2,
-      "B9": 2,
-      "B10": 2,
-      "B11": 2
-    },
-    "blockers": [
-      "丈夫抵触戴机",
-      "女儿也被吵到"
-    ],
-    "drivers": [
-      "夜间窒息恐惧",
-      "关系危机",
-      "面罩舒适"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复连续无扰的睡眠」上的任务（我卡在被数据击穿侥幸），尤其是他夜间憋醒好几次，我也睡不踏实，再拖下去全家崩溃。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「被数据击穿侥幸」，得再想想。",
-      "reject": "推广没解开我真正卡点（被数据击穿侥幸 / 他夜间憋醒好几次，我也睡不踏实，再拖下去全家崩溃。…），不太信。",
-      "na": "跟我现在的任务「恢复连续无扰的睡眠」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "夜间憋醒",
-      "job_id": "J1",
-      "job_owner": "伴侣",
-      "core_job": "恢复连续无扰的睡眠",
-      "job_statement": "当我整夜被鼾声和憋醒打断、第二天疲惫不堪时，我需要恢复连续、安静的睡眠，让自己和家人睡个整觉。",
-      "current_step": "被数据击穿侥幸",
-      "desired_outcomes": [
-        {
-          "id": "O3",
-          "importance": 8,
-          "satisfaction": 3
-        },
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 4
-        },
-        {
-          "id": "O4",
-          "importance": 10,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A1",
-          "A5"
-        ],
-        "pull": [
-          "B4"
-        ],
-        "anxiety": [
-          "B2"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "spouse_lin"
-    ]
-  },
-  {
-    "id": "P24",
-    "name": "温女士",
-    "emoji": "👩",
-    "segment": "长期照护型",
-    "role": "子女(为父母)",
-    "subject": "父亲(患者)",
-    "age": 41,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "银行客户经理",
-    "family": "父母异地需照护",
-    "income": "家庭月入约2万",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "父亲有睡眠呼吸问题，我作为子女得帮他把关，别把照护变成催促冲突。",
-      "fear": "怕催得太紧伤感情，也怕买了没人教他用。",
-      "decision_logic": "优先医院渠道+能上门/远程指导的售后。",
-      "price_sensitivity": 4,
-      "brand_anchor": "医院推荐",
-      "channel_preference": "三甲+官方售后",
-      "quote": "孝心不是买最贵，是买能坚持用的。"
-    },
-    "dominant_features": [
-      {
-        "code": "A8",
-        "weight": 6
-      },
-      {
-        "code": "B3",
-        "weight": 8
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 1,
-      "A3": 1,
-      "A4": 2,
-      "A5": 1,
-      "A6": 1,
-      "A7": 0,
-      "A8": 6,
-      "A9": 1,
-      "A10": 0,
-      "A11": 1,
-      "B1": 0,
-      "B2": 1,
-      "B3": 8,
-      "B4": 0,
-      "B5": 0,
-      "B6": 1,
-      "B7": 6,
-      "B8": 0,
-      "B9": 2,
-      "B10": 0,
-      "B11": 1
-    },
-    "blockers": [
-      "父亲可能不愿戴",
-      "两地奔波或时间不够"
-    ],
-    "drivers": [
-      "孝心",
-      "售后上门",
-      "医院渠道"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「履行对亲人的照护责任（孝道）」上的任务（我卡在搞懂呼吸机），尤其是父亲体检提示睡眠呼吸问题，我人在外地，得远程把设备与售后…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞懂呼吸机」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞懂呼吸机 / 父亲体检提示睡眠呼吸问题，我人在外地，得远程把设备与售后…），不太信。",
-      "na": "跟我现在的任务「履行对亲人的照护责任（孝道）」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "老人健康担忧",
-      "job_id": "J7",
-      "job_owner": "子女",
-      "core_job": "履行对亲人的照护责任（孝道）",
-      "job_statement": "当我担心父母因打鼾/呼吸问题睡不好、出健康风险时，我需要为他们找到能坚持使用的方案，尽到照护责任。",
-      "current_step": "搞懂呼吸机",
-      "desired_outcomes": [
-        {
-          "id": "O5",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O7",
-          "importance": 8,
-          "satisfaction": 2
-        },
-        {
-          "id": "O1",
-          "importance": 5,
-          "satisfaction": 5
-        }
-      ],
-      "forces": {
-        "push": [
-          "A8"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B3",
           "B7"
         ],
         "habit_or_alternative": []
       }
     },
     "evidence_refs": [
-      "synthetic",
-      "filial_son"
+      "llm_generated",
+      "synthetic"
     ]
   },
   {
-    "id": "P25",
-    "name": "陆先生",
-    "emoji": "👨‍💼",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 42,
-    "gender": "男",
-    "city": "一线城市",
-    "occupation": "项目经理",
-    "family": "妻子(中度OSA)+一子",
-    "income": "家庭月入约2.8万",
-    "osa": {
-      "severity": "重度",
-      "ahi": "35",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "开会打瞌睡太危险，体检也提示重度OSA，必须解决。",
-      "fear": "怕影响工作和形象，也怕设备噪音大。",
-      "decision_logic": "选进口旗舰+便携，出差也能用。",
-      "price_sensitivity": 3,
-      "brand_anchor": "瑞思迈",
-      "channel_preference": "品牌官网或高端门店",
-      "quote": "健康和工作，我都不想牺牲。"
-    },
-    "dominant_features": [
-      {
-        "code": "A4",
-        "weight": 8
-      },
-      {
-        "code": "A5",
-        "weight": 9
-      },
-      {
-        "code": "B5",
-        "weight": 10
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 1,
-      "A4": 8,
-      "A5": 9,
-      "A6": 1,
-      "A7": 1,
-      "A8": 0,
-      "A9": 1,
-      "A10": 0,
-      "A11": 1,
-      "B1": 2,
-      "B2": 0,
-      "B3": 0,
-      "B4": 1,
-      "B5": 10,
-      "B6": 2,
-      "B7": 2,
-      "B8": 1,
-      "B9": 2,
-      "B10": 1,
-      "B11": 2
-    },
-    "blockers": [
-      "出差多",
-      "担心便携性"
-    ],
-    "drivers": [
-      "白天安全",
-      "进口品牌",
-      "静音"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复白天的精力与清醒」上的任务（我卡在搞懂呼吸机），尤其是开会打瞌睡太危险，体检也提示重度OSA，必须解决。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞懂呼吸机」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞懂呼吸机 / 开会打瞌睡太危险，体检也提示重度OSA，必须解决。…），不太信。",
-      "na": "跟我现在的任务「恢复白天的精力与清醒」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "开会打盹",
-      "job_id": "J2",
-      "job_owner": "本人",
-      "core_job": "恢复白天的精力与清醒",
-      "job_statement": "当疲劳和嗜睡开始影响我开车、工作或照顾家人时，我需要恢复可靠的白天状态，并确认投入能带来实际改善。",
-      "current_step": "搞懂呼吸机",
-      "desired_outcomes": [
-        {
-          "id": "O2",
-          "importance": 10,
-          "satisfaction": 3
-        },
-        {
-          "id": "O3",
-          "importance": 7,
-          "satisfaction": 4
-        },
-        {
-          "id": "O6",
-          "importance": 4,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A4",
-          "A5"
-        ],
-        "pull": [
-          "B10"
-        ],
-        "anxiety": [
-          "B5"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "exec_self"
-    ]
-  },
-  {
-    "id": "P26",
-    "name": "小马",
-    "emoji": "👨",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 33,
-    "gender": "男",
-    "city": "一线城市",
-    "occupation": "外卖站长",
-    "family": "合租",
-    "income": "个人月入约9千",
-    "osa": {
-      "severity": "未确诊",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "手表提示血氧异常，查资料越查越怕，想确认要不要上呼吸机。",
-      "fear": "怕延误治疗，也怕买错型号被割韭菜。",
-      "decision_logic": "先做多导睡眠监测，再选数据口碑好的品牌。",
-      "price_sensitivity": 5,
-      "brand_anchor": "瑞思迈",
-      "channel_preference": "互联网医疗+京东自营",
-      "quote": "数据都红了，不能再当没事。"
-    },
-    "dominant_features": [
-      {
-        "code": "A2",
-        "weight": 6
-      },
-      {
-        "code": "A3",
-        "weight": 6
-      },
-      {
-        "code": "B5",
-        "weight": 10
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 6,
-      "A3": 6,
-      "A4": 2,
-      "A5": 1,
-      "A6": 2,
-      "A7": 0,
-      "A8": 0,
-      "A9": 0,
-      "A10": 0,
-      "A11": 1,
-      "B1": 1,
-      "B2": 2,
-      "B3": 1,
-      "B4": 1,
-      "B5": 10,
-      "B6": 2,
-      "B7": 0,
-      "B8": 0,
-      "B9": 0,
-      "B10": 0,
-      "B11": 1
-    },
-    "blockers": [
-      "还没正式确诊",
-      "信息过载"
-    ],
-    "drivers": [
-      "手表预警",
-      "医学数据恐惧",
-      "品牌信任"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除睡梦中出事的健康风险」上的任务（我卡在搞清楚是不是病），尤其是手表提示血氧异常，查资料越查越怕，想确认要不要上呼吸机。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「搞清楚是不是病」，得再想想。",
-      "reject": "推广没解开我真正卡点（搞清楚是不是病 / 手表提示血氧异常，查资料越查越怕，想确认要不要上呼吸机。…），不太信。",
-      "na": "跟我现在的任务「消除睡梦中出事的健康风险」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "AHI/血氧确诊",
-      "job_id": "J3",
-      "job_owner": "本人",
-      "core_job": "消除睡梦中出事的健康风险",
-      "job_statement": "当我确认 OSA 可能与心脏病复发或恶化有关时，我需要建立一项能坚持的夜间管理方式，以更有把握地控制长期健康风险。",
-      "current_step": "搞清楚是不是病",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O2",
-          "importance": 7,
-          "satisfaction": 3
-        },
-        {
-          "id": "O7",
-          "importance": 4,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A2",
-          "A3"
-        ],
-        "pull": [
-          "B1"
-        ],
-        "anxiety": [
-          "B5"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "young_pm"
-    ]
-  },
-  {
-    "id": "P27",
-    "name": "周姐",
-    "emoji": "👩‍💼",
-    "segment": "健康焦虑自用型",
-    "role": "本人",
-    "subject": "本人",
-    "age": 38,
-    "gender": "女",
-    "city": "一线城市",
-    "occupation": "行政主管",
-    "family": "已婚",
-    "income": "个人月入约1.3万",
-    "osa": {
-      "severity": "轻度",
-      "ahi": "—",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "自己打呼让家人难堪，想体面解决，又不想闹大。",
-      "fear": "最怕戴机更丢人，同事出差看见。",
-      "decision_logic": "选小巧不显眼、有名人背书的入门方案。",
-      "price_sensitivity": 7,
-      "brand_anchor": "外观与口碑",
-      "channel_preference": "线上匿名下单",
-      "quote": "我不是不想治，是不想被当成笑话。"
-    },
-    "dominant_features": [
-      {
-        "code": "A11",
-        "weight": 7
-      },
-      {
-        "code": "B6",
-        "weight": 4
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 1,
-      "A4": 2,
-      "A5": 0,
-      "A6": 2,
-      "A7": 0,
-      "A8": 0,
-      "A9": 1,
-      "A10": 0,
-      "A11": 7,
-      "B1": 0,
-      "B2": 1,
-      "B3": 1,
-      "B4": 0,
-      "B5": 2,
-      "B6": 6,
-      "B7": 1,
-      "B8": 7,
-      "B9": 0,
-      "B10": 1,
-      "B11": 0
-    },
-    "blockers": [
-      "觉得戴机丢人",
-      "不想被同事知道"
-    ],
-    "drivers": [
-      "社交尊严",
-      "体面外观",
-      "入门价"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「消除打呼丢人的羞耻感」上的任务（我卡在被数据击穿侥幸），尤其是自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「被数据击穿侥幸」，得再想想。",
-      "reject": "推广没解开我真正卡点（被数据击穿侥幸 / 自己打呼被室友录音嘲笑，想体面地解决，又不想闹得人尽皆知…），不太信。",
-      "na": "跟我现在的任务「消除打呼丢人的羞耻感」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "宿舍/合租尴尬",
-      "job_id": "J6",
-      "job_owner": "本人",
-      "core_job": "消除打呼丢人的羞耻感",
-      "job_statement": "当打呼让我在社交中丢脸、被疏远时，我需要恢复体面和社交尊严，又不显得过度在意。",
-      "current_step": "被数据击穿侥幸",
-      "desired_outcomes": [
-        {
-          "id": "O1",
-          "importance": 10,
-          "satisfaction": 2
-        },
-        {
-          "id": "O5",
-          "importance": 7,
-          "satisfaction": 4
-        }
-      ],
-      "forces": {
-        "push": [
-          "A11"
-        ],
-        "pull": [
-          "B6"
-        ],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "shame_self"
-    ]
-  },
-  {
-    "id": "P28",
-    "name": "陈女士（乙）",
-    "emoji": "👩",
-    "segment": "长期照护型",
-    "role": "子女(为父母)",
-    "subject": "父亲(重症)",
-    "age": 48,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "会计",
-    "family": "父亲患渐冻症，需夜间呼吸支持",
-    "income": "家庭月入约1.8万",
-    "osa": {
-      "severity": "重度",
-      "ahi": "35",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "父亲需要夜间呼吸支持，这是保命设备，不能省。",
-      "fear": "最怕机器失灵或没人指导，危及他的生命。",
-      "decision_logic": "选医疗级、售后上门、能远程监护的方案。",
-      "price_sensitivity": 2,
-      "brand_anchor": "医院指定机型",
-      "channel_preference": "医院渠道",
-      "quote": "能多陪一天，就值。"
-    },
-    "dominant_features": [
-      {
-        "code": "A10",
-        "weight": 10
-      },
-      {
-        "code": "B3",
-        "weight": 8
-      },
-      {
-        "code": "B7",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 0,
-      "A2": 1,
-      "A3": 2,
-      "A4": 2,
-      "A5": 0,
-      "A6": 1,
-      "A7": 0,
-      "A8": 2,
-      "A9": 2,
-      "A10": 10,
-      "A11": 2,
-      "B1": 0,
-      "B2": 0,
-      "B3": 8,
-      "B4": 0,
-      "B5": 2,
-      "B6": 1,
-      "B7": 6,
-      "B8": 0,
-      "B9": 1,
-      "B10": 2,
-      "B11": 1
-    },
-    "blockers": [
-      "设备可靠性要求极高",
-      "长期维护成本"
-    ],
-    "drivers": [
-      "呼吸支持",
-      "远程照护",
-      "售后上门"
-    ],
-    "decision_style": "理性",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「维持呼吸功能保住生命（重症）」上的任务（我卡在坚持每天戴），尤其是父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「坚持每天戴」，得再想想。",
-      "reject": "推广没解开我真正卡点（坚持每天戴 / 父亲渐冻症需要夜间呼吸支持，这是保命设备，不能省。…），不太信。",
-      "na": "跟我现在的任务「维持呼吸功能保住生命（重症）」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "ALS/渐冻症",
-      "job_id": "J4",
-      "job_owner": "子女",
-      "core_job": "维持呼吸功能保住生命（重症）",
-      "job_statement": "当呼吸肌无力威胁到我的生命时，我需要可靠的呼吸支持来维持肺功能、避免呼吸衰竭，争取更多时间。",
-      "current_step": "坚持每天戴",
-      "desired_outcomes": [
-        {
-          "id": "O7",
-          "importance": 7,
-          "satisfaction": 2
-        },
-        {
-          "id": "O9",
-          "importance": 10,
-          "satisfaction": 3
-        }
-      ],
-      "forces": {
-        "push": [
-          "A10"
-        ],
-        "pull": [],
-        "anxiety": [
-          "B3",
-          "B7"
-        ],
-        "habit_or_alternative": []
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "als_caregiver"
-    ]
-  },
-  {
-    "id": "P29",
-    "name": "黄姐",
-    "emoji": "👩",
-    "segment": "经济受限型",
-    "role": "家人推动者(伴侣)",
-    "subject": "丈夫(患者)",
-    "age": 47,
-    "gender": "女",
-    "city": "二线城市",
-    "occupation": "幼儿园老师",
-    "family": "丈夫打鼾+一子",
-    "income": "家庭月入约1.4万",
-    "osa": {
-      "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
-    },
-    "mindset": {
-      "core_motive": "老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。",
-      "fear": "怕贪便宜买到翻新机，更怕隐藏费用超预算。",
-      "decision_logic": "先算总账（机器+面罩+耗材），有补贴或试用才敢下单。",
-      "price_sensitivity": 9,
-      "brand_anchor": "国产也行，只要靠谱",
-      "channel_preference": "京东自营或二手平台比价",
-      "quote": "不是不买，是每一分钱都得花在刀刃上。"
-    },
-    "dominant_features": [
-      {
-        "code": "A1",
-        "weight": 9
-      },
-      {
-        "code": "B8",
-        "weight": 7
-      },
-      {
-        "code": "A9",
-        "weight": 6
-      }
-    ],
-    "factor_weights": {
-      "A1": 9,
-      "A2": 2,
-      "A3": 2,
-      "A4": 0,
-      "A5": 0,
-      "A6": 1,
-      "A7": 2,
-      "A8": 0,
-      "A9": 6,
-      "A10": 0,
-      "A11": 0,
-      "B1": 2,
-      "B2": 2,
-      "B3": 1,
-      "B4": 2,
-      "B5": 1,
-      "B6": 2,
-      "B7": 2,
-      "B8": 7,
-      "B9": 1,
-      "B10": 2,
-      "B11": 1
-    },
-    "blockers": [
-      "总预算有限",
-      "怕后续耗材贵"
-    ],
-    "drivers": [
-      "国补/优惠",
-      "二手或租赁入门",
-      "关系危机"
-    ],
-    "decision_style": "谨慎",
-    "react": {
-      "advance": "听到{{topic}}，这正好推进我在「修复/维系亲密关系」上的任务（我卡在预算内选对），尤其是老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「预算内选对」，得再想想。",
-      "reject": "推广没解开我真正卡点（预算内选对 / 老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。…），不太信。",
-      "na": "跟我现在的任务「修复/维系亲密关系」关系不大。"
-    },
-    "jtbd": {
-      "entry_situation": "关系冲突/濒临破裂",
-      "job_id": "J5",
-      "job_owner": "伴侣",
-      "core_job": "修复/维系亲密关系",
-      "job_statement": "当伴侣的打鼾长期破坏我的睡眠、情绪和关系时，我需要帮助我们恢复安静且能持续的夜间生活，又不让照护变成冲突。",
-      "current_step": "预算内选对",
-      "desired_outcomes": [
-        {
-          "id": "O6",
-          "importance": 9,
-          "satisfaction": 2
-        },
-        {
-          "id": "O4",
-          "importance": 10,
-          "satisfaction": 3
-        },
-        {
-          "id": "O8",
-          "importance": 8,
-          "satisfaction": 6
-        }
-      ],
-      "forces": {
-        "push": [
-          "A1"
-        ],
-        "pull": [
-          "A7"
-        ],
-        "anxiety": [
-          "B8"
-        ],
-        "habit_or_alternative": [
-          "A9"
-        ]
-      }
-    },
-    "evidence_refs": [
-      "synthetic",
-      "spouse_shopkeeper"
-    ]
-  },
-  {
-    "id": "P30",
-    "name": "老周",
-    "emoji": "👴",
+    "id": "P06",
+    "name": "程远",
+    "emoji": "😮‍💨",
     "segment": "依从挣扎型",
     "role": "本人",
     "subject": "本人",
-    "age": 65,
+    "age": 38,
     "gender": "男",
-    "city": "四线城市",
-    "occupation": "退休司机",
-    "family": "与老伴同住",
-    "income": "退休金约4千",
+    "city": "洛阳",
+    "occupation": "电商运营主管",
+    "family": "与父母同住，三代同堂，妻子是中学教师，女儿5岁",
+    "income": "月入1.2万，家庭月入2万+",
     "osa": {
       "severity": "中度",
-      "ahi": "22",
-      "diagnosed": false,
-      "stage": "察觉"
+      "ahi": "22.5",
+      "diagnosed": true,
+      "stage": "适应"
     },
     "mindset": {
-      "core_motive": "以前买过一台，面罩勒得难受就闲置了，想再试更合适的。",
-      "fear": "怕又是买了落灰，浪费儿女的钱。",
-      "decision_logic": "必须试戴成功+有人跟进售后，否则不买。",
+      "core_motive": "我已经确诊了中度睡眠呼吸暂停，必须把呼吸机用起来，不想让父母和妻子再为我担心，更不想让这个机器变成浪费钱的摆设。",
+      "fear": "怕戴上面罩像戴了个猪鼻子，在媳妇面前很狼狈，更怕半夜漏气把自己吓醒，最后还是坚持不下去，被全家人说‘早就知道你会这样’。",
+      "decision_logic": "既然买了，就得想办法用起来。我信实测数据，也信身边用过的朋友。但要是售后没人管、面罩不合适没人调，我肯定得炸。",
       "price_sensitivity": 6,
-      "brand_anchor": "无所谓品牌，舒服第一",
-      "channel_preference": "能上门调试的门店",
-      "quote": "不是不想戴，是上次那面罩真要命。"
+      "brand_anchor": "进口瑞思迈，但看看国产性价比高的，只要别让我三天两头修",
+      "channel_preference": "京东自营+本地睡眠中心线下试戴，售后要有真人对接",
+      "quote": "我这人最怕的就是‘坚持’俩字，但为了晚上能睡个整觉，为了我闺女不被他爷爷的呼噜吵醒，我得咬牙把它戴住。"
     },
     "dominant_features": [
       {
@@ -3606,67 +643,60 @@
       }
     ],
     "factor_weights": {
-      "A1": 0,
-      "A2": 0,
-      "A3": 2,
-      "A4": 0,
-      "A5": 2,
-      "A6": 0,
-      "A7": 2,
-      "A8": 0,
-      "A9": 2,
-      "A10": 0,
-      "A11": 1,
-      "B1": 1,
       "B2": 9,
-      "B3": 8,
       "B4": 7,
-      "B5": 1,
-      "B6": 1,
-      "B7": 2,
+      "B3": 8,
+      "B11": 8,
+      "A1": 6,
+      "A2": 0,
+      "A3": 0,
+      "A4": 0,
+      "A5": 0,
+      "A6": 0,
+      "A7": 0,
+      "A8": 0,
+      "A9": 0,
+      "A10": 0,
+      "A11": 0,
+      "B1": 0,
+      "B5": 0,
+      "B6": 0,
+      "B7": 0,
       "B8": 0,
-      "B9": 2,
-      "B10": 2,
-      "B11": 0
+      "B9": 0,
+      "B10": 0
     },
-    "blockers": [
-      "之前戴过不舒服",
-      "面罩漏气"
-    ],
-    "drivers": [
-      "先试后买",
-      "面罩适配",
-      "售后保障"
-    ],
-    "decision_style": "谨慎",
+    "blockers": [],
+    "drivers": [],
+    "decision_style": "理性",
     "react": {
-      "advance": "听到{{topic}}，这正好推进我在「恢复连续无扰的睡眠」上的任务（我卡在解决面罩适配），尤其是以前买过一台，面罩勒得难受就闲置了，想再试更合适的。…想深入了解。",
-      "hesitate": "{{topic}}有点相关，但我还卡在「解决面罩适配」，得再想想。",
-      "reject": "推广没解开我真正卡点（解决面罩适配 / 以前买过一台，面罩勒得难受就闲置了，想再试更合适的。…），不太信。",
-      "na": "跟我现在的任务「恢复连续无扰的睡眠」关系不大。"
+      "advance": "如果你能帮我解决面罩漏气的问题，比如寄个鼻枕试用装，或者告诉我怎么调整头带，我就愿意再试一周。{{topic}}",
+      "hesitate": "我怕又是那种‘七天无理由’但退货流程繁琐，客服找不到人的套路。",
+      "reject": "别跟我扯什么‘坚持就是胜利’，你要是能让我戴上一夜不漏气，我就服你。",
+      "na": ""
     },
     "jtbd": {
-      "entry_situation": "睡眠碎片化",
+      "entry_situation": "确诊后买了呼吸机，但用了两周，每晚还是会因为面罩漏气醒两三次，白天照样犯困，家里人都盯着我看效果。",
       "job_id": "J1",
       "job_owner": "本人",
-      "core_job": "恢复连续无扰的睡眠",
-      "job_statement": "当我整夜被鼾声和憋醒打断、第二天疲惫不堪时，我需要恢复连续、安静的睡眠，让自己和家人睡个整觉。",
+      "core_job": "解决面罩适配问题，让自己能戴着它睡整觉，证明这钱没白花。",
+      "job_statement": "当我整夜因为面罩漏气、勒得疼而反复醒来，白天还是没精神时，我需要找到不漏气、不压脸的面罩，让自己能真正适应呼吸机，睡个连续觉。",
       "current_step": "解决面罩适配",
       "desired_outcomes": [
         {
           "id": "O3",
           "importance": 10,
-          "satisfaction": 1
+          "satisfaction": 2
         },
         {
           "id": "O8",
-          "importance": 8,
-          "satisfaction": 4
+          "importance": 9,
+          "satisfaction": 3
         },
         {
           "id": "O7",
-          "importance": 6,
-          "satisfaction": 5
+          "importance": 8,
+          "satisfaction": 4
         }
       ],
       "forces": {
@@ -3683,8 +713,490 @@
       }
     },
     "evidence_refs": [
-      "synthetic",
-      "retiree_struggle"
+      "llm_generated",
+      "synthetic"
+    ]
+  },
+  {
+    "id": "P07",
+    "name": "马丽",
+    "emoji": "🧗‍♀️",
+    "segment": "场景干扰型",
+    "role": "本人",
+    "subject": "本人",
+    "age": 34,
+    "gender": "女",
+    "city": "宜昌",
+    "occupation": "连锁药妆店区域督导",
+    "family": "已婚5年，丈夫是高中体育老师，两人和三岁的女儿同住",
+    "income": "家庭年收入约20万（个人月薪8000+丈夫6000+年终奖）",
+    "osa": {
+      "severity": "疑似中度",
+      "ahi": "—",
+      "diagnosed": false,
+      "stage": "察觉"
+    },
+    "mindset": {
+      "core_motive": "不想再因为打呼被同事调侃，更不想让老公和女儿觉得我有病，得悄无声息地把这个问题解决掉",
+      "fear": "怕自己一个人去睡眠科检查会被人用异样眼光看，更怕戴上呼吸机后变成同事嘴里那种'半死不活'的人",
+      "decision_logic": "先自己搞清楚到底是不是病，能不能用别的方式改善，如果非要买，要找一个看起来不像医疗设备的方案，最好是能让我偷偷用起来的",
+      "price_sensitivity": 7,
+      "brand_anchor": "不知道哪个牌子好，朋友说瑞思迈是天花板，但价格让我不敢看，国产的又怕效果不行",
+      "channel_preference": "不想在实体店试，怕被熟人撞见。更想在网上匿名咨询，如果真要买，倾向于线上旗舰店或者能匿名收货的渠道",
+      "quote": "我前两天刷到一条视频，说打呼噜是病，不是睡得香。我当时就在想，我是不是得趁着还没被录下来，赶紧想个办法。"
+    },
+    "dominant_features": [
+      {
+        "code": "A11",
+        "weight": 9
+      },
+      {
+        "code": "B8",
+        "weight": 8
+      },
+      {
+        "code": "B6",
+        "weight": 7
+      }
+    ],
+    "factor_weights": {
+      "A11": 9,
+      "B8": 8,
+      "B6": 7,
+      "B3": 6,
+      "B11": 6,
+      "A1": 0,
+      "A2": 0,
+      "A3": 0,
+      "A4": 0,
+      "A5": 0,
+      "A6": 0,
+      "A7": 0,
+      "A8": 0,
+      "A9": 0,
+      "A10": 0,
+      "B1": 0,
+      "B2": 0,
+      "B4": 0,
+      "B5": 0,
+      "B7": 0,
+      "B9": 0,
+      "B10": 0
+    },
+    "blockers": [
+      "担心去医院做睡眠监测太麻烦，而且在医院过夜感觉像重症病人",
+      "觉得呼吸机是老年人才用的东西，自己戴上去会很滑稽",
+      "担心买了之后如果戴不习惯，几千块就浪费了"
+    ],
+    "drivers": [
+      "上周公司outing，同组的小年轻在帐篷里学我打呼噜，当时恨不得找个地缝钻进去",
+      "老公虽然没明说，但最近老是说'你白天累不累啊，晚上睡得好沉'，感觉在暗示我",
+      "自己刷到短视频说女性打呼噜跟更年期、内分泌有关系，越看越心慌"
+    ],
+    "decision_style": "偏好匿名研究后的理性购买",
+    "react": {
+      "advance": "如果{{topic}}能让我看到一个真实的、看起来跟我差不多的女生案例，而且机器外形不笨重、噪音小，我可能会愿意偷偷了解一下",
+      "hesitate": "如果{{topic}}上来就让我去医院或者直接推荐大机器，我会觉得有点小题大做，再看看",
+      "reject": "如果{{topic}}把打呼噜和猝死绑得太紧，或者让我感觉像得了绝症，我会直接关掉页面",
+      "na": "对{{topic}}没什么感觉，这跟我现在遇到的问题好像不太一样"
+    },
+    "jtbd": {
+      "entry_situation": "公司outing被同事学打呼噜，加上老公暗示性询问",
+      "job_id": "J6",
+      "job_owner": "本人",
+      "core_job": "消除打呼丢人的羞耻感",
+      "job_statement": "当打呼让我在社交中丢脸、被疏远时，我需要恢复体面和社交尊严，又不显得过度在意。",
+      "current_step": "被数据击穿侥幸",
+      "desired_outcomes": [
+        {
+          "id": "O10",
+          "importance": 10,
+          "satisfaction": 2
+        },
+        {
+          "id": "O8",
+          "importance": 9,
+          "satisfaction": 3
+        },
+        {
+          "id": "O3",
+          "importance": 8,
+          "satisfaction": 4
+        }
+      ],
+      "forces": {
+        "push": [
+          "A11"
+        ],
+        "pull": [
+          "B6"
+        ],
+        "anxiety": [
+          "B8"
+        ],
+        "habit_or_alternative": []
+      }
+    },
+    "evidence_refs": [
+      "llm_generated",
+      "synthetic"
+    ]
+  },
+  {
+    "id": "P08",
+    "name": "郑国良",
+    "emoji": "👨‍⚕️",
+    "segment": "健康焦虑自用型",
+    "role": "本人",
+    "subject": "本人",
+    "age": 54,
+    "gender": "男",
+    "city": "河南周口（四线）",
+    "occupation": "县民政局办公室主任",
+    "family": "与82岁母亲同住，妻子在邻县银行工作周末回家，儿子在郑州读大学，三代同堂但妻子常不在家",
+    "income": "家庭年收入约15万（含妻子工资），本人月薪6000出头",
+    "osa": {
+      "severity": "中度",
+      "ahi": "AHI 32.7",
+      "diagnosed": true,
+      "stage": "就医确诊"
+    },
+    "mindset": {
+      "core_motive": "我心脏放过支架，医生说睡眠呼吸暂停会让血压更难控制、心脏更累。我这人一辈子认真，有了病就得正经治，不能糊弄。",
+      "fear": "最怕花了钱、戴了不舒服，最后坚持不下来，钱打了水漂，病也没管住。更怕万一哪天夜里一口气没上来，白发老母、没毕业的儿子可怎么办。",
+      "decision_logic": "先在本地医院把数据弄扎实，再找熟人打听哪个品牌售后靠谱。机器必须能导出详细报告，我要自己看得懂、能核对，不能只听卖货的说。",
+      "price_sensitivity": 7,
+      "brand_anchor": "瑞思迈是进口老牌子，但价格高；鱼跃是国产大牌，县医院有售后点，我倾向国产带数据管理功能的。",
+      "channel_preference": "优先县医院呼吸科医生推荐或官方授权店，一定要有正规发票和本地维修点，绝不买水货。",
+      "quote": "我这岁数，不求多舒服，但求能坚持十年。数据骗不了人，能看见效果我才舍得掏钱。"
+    },
+    "dominant_features": [
+      {
+        "code": "A6",
+        "weight": 9
+      },
+      {
+        "code": "B2",
+        "weight": 8
+      },
+      {
+        "code": "B7",
+        "weight": 8
+      }
+    ],
+    "factor_weights": {
+      "A6": 9,
+      "B2": 8,
+      "B7": 8,
+      "A3": 7,
+      "B3": 7,
+      "B8": 6,
+      "B5": 6,
+      "B1": 5,
+      "A1": 0,
+      "A2": 0,
+      "A4": 0,
+      "A5": 0,
+      "A7": 0,
+      "A8": 0,
+      "A9": 0,
+      "A10": 0,
+      "A11": 0,
+      "B4": 0,
+      "B6": 0,
+      "B9": 0,
+      "B10": 0,
+      "B11": 0
+    },
+    "blockers": [
+      "对呼吸机工作原理不了解，怕戴了难受",
+      "担心县里没有专业调试人员，调不好参数等于白买",
+      "怕自己坚持不下来，浪费八九千块钱"
+    ],
+    "drivers": [
+      "心脏支架史和血压控制不好的事实",
+      "医生明确说必须用，否则心脏风险持续存在",
+      "母亲年迈、儿子未立业，自己不能倒下"
+    ],
+    "decision_style": "理性",
+    "react": {
+      "advance": "如果{{topic}}能让我先在县医院试用一两晚，或者提供免费试戴，而且报告能在我手机上看懂，我就很愿意深入了解。",
+      "hesitate": "{{topic}}要是没有本地售后点，或者面罩不舒服得反复买耗材，我就得再考虑考虑。",
+      "reject": "{{topic}}要是只跟我说多好多好，却拿不出真实的使用数据报告，或者渠道不正规，那我宁愿不买也不能冒险。",
+      "na": "我不太看重外观小巧，毕竟放在床头柜，实用比好看重要。"
+    },
+    "jtbd": {
+      "entry_situation": "高血压多年，心脏放过支架，睡眠监测确诊中度阻塞性睡眠呼吸暂停（AHI 32.7），医生警告与心脏风险直接相关",
+      "job_id": "J3",
+      "job_owner": "本人",
+      "core_job": "建立一项能长期坚持的夜间呼吸管理方式，控制好血压和心脏风险，给家人一个安心",
+      "job_statement": "当我确认 OSA 可能加重我的高血压和心脏负担时，我需要一台能真实改善数据、又不会让我半途而废的呼吸机，以确保我能有把握地管理自己的健康。",
+      "current_step": "搞懂呼吸机",
+      "desired_outcomes": [
+        {
+          "id": "O2",
+          "importance": 10,
+          "satisfaction": 2
+        },
+        {
+          "id": "O3",
+          "importance": 9,
+          "satisfaction": 4
+        },
+        {
+          "id": "O7",
+          "importance": 8,
+          "satisfaction": 3
+        }
+      ],
+      "forces": {
+        "push": [
+          "A6"
+        ],
+        "pull": [],
+        "anxiety": [
+          "B2",
+          "B7"
+        ],
+        "habit_or_alternative": []
+      }
+    },
+    "evidence_refs": [
+      "llm_generated",
+      "synthetic"
+    ]
+  },
+  {
+    "id": "P09",
+    "name": "老罗",
+    "emoji": "🧢",
+    "segment": "长期照护型",
+    "role": "子女(为父母)",
+    "subject": "父亲(患者)",
+    "age": 42,
+    "gender": "男",
+    "city": "江西赣州",
+    "occupation": "经营一家五金建材店",
+    "family": "老婆、两个女儿（一个6岁、一个3岁）、父亲罗大爷（68岁，独居在郊区的老房子，确诊中度睡眠呼吸暂停）",
+    "income": "月入约1.5万，但手头紧，二孩开销大",
+    "osa": {
+      "severity": "中度",
+      "ahi": "23",
+      "diagnosed": true,
+      "stage": "就医确诊"
+    },
+    "mindset": {
+      "core_motive": "尽孝不能老用催的，想找到我爸能心甘情愿戴上的办法。",
+      "fear": "我爸要是哪天晚上一口气没上来，我没在跟前，后悔都来不及。",
+      "decision_logic": "不怕花钱，就怕花了钱老爷子不配合，最后放着落灰还惹他生气。得找那种服务好、能有人上门教、老人容易适应的。",
+      "price_sensitivity": 7,
+      "brand_anchor": "进口的瑞思迈、飞利浦是好，但价格有点吓人，国产品牌又怕质量不靠谱，心里没底。",
+      "channel_preference": "信任医院旁边的医疗器械店，或者官方旗舰店，得有实体服务点才放心。",
+      "quote": "我爸脾气倔，你说啥他都当耳旁风，可要是他自个儿觉得好，不用你催他自个儿就戴上了。"
+    },
+    "dominant_features": [
+      {
+        "code": "A8",
+        "weight": 9
+      },
+      {
+        "code": "B3",
+        "weight": 8
+      },
+      {
+        "code": "B7",
+        "weight": 7
+      }
+    ],
+    "factor_weights": {
+      "A8": 9,
+      "B3": 8,
+      "B7": 7,
+      "A1": 0,
+      "A2": 0,
+      "A3": 0,
+      "A4": 0,
+      "A5": 0,
+      "A6": 0,
+      "A7": 0,
+      "A9": 0,
+      "A10": 0,
+      "A11": 0,
+      "B1": 0,
+      "B2": 0,
+      "B4": 0,
+      "B5": 0,
+      "B6": 0,
+      "B8": 0,
+      "B9": 0,
+      "B10": 0,
+      "B11": 0
+    },
+    "blockers": [],
+    "drivers": [],
+    "decision_style": "理性中带点急躁",
+    "react": {
+      "advance": "提到呼吸机，我第一反应是得让我爸先试戴，店里能模拟睡觉最好。得有人告诉我这玩意儿戴上去啥感觉，我才能放心让他试。{{topic}}",
+      "hesitate": "你说那机器能不能管用我不知道，但我最怕的是买回去他嫌麻烦不戴，那几千块就白扔了。而且镇上那些卖医疗器械的，也不知道靠不靠谱，坏了找谁修？",
+      "reject": "那种没有实体店、纯网上卖的，我是不敢碰。万一出了毛病，连个人影都找不着。我爸的事，不能光图便宜，得图个踏实。",
+      "na": ""
+    },
+    "jtbd": {
+      "entry_situation": "老人健康担忧",
+      "job_id": "J7",
+      "job_owner": "子女",
+      "core_job": "履行对亲人的照护责任（孝道）",
+      "job_statement": "当我担心父亲因打鼾/呼吸问题睡不好、出健康风险时，我需要为他找到能坚持使用的方案，尽到照护责任。",
+      "current_step": "搞懂呼吸机",
+      "desired_outcomes": [
+        {
+          "id": "O5",
+          "importance": 10,
+          "satisfaction": 3
+        },
+        {
+          "id": "O7",
+          "importance": 8,
+          "satisfaction": 4
+        },
+        {
+          "id": "O1",
+          "importance": 9,
+          "satisfaction": 6
+        }
+      ],
+      "forces": {
+        "push": [
+          "A8"
+        ],
+        "pull": [],
+        "anxiety": [
+          "B3",
+          "B7"
+        ],
+        "habit_or_alternative": []
+      }
+    },
+    "evidence_refs": [
+      "llm_generated",
+      "synthetic"
+    ]
+  },
+  {
+    "id": "P10",
+    "name": "方敏",
+    "emoji": "👩‍💼",
+    "segment": "场景干扰型",
+    "role": "本人(室友影响)",
+    "subject": "本人(受室友影响)",
+    "age": 36,
+    "gender": "女",
+    "city": "武汉",
+    "occupation": "银行信贷主管",
+    "family": "合租，室友打鼾严重影响夜间睡眠",
+    "income": "家庭年收入约45万",
+    "osa": {
+      "severity": "未确诊",
+      "ahi": "—",
+      "diagnosed": false,
+      "stage": "未察觉"
+    },
+    "mindset": {
+      "core_motive": "我太想睡一个不被室友鼾声打断的整觉了，我甚至愿意为此尝试任何看起来靠谱的东西。",
+      "fear": "怕自己身体已经出了大问题自己还不知道，更怕花了大几千块买回来一台噪音很大的机器，结果更睡不着；也怕管室友的事撕破脸，合租日子更难过。",
+      "decision_logic": "对价格不算特别敏感，但极其厌恶风险和不确定性。我需要看到医院或权威机构给出的明确证据，再加上身边真实用户的成功案例，才敢迈出下一步。最好能先免费试用，感觉有效果再说。",
+      "price_sensitivity": 5,
+      "brand_anchor": "瑞思迈、飞利浦是公认的国际大牌，品质应该可靠，但价格确实贵；国产的又担心技术不过关。",
+      "channel_preference": "只信三甲医院呼吸科和大型连锁医疗器械店，其次是官方旗舰店，海淘代购绝对不考虑。",
+      "quote": "我白天开会时脑子就像一团浆糊，但我还得装出一副精神饱满的样子。晚上被室友鼾声反复吵醒，我已经受够了。"
+    },
+    "dominant_features": [
+      {
+        "code": "A1",
+        "weight": 9
+      },
+      {
+        "code": "A4",
+        "weight": 8
+      },
+      {
+        "code": "B8",
+        "weight": 7
+      }
+    ],
+    "factor_weights": {
+      "A1": 9,
+      "A4": 8,
+      "B8": 7,
+      "B4": 7,
+      "A2": 0,
+      "A3": 0,
+      "A5": 0,
+      "A6": 0,
+      "A7": 0,
+      "A8": 0,
+      "A9": 0,
+      "A10": 0,
+      "A11": 0,
+      "B1": 0,
+      "B2": 0,
+      "B3": 0,
+      "B5": 0,
+      "B6": 0,
+      "B7": 0,
+      "B9": 0,
+      "B10": 0,
+      "B11": 0
+    },
+    "blockers": [],
+    "drivers": [],
+    "decision_style": "理性",
+    "react": {
+      "advance": "如果{{topic}}能解决我夜里被室友鼾声反复吵醒、白天开会犯困的问题，并且有足够的医学证据支持，我非常愿意认真了解一下，甚至可以立刻约室友一起去做睡眠筛查。",
+      "hesitate": "免费试用听起来很吸引我，但我担心试用期太短，根本看不出真实效果，或者试用设备是旧的、有问题的，反而会误导我的判断，让我错过最佳治疗时机。",
+      "reject": "如果这东西需要我每天花大量时间去维护、清洗，或者动静很大影响室友休息、把合租关系搞僵，那再好的效果我可能也坚持不下来。我买它是为了省心，不是给自己增加负担。",
+      "na": "这跟我被室友吵醒、想睡整觉的问题好像不太搭。"
+    },
+    "jtbd": {
+      "entry_situation": "合租室友鼾声严重，夜间睡眠被反复打断",
+      "job_id": "J1",
+      "job_owner": "本人",
+      "core_job": "恢复连续无扰的睡眠",
+      "job_statement": "当合租室友鼾声如雷、整夜把我吵醒，导致白天精神恍惚时，我需要找到一个能恢复连续、安稳睡眠的方法——推动室友筛查或自己先搞清状况——让自己能重新充满精力地工作。",
+      "current_step": "搞清楚是不是病",
+      "desired_outcomes": [
+        {
+          "id": "O1",
+          "importance": 9,
+          "satisfaction": 2
+        },
+        {
+          "id": "O3",
+          "importance": 8,
+          "satisfaction": 4
+        },
+        {
+          "id": "O6",
+          "importance": 7,
+          "satisfaction": 5
+        }
+      ],
+      "forces": {
+        "push": [
+          "A1"
+        ],
+        "pull": [
+          "B4"
+        ],
+        "anxiety": [
+          "B8"
+        ],
+        "habit_or_alternative": []
+      }
+    },
+    "evidence_refs": [
+      "llm_generated",
+      "synthetic"
     ]
   }
 ]

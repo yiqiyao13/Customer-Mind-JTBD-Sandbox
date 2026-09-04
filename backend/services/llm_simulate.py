@@ -7,17 +7,16 @@ from typing import Any, Dict, List, Optional
 
 from config import get_model_name, llm_configured
 from schemas import Factor, Persona, SimulateResult
-from services.job_store import load_outcomes
+from services.job_store import load_outcomes, resolve_step_name
 from services.llm import _client
 from services.memory import get_memory_context
-from services.simulate import decide_for, identify_factors
+from services.simulate import decide_for, identify_factors, _required_outcome
 
 
 def _required_outcome_brief(persona: Persona) -> str:
-    dos = persona.jtbd.desired_outcomes
-    if not dos:
+    req = _required_outcome(persona)
+    if not req:
         return "无"
-    req = min(dos, key=lambda d: (d.satisfaction / max(d.importance, 1), -d.importance))
     outcomes = {o.id: o.name for o in load_outcomes()}
     return f"{req.id} {outcomes.get(req.id, '')}（重要{req.importance}/满意{req.satisfaction}）"
 
@@ -80,13 +79,16 @@ def _build_simulate_prompt(
 3. **禁止**空泛说「有点相关」「得再想想」而不点名自己的 Job/障碍。
 4. reaction 必须出现：① 自己的身份或家庭关系 ② 当前卡点或关键 Outcome 顾虑 ③ 对这句话里**对自己有用/没用**的一点的具体判断。
 5. 不同人关注点必须不同：伴侣推动者谈分房/催促冲突；子女谈老人配合；本人谈嗜睡/丢人/数据；重症谈保命可靠——不要人人都只谈「怕买了浪费」。
-6. 若关键 Outcome 未解决 → 不要判 advance；可 hesitate/reject，并说清还缺什么。
-7. reasoning 用内心独白，写「我卡在…，这句话只解决了…，没解决…」，不要写成营销分析报告。
+6. 若**关键 Outcome**未解决 → 不要判 advance；可 hesitate/reject，并说清还缺什么。
+7. 若规则引擎已判 advance，且你认可关键缺口已被话术回应 → 保持 advance，不要无脑降成 hesitate。
+8. 意愿分必须贴合文案：若你写「光说没用/没碰我的卡点」→ willingness ≤4，decision 不得为 advance。
+9. reasoning 用内心独白，写「我卡在…，这句话只解决了…，没解决…」，不要写成营销分析报告。
 
 【口吻示例（仅示意差异，勿照抄）】
 - 伴侣型：「他再这样我真要搬次卧了……义诊可以，可面罩合不合适你们说清楚没有？」
 - 子女型：「我妈认死理，医生说她才肯动。远程教不会的话我买了也白搭。」
 - 司机本人：「开会打瞌睡差点出事。试用可以，但别跟我绕弯讲情怀，总价和耗材说清楚。」
+- 专业验证：「补贴进口我听过，但算法口径和报告能不能对上临床？对不上我不会动。」
 
 【输出】只输出一个 JSON 对象：
 {{
@@ -97,7 +99,7 @@ def _build_simulate_prompt(
   "willingness": 1,
   "outcome_improved": ["O3"],
   "unresolved_outcomes": ["O8"],
-  "next_step": "当前或下一步子任务中文名"
+  "next_step": "当前或下一步子任务中文名（禁止填字母 id）"
 }}
 """
 
@@ -132,6 +134,11 @@ def _looks_positive(text: str) -> bool:
     return any(m in (text or "") for m in markers)
 
 
+def _looks_negative(text: str) -> bool:
+    markers = ("没用", "光说", "没碰", "别跟我", "不对口", "不相关", "跑题", "听着抵触", "不会往下")
+    return any(m in (text or "") for m in markers)
+
+
 def _sanitize_llm_result(
     *,
     decision: str,
@@ -147,17 +154,39 @@ def _sanitize_llm_result(
     rule_improved: List[str],
     rule_unresolved: List[str],
     rule_next: str,
+    required_id: str = "",
 ) -> tuple[str, int, str, str, List[str], List[str], str]:
-    """对齐意愿分/标签/字段，消除自相矛盾。"""
+    """对齐意愿分/标签/字段，消除自相矛盾；双向门控避免一面倒犹豫。"""
     # 1) improved ∩ unresolved 互斥：优先保留 improved
     improved = list(dict.fromkeys(improved))
     unresolved = [x for x in dict.fromkeys(unresolved) if x not in set(improved)]
     if not improved and not unresolved:
         improved, unresolved = list(rule_improved), list(rule_unresolved)
 
-    # 2) 关键 Outcome 门控：规则判不能推进时，LLM 不得硬判 advance
+    rule_core_ok = (not required_id) or (required_id in set(rule_improved))
+    llm_core_ok = (not required_id) or (required_id in set(improved))
+
+    # 2a) 单向：规则不能推进时，LLM 不得硬 advance
     if rule_decision in ("hesitate", "reject", "na") and decision == "advance":
         decision = rule_decision
+
+    # 2b) 反向：规则已推进且关键缺口已回应时，禁止 LLM 无脑降成 hesitate
+    if (
+        rule_decision == "advance"
+        and decision == "hesitate"
+        and rule_core_ok
+        and not _looks_negative(reaction)
+    ):
+        decision = "advance"
+        if required_id and required_id not in improved:
+            improved = list(dict.fromkeys([*improved, required_id]))
+            unresolved = [x for x in unresolved if x != required_id]
+
+    # 2c) 文案强烈否定时，不得维持高意愿 advance
+    if _looks_negative(reaction) or _looks_negative(reasoning):
+        if decision == "advance" and not llm_core_ok:
+            decision = "hesitate"
+        willingness = min(int(willingness), 4)
 
     # 3) 意愿分与标签绑定（统一阈值，避免同分不同标签）
     bands = {
@@ -168,9 +197,12 @@ def _sanitize_llm_result(
     }
     lo, hi = bands.get(decision, (1, 10))
     willingness = max(lo, min(hi, int(willingness)))
-    # 与规则分靠近，降低同人两次大跳
-    willingness = int(round((willingness * 0.4) + (rule_w * 0.6)))
+    # 与规则分靠近，但保留 LLM 文案带来的下调空间
+    blend = 0.55 if decision == rule_decision else 0.35
+    willingness = int(round((willingness * (1 - blend)) + (rule_w * blend)))
     willingness = max(lo, min(hi, willingness))
+    if _looks_negative(reaction):
+        willingness = min(willingness, 4 if decision != "reject" else 2)
 
     # 4) 文案与意愿不得打架
     if willingness <= 2 and _looks_positive(reaction):
@@ -270,12 +302,14 @@ def _simulate_one_sync(
     improved = [str(x) for x in raw.get("outcome_improved", [])] or list(rule_improved)
     unresolved = [str(x) for x in raw.get("unresolved_outcomes", [])] or list(rule_unresolved)
     next_step = str(raw.get("next_step") or rule_next or persona.jtbd.current_step)
+    next_step = resolve_step_name(next_step, persona.jtbd.job_id)
 
     try:
         willingness = int(raw.get("willingness", rule_w or 5))
     except (TypeError, ValueError):
         willingness = rule_w or 5
 
+    req = _required_outcome(persona)
     decision, willingness, reaction, reasoning, improved, unresolved, next_step = _sanitize_llm_result(
         decision=decision,
         willingness=willingness,
@@ -290,6 +324,7 @@ def _simulate_one_sync(
         rule_improved=rule_improved,
         rule_unresolved=rule_unresolved,
         rule_next=rule_next,
+        required_id=(req.id if req else ""),
     )
 
     # 去掉业务界面不该出现的内部编码

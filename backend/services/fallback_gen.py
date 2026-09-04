@@ -111,6 +111,7 @@ EXTRA_SEEDS: List[Dict] = [
     {"name": "郑工", "emoji": "🧑‍🔧", "gender": "男", "age_range": (38, 48), "city": "二线城市", "occupation": "机电工程师", "income": "个人月入约1.5万", "family": "已婚"},
     {"name": "小马", "emoji": "👨", "gender": "男", "age_range": (30, 38), "city": "一线城市", "occupation": "外卖站长", "income": "个人月入约9千", "family": "合租"},
     {"name": "邓先生", "emoji": "👨‍💼", "gender": "男", "age_range": (44, 54), "city": "一线城市", "occupation": "公务员", "income": "家庭月入约2.2万", "family": "已婚一子"},
+    {"name": "魏师傅", "emoji": "🚛", "gender": "男", "age_range": (45, 55), "city": "三线城市", "occupation": "长途货车司机", "income": "个人月入约9千", "family": "已婚；常年跑长途"},
     {"name": "周姐", "emoji": "👩‍💼", "gender": "女", "age_range": (35, 45), "city": "一线城市", "occupation": "行政主管", "income": "个人月入约1.3万", "family": "已婚"},
     {"name": "小薇", "emoji": "🧑", "gender": "女", "age_range": (26, 33), "city": "一线城市", "occupation": "平面设计师", "income": "个人月入约1.4万", "family": "独居"},
     # —— 老人自用 ——
@@ -233,22 +234,60 @@ def _seed_fit_score(arch: Dict, seed: Dict) -> int:
     else:
         score += 5
 
+    # 经济受限·司机叙事：优先体力/驾驶岗，公务员等体制岗降权（避免「耽误跑活」套公务员）
+    if arch.get("key") == "trucker_self":
+        if _occ_matches(occ, ["司机", "驾驶", "外卖", "快递", "货车", "货运"]):
+            score += 35
+        elif _occ_matches(occ, ["工厂", "班长", "工人", "保安", "物业"]):
+            score += 20
+        elif _occ_matches(occ, ["公务员", "事业编", "医生", "律师", "经理", "工程师", "教师"]):
+            score -= 35
+
+    # 专业医生叙事：优先医护
+    if arch.get("key") == "doctor_self":
+        if _occ_matches(occ, ["医生", "医师", "呼吸", "临床"]):
+            score += 40
+        elif _occ_matches(occ, ["护士", "药师", "医技"]):
+            score += 15
+        elif _occ_matches(occ, ["司机", "外卖", "保安"]):
+            score -= 30
+
     preferred = SEED_BY_NAME.get(arch.get("seed_name", ""))
     if preferred:
         score -= _seed_age_distance(seed, preferred) // 3
     return score
 
 
-def _unique_clone_name(base_name: str, used_names: set) -> str:
-    """避免「小徐2」脏数据感：用城市后缀或乙丙丁。"""
-    for mark in ("乙", "丙", "丁", "戊", "己", "庚", "辛"):
-        cand = f"{base_name}（{mark}）"
+def _unique_clone_name(base_name: str, used_names: set, gender: str = "女") -> str:
+    """姓名耗尽时换全新人名，避免「刘女士（乙）」这种一眼假的复制感。"""
+    pool = _FRESH_NAMES.get(gender) or _FRESH_NAMES["女"]
+    for cand in pool:
+        if cand not in used_names:
+            return cand
+    # 仍冲突时用城市+辈分，不用「（乙）」
+    for mark in ("杭", "蓉", "汉", "宁", "苏", "深", "厦", "青"):
+        cand = f"{base_name[0]}{mark}姐" if gender == "女" else f"{base_name[0]}{mark}哥"
         if cand not in used_names:
             return cand
     n = 2
     while f"{base_name}·{n}" in used_names:
         n += 1
     return f"{base_name}·{n}"
+
+
+# 克隆时的全新人名池（按性别），优先于此而非「（乙）」后缀
+_FRESH_NAMES: Dict[str, List[str]] = {
+    "女": [
+        "方姐", "蒋女士", "卢姐", "丁女士", "钟姐", "蔡女士", "戴姐", "夏女士",
+        "田姐", "任女士", "姜姐", "白女士", "秦姐", "邹女士", "喻姐", "邵女士",
+        "常姐", "武女士", "乔姐", "贺女士", "安姐", "叶女士", "龚姐", "严女士",
+    ],
+    "男": [
+        "冯工", "谭先生", "严先生", "贺先生", "龚先生", "薛先生", "侯先生", "龙先生",
+        "段先生", "雷先生", "钱工", "易先生", "卞先生", "成先生", "康先生", "施先生",
+        "孔先生", "邵工", "汪先生", "傅先生", "戴工", "方先生", "任先生", "姜先生",
+    ],
+}
 
 
 def _pick_unique_seed(
@@ -279,7 +318,7 @@ def _pick_unique_seed(
             (s for s in PERSONA_SEEDS if s["gender"] == gender), PERSONA_SEEDS[0]
         )
         seed = dict(base)
-        seed["name"] = _unique_clone_name(base["name"], used_names)
+        seed["name"] = _unique_clone_name(base["name"], used_names, gender=gender)
         used_names.add(seed["name"])
         return seed
 
@@ -294,7 +333,7 @@ def _pick_unique_seed(
         elif _arch_kind(arch) in ("filial", "als_care", "spouse", "nurse_care") and primary:
             # 无合适备选时克隆主种子人口学，绝不硬套老人/错性别故事
             seed = dict(primary)
-            seed["name"] = _unique_clone_name(primary["name"], used_names)
+            seed["name"] = _unique_clone_name(primary["name"], used_names, gender=gender)
         else:
             seed = dict(scored[0])
     else:
@@ -374,11 +413,330 @@ def _align_role_subject_family(arch: Dict, seed: Dict) -> tuple[str, str, str]:
     return role, subject, family
 
 
+def _he_to_she(text: str) -> str:
+    """伴侣叙事：丈夫→妻子（粗粒度代词替换，仅用于 subject 为妻子时）。"""
+    if not text:
+        return text
+    out = text
+    for a, b in (
+        ("丈夫", "妻子"),
+        ("老公", "老婆"),
+        ("他戴", "她戴"),
+        ("他愿", "她愿"),
+        ("他坚", "她坚"),
+        ("他放", "她放"),
+        ("买了他", "买了她"),
+        ("让他", "让她"),
+        ("帮他", "帮她"),
+        ("盯他", "盯她"),
+        ("催他", "催她"),
+        ("承认", "承认"),  # noop keep
+    ):
+        if a != b:
+            out = out.replace(a, b)
+    # 剩余「他」在短句里易误伤，只替换常见模式
+    out = out.replace("他愿意", "她愿意").replace("他不", "她不")
+    return out
+
+
+# 同原型复用时的措辞变体（至少动机/恐惧/quote 不同，避免市场部一眼看出「复制粘贴」）
+STORY_VARIANTS: Dict[str, List[Dict]] = {
+    "spouse_pusher_liu": [
+        {
+            "core_motive": "夜里被鼾声吵醒已经成常态，孩子也睡不好，我想先帮他找能试戴的方案。",
+            "fear": "怕催急了吵架，更怕买回来两周就扔抽屉里。",
+            "quote": "分房不是办法，得找一台他真能戴住的。",
+            "decision_logic": "先试戴再说价格，面罩不合适其他免谈。",
+            "blockers": ["他嘴上答应行动慢", "怕家里说我乱花钱"],
+            "drivers": ["全家睡眠", "试戴门槛", "面罩合不合适"],
+        },
+        {
+            "core_motive": "朋友圈里好几个家庭都因打鼾闹分房，我不想走到那一步，得主动帮他选。",
+            "fear": "最怕选错型号，他更有借口说「看吧没用」。",
+            "quote": "我要的不是最贵，是他肯每晚戴。",
+            "blockers": ["他觉得「又没病」", "售后能不能上门不清楚"],
+            "drivers": ["关系危机预警", "医院同款", "先试后买"],
+        },
+        {
+            "core_motive": "孩子抱怨爸爸打鼾吵，我夹在中间，想尽快找到他肯配合的入门方案。",
+            "fear": "怕家庭会议变成互相指责。",
+            "quote": "先让他愿意试一周，比吵一百次有用。",
+            "blockers": ["他爱面子不愿就医", "预算要全家商量"],
+            "drivers": ["亲子睡眠", "低冲突沟通", "试用"],
+        },
+        {
+            "core_motive": "我自己熬夜查了面罩漏气和适应期，想帮他避开「买了就闲置」的坑。",
+            "fear": "怕适配跟进断掉，他又偷偷不戴。",
+            "quote": "适配服务不到位，我宁可不买。",
+            "blockers": ["适配耗时", "他出差多"],
+            "drivers": ["上门适配", "静音", "可退换"],
+        },
+        {
+            "core_motive": "亲戚劝我们分房，我觉得太伤感情，想用设备把问题就地解决。",
+            "fear": "怕买贵被说败家，更怕无效。",
+            "quote": "钱可以商量，睡眠和关系不能再耗。",
+            "blockers": ["公婆意见不一致", "价格敏感"],
+            "drivers": ["关系修复", "性价比", "试戴"],
+        },
+    ],
+    "spouse_shopkeeper": [
+        {
+            "core_motive": "全家被鼾声拖垮，可这个月流水紧，只能先看补贴和总价清楚的方案。",
+            "fear": "怕分期陷阱和耗材越用越贵。",
+            "quote": "想治，也得活下去——账要算明白。",
+            "blockers": ["现金流紧", "怕隐藏费用"],
+            "drivers": ["国补/满减", "总账透明", "可退可换"],
+        },
+        {
+            "core_motive": "店里生意一般，家里又因打鼾天天吵，得找一台入门级但不翻新的。",
+            "fear": "贪便宜买到问题机，钱和感情两头亏。",
+            "quote": "不是抠，是真不敢再踩坑。",
+        },
+    ],
+    "spouse_lin": [
+        {
+            "core_motive": "他睡着会突然憋气坐起来，我吓得不敢合眼，得尽快推动筛查。",
+            "fear": "怕拖出大问题，也怕他死活不肯戴。",
+            "quote": "这不是吵不吵架的事，是安全。",
+            "blockers": ["他否认严重性", "夜里照顾精力不够"],
+            "drivers": ["窒息恐惧", "尽快确诊", "面罩舒适"],
+        },
+    ],
+    "young_pm": [
+        {
+            "core_motive": "智能手表连续报警低血氧，我对照论文越看越慌，想先搞清要不要上机。",
+            "fear": "怕自己吓自己，也怕被不规范渠道割韭菜。",
+            "quote": "数据在那儿摆着，装看不见更难受。",
+            "blockers": ["还没多导报告", "品牌参数看不懂"],
+            "drivers": ["可穿戴预警", "权威解读", "数据透明"],
+        },
+        {
+            "core_motive": "体检附带睡眠问卷全是红灯，我开始怀疑白天嗜睡不是『太累』那么简单。",
+            "fear": "怕延误，也怕一步买贵用不住。",
+            "quote": "先确诊，再谈型号——别被种草带着跑。",
+        },
+        {
+            "core_motive": "刷到好多猝死案例，手表血氧又偏低，我想尽快做个靠谱筛查。",
+            "fear": "怕信息过载选错机构。",
+            "quote": "先把不确定性降下来。",
+        },
+    ],
+    "trucker_self": [
+        {
+            "core_motive": "高速上打盹过一次就后怕，新机太贵，想先租或看靠谱二手。",
+            "fear": "怕花大钱半途而废，影响养家。",
+            "quote": "命重要，钱也得够用到下个月。",
+        },
+        {
+            "core_motive": "夜间跑长途靠浓茶撑，知道不是长久办法，但预算卡得很死。",
+            "fear": "怕设备贵又麻烦，耽误接单。",
+            "quote": "有低门槛方案我才敢试。",
+        },
+    ],
+    "exec_self": [
+        {
+            "core_motive": "董事会上差点睡着太丢人，体检也写了重度，必须有便携方案。",
+            "fear": "怕出差酒店不方便用，更怕噪音影响同住人。",
+            "quote": "工作和健康我都想保住面子。",
+        },
+        {
+            "core_motive": "白天决策质量下降，同事都看出来了，得尽快把睡眠问题按住。",
+            "fear": "怕选错便携机，机场安检也麻烦。",
+            "quote": "旗舰可以，但不能拖后腿。",
+        },
+        {
+            "core_motive": "体检报告写着重度OSA，开会打盹已经影响晋升评价，得马上处理。",
+            "fear": "怕治疗影响出差节奏。",
+            "quote": "效率掉了，职场代价比机器贵。",
+        },
+        {
+            "core_motive": "国际航班上打鼾被投诉过，我想要静音便携、不丢人的方案。",
+            "fear": "怕设备外观太医疗感。",
+            "quote": "要治，也要体面。",
+        },
+    ],
+    "retiree_struggle": [
+        {
+            "core_motive": "以前那台面罩勒得慌，戴三天就闲置，这次得先解决『戴得住』。",
+            "fear": "怕再买一台继续吃灰，儿女埋怨。",
+            "quote": "不是不听话，是真戴不住。",
+        },
+        {
+            "core_motive": "旧机漏气吵得老伴也睡不着，我想换但更怕又选错面罩。",
+            "fear": "怕售后教不会，自己摆弄不来。",
+            "quote": "先让我试戴舒服，再谈别的。",
+        },
+    ],
+    "shame_self": [
+        {
+            "core_motive": "被同事玩笑『打呼交响乐』，我想低调把问题解决掉。",
+            "fear": "怕戴机被看见，笑话升级。",
+            "quote": "能匿名买、外观不显眼最好。",
+        },
+        {
+            "core_motive": "对象说分房睡是因为鼾声，我又气又丢脸，想体面地治。",
+            "fear": "怕治疗过程更尴尬。",
+            "quote": "要治，但别搞得尽人皆知。",
+        },
+    ],
+    "doctor_self": [
+        {
+            "core_motive": "AHI 和血氧曲线我看得懂；纠结的是哪家报告口径能对上临床。",
+            "fear": "怕消费级算法吹过头，疗效无法复核。",
+            "quote": "我挑证据链，不挑广告词。",
+        },
+        {
+            "core_motive": "作为从业者更在意报告完整性和算法口径，而不是被焦虑推着下单。",
+            "fear": "怕买到无法复核疗效的消费级玩具。",
+            "quote": "证据链闭环，我才签字。",
+        },
+    ],
+    "roommate_young": [
+        {
+            "core_motive": "合租墙薄，室友鼾声穿透耳塞，我连续熬夜影响上班。",
+            "fear": "怕开口撕破脸，也怕查完发现两人都有问题。",
+            "quote": "先把觉睡回来，关系以后再说。",
+        },
+        {
+            "core_motive": "换过耳塞白噪音都没用，我想推动室友筛查，自己也排查一下。",
+            "fear": "预算紧，不想一次扛两个人的开销。",
+            "quote": "低门槛筛查比吵架强。",
+        },
+    ],
+    "filial_daughter": [
+        {
+            "core_motive": "妈有高血压还打鼾憋气，我想陪诊把关，别让照护变成天天催。",
+            "fear": "怕买回去落灰，更怕伤母女感情。",
+            "quote": "合适比贵重要，她戴得住才算孝。",
+        },
+        {
+            "core_motive": "母亲总说「没事」，但我听到憋气声就心慌，想找温和推进的方案。",
+            "fear": "怕一催就顶嘴，关系更僵。",
+            "quote": "得让她觉得是为她好，不是我在管她。",
+        },
+    ],
+    "filial_son": [
+        {
+            "core_motive": "爸在老家，体检提示睡眠呼吸问题，我得远程把设备和售后安排妥当。",
+            "fear": "怕电话里催急了顶牛，也怕没人教他开机。",
+            "quote": "远程能指导，我才敢下单。",
+        },
+        {
+            "core_motive": "两地奔波顾不上，父亲打鼾越来越重，我想先把医院渠道和上门服务锁定。",
+            "fear": "怕买了没人跟进，钱和关心都落空。",
+            "quote": "售后上门比我周末跑一趟靠谱。",
+        },
+    ],
+    "nurse_caregiver": [
+        {
+            "core_motive": "我懂呼吸机原理，难的是排班+带娃，没时间反复跑店试面罩。",
+            "fear": "怕渠道不正规，或适配跟进断掉他又摘。",
+            "quote": "给我可靠渠道和上门适配，比讲课有用。",
+        },
+        {
+            "core_motive": "临床我见得多，回家却没精力盯他适应期，需要门店把适配流程扛住。",
+            "fear": "怕自己懂行反而被随便打发。",
+            "quote": "别跟我玩话术，给我可执行的适配计划。",
+        },
+    ],
+    "elderly_self": [
+        {
+            "core_motive": "医生和儿子都说打鼾要管，我答应了，但怕机器太复杂。",
+            "fear": "怕给儿女添乱，也怕学不会。",
+            "quote": "简单、有人教，我才敢用。",
+        },
+        {
+            "core_motive": "老伴嫌我打鼾，儿女也催，我想治但不想摆弄一堆按钮。",
+            "fear": "怕说明书看不懂。",
+            "quote": "一键就用，最好有人上门教一次。",
+        },
+    ],
+    "als_caregiver": [
+        {
+            "core_motive": "家里有重症呼吸支持需求，机器可靠性是底线，不能赌。",
+            "fear": "怕半夜报警没人会处理。",
+            "quote": "医疗级+上门，别的以后再说。",
+        },
+        {
+            "core_motive": "长辈离不开夜间呼吸支持，我更在意断电保护和远程监护能不能接上。",
+            "fear": "怕售后响应慢，黄金几分钟没人来。",
+            "quote": "保命设备，渠道必须医院级。",
+        },
+        {
+            "core_motive": "照护重症亲人，我要的是稳定供氧和有人教应急，不是花哨功能。",
+            "fear": "怕自己操作失误。",
+            "quote": "培训和上门比品牌广告重要。",
+        },
+    ],
+}
+
+
+def _apply_story_variant(
+    arch: Dict,
+    ms: Dict,
+    blockers: List[str],
+    drivers: List[str],
+    reuse_idx: int,
+) -> tuple[Dict, List[str], List[str]]:
+    """reuse_idx=0 用原型原文；>0 换措辞变体。变体用尽后仍强制加区分尾巴。"""
+    if reuse_idx <= 0:
+        return ms, blockers, drivers
+    variants = STORY_VARIANTS.get(arch.get("key", "")) or []
+    ms = dict(ms)
+    if variants:
+        v = variants[(reuse_idx - 1) % len(variants)]
+        for k in ("core_motive", "fear", "quote", "decision_logic"):
+            if v.get(k):
+                ms[k] = v[k]
+        if v.get("blockers"):
+            blockers = list(v["blockers"])
+        if v.get("drivers"):
+            drivers = list(v["drivers"])
+    # 变体表用尽（或无表）时必须改写，避免第 2、第 3 人拿到同一句
+    n_var = len(variants)
+    if not variants or reuse_idx > n_var:
+        tags = (
+            "先问清适配与售后",
+            "先算清总账再动手",
+            "先确认对方肯试",
+            "先看数据能不能核对",
+            "先解决戴得住这件事",
+            "先找低冲突的沟通方式",
+        )
+        tag = tags[(reuse_idx - 1) % len(tags)]
+        base = (ms.get("core_motive") or "").rstrip("。")
+        # 去掉可能已有的同款尾巴再拼，避免叠罗汉
+        for t in tags:
+            if base.endswith(f"——{t}"):
+                base = base[: -len(f"——{t}")].rstrip("。")
+        ms["core_motive"] = f"{base}——{tag}。"
+        fear = (ms.get("fear") or "").rstrip("。")
+        if fear and f"侧重点{reuse_idx}" not in fear:
+            ms["fear"] = f"{fear}（侧重点{reuse_idx + 1}）。"
+    return ms, blockers, drivers
+
+
+def _effective_reuse_idx(arch: Dict, seed: Dict, reuse_idx: int) -> int:
+    """非种子本人 / 克隆名，至少按第 2 套叙事处理，杜绝「换皮同文案」。"""
+    name = seed.get("name") or ""
+    if name != arch.get("seed_name"):
+        return max(reuse_idx, 1)
+    if any(x in name for x in ("（", "(", "·")):
+        return max(reuse_idx, 1)
+    return reuse_idx
+
+
 def _adapt_story_to_seed(
-    arch: Dict, seed: Dict, *, subject: str, family: str
+    arch: Dict,
+    seed: Dict,
+    *,
+    subject: str,
+    family: str,
+    reuse_idx: int = 0,
 ) -> tuple[Dict, List[str], List[str]]:
     """
-    原型复用换姓名后，按新人口学 + 对齐后的 subject/family 改写文案。
+    原型复用换姓名后，按新人口学改写文案；同 key 第 2+ 次强制措辞差异化。
+    注意：不可把所有伴侣原型都压成「刘女士」同一句动机。
     """
     ms = dict(arch["mindset"])
     blockers = list(arch.get("blockers") or [])
@@ -388,26 +746,21 @@ def _adapt_story_to_seed(
     age = _age_mid(seed)
     kind = _arch_kind(arch)
 
-    if seed["name"] == arch.get("seed_name") and family == seed.get("family"):
-        # 原装种子且家庭未改写
+    # 原装种子且未复用：保留原型；若 reuse>0 仍要换变体
+    if (
+        seed["name"] == arch.get("seed_name")
+        and family == seed.get("family")
+        and reuse_idx == 0
+    ):
         return ms, blockers, drivers
 
     if kind == "spouse":
+        # 只做性别对齐，保留各 key 自己的动机骨架（spouse_lin / shopkeeper 不再被刘女士句覆盖）
         if "妻子" in subject:
-            ms["core_motive"] = (
-                "妻子鼾声越来越大，我们快要分房睡了，得帮她选一台能试戴、面罩合适的机器。"
-            )
-            ms["fear"] = "最怕买了她戴不住，家里人更埋怨我瞎折腾。"
-            ms["quote"] = "我不是不想买，是得先让她愿意戴，别又白花钱。"
-            ms["decision_logic"] = "先确认她愿意试，再比面罩和售后，价格要在家庭预算内。"
-            blockers = ["妻子怕戴不住就放弃", "担心买贵被说乱花钱"]
-            drivers = ["分房压力", "先试后买", "面罩适配"]
-        else:
-            ms["core_motive"] = (
-                "丈夫鼾声越来越大，我们快要分房睡了，得帮他选一台能试戴、面罩合适的机器。"
-            )
-            if "开支紧" in (arch.get("mindset") or {}).get("core_motive", "") or key == "spouse_shopkeeper":
-                ms["core_motive"] = "老公打鼾全家睡不好，但家里开支紧，得找性价比高的方案。"
+            for field in ("core_motive", "fear", "quote", "decision_logic"):
+                ms[field] = _he_to_she(ms.get(field, ""))
+            blockers = [_he_to_she(b) for b in blockers]
+            drivers = list(drivers)
 
     elif kind in ("filial", "als_care"):
         parent = "母亲" if "母" in subject else "父亲"
@@ -420,17 +773,28 @@ def _adapt_story_to_seed(
             blockers = ["设备可靠性要求极高", "长期维护成本"]
             drivers = ["呼吸支持", "远程照护", "售后上门"]
         else:
-            ms["core_motive"] = (
-                f"{parent}有睡眠呼吸问题，我作为子女得帮{pronoun}把关，别把照护变成催促冲突。"
-            )
+            # 保留原型骨架，仅替换父母称呼
+            base_m = ms.get("core_motive", "")
+            if "母亲" in base_m or "父亲" in base_m:
+                ms["core_motive"] = (
+                    base_m.replace("母亲", parent).replace("父亲", parent)
+                    .replace("她", pronoun).replace("他", pronoun)
+                )
+            else:
+                ms["core_motive"] = (
+                    f"{parent}有睡眠呼吸问题，我作为子女得帮{pronoun}把关，别把照护变成催促冲突。"
+                )
             ms["fear"] = f"怕催得太紧伤感情，也怕买了没人教{pronoun}用。"
-            ms["quote"] = "孝心不是买最贵，是买能坚持用的。"
-            blockers = [f"{parent}可能不愿戴", "两地奔波或时间不够"]
-            drivers = ["孝心", "售后上门", "医院渠道"]
+            if parent == "母亲":
+                ms["quote"] = ms.get("quote") or "给妈买东西，合适比便宜重要。"
+            else:
+                ms["quote"] = "孝心不是买最贵，是买他能坚持用的。"
 
     elif key == "trucker_self":
-        if _occ_matches(occ, ["司机", "驾驶", "外卖", "快递"]):
+        if _occ_matches(occ, ["司机", "驾驶", "外卖", "快递", "货车", "货运"]):
             ms["core_motive"] = "开车犯困太危险，但新机太贵，想看看二手或租赁。"
+            ms["fear"] = "怕花大钱买了用不住，耽误跑活。"
+            ms["quote"] = "我知道要重视，可也得看兜里有多少。"
             blockers = ["跑活赚钱紧", "觉得戴机麻烦"]
             drivers = ["白天嗜睡安全", "二手低门槛", "价格敏感"]
         elif _occ_matches(occ, ["工厂", "班长", "工人", "保安", "物业", "机电"]):
@@ -445,8 +809,18 @@ def _adapt_story_to_seed(
             ms["quote"] = "老了更怕摔，可也不敢乱花儿女的钱。"
             blockers = ["退休金有限", "操作怕复杂"]
             drivers = ["白天安全", "二手低门槛", "子女帮忙"]
+        elif _occ_matches(occ, ["公务员", "事业", "行政", "文员", "人事", "公务员"]):
+            # 体制/办公室：禁用「跑活」话术
+            ms["core_motive"] = f"白天开会犯困影响履职（我是{occ}），但家庭预算要精打细算，想先看性价比方案。"
+            ms["fear"] = "怕花了钱坚持不了，也怕单位同事知道我在治这个。"
+            ms["quote"] = "知道要重视，可也得把总账算清楚再买。"
+            ms["decision_logic"] = "总价透明、能试用、外观低调优先。"
+            blockers = ["家庭预算要盘算", "不想张扬", "觉得戴机麻烦"]
+            drivers = ["白天精神/考评", "性价比", "低调购机"]
         else:
             ms["core_motive"] = f"白天犯困太危险（我是{occ}），但新机太贵，想看看二手或租赁。"
+            ms["fear"] = "怕投入打水漂，影响家里开销。"
+            ms["quote"] = "我知道要重视，可也得看手里还有多少余地。"
             blockers = ["预算紧", "觉得戴机麻烦"]
 
     elif key == "shame_self":
@@ -465,9 +839,9 @@ def _adapt_story_to_seed(
 
     elif key == "roommate_young":
         if "合租" in family or age < 36:
-            pass
+            pass  # 保留原型合租叙事
         elif age >= 50:
-            ms["core_motive"] = "老伴/同住人鼾声如雷，我整夜睡不着，想推动对方去筛查或自己想办法睡好。"
+            ms["core_motive"] = "同住人鼾声如雷，我整夜睡不着，想推动对方去筛查或自己想办法睡好。"
             ms["fear"] = "怕开口伤感情，也怕查了发现两人都要治。"
             blockers = ["预算有限", "不确定该不该硬推对方"]
             drivers = ["同住打鼾", "睡眠被影响", "价格"]
@@ -481,10 +855,20 @@ def _adapt_story_to_seed(
             ms["quote"] = "不怕花钱，怕不会用、坚持不了。"
 
     elif key == "exec_self":
-        if not _occ_matches(occ, ["管理", "经理", "主管", "公务员", "销售"]):
+        if not _occ_matches(occ, ["管理", "经理", "主管", "公务员", "销售", "项目"]):
             ms["core_motive"] = f"白天犯困影响工作（{occ}），体检也提示睡眠问题，必须解决。"
 
+    elif key == "doctor_self":
+        if not _occ_matches(occ, ["医生", "医师", "呼吸", "临床"]):
+            ms["core_motive"] = (
+                f"我自己指标不低（职业：{occ}），更在意哪套数据和报告能验证疗效，而不是被焦虑推着买。"
+            )
+            ms["fear"] = "怕设备数据不准，无法评估有没有效果。"
+            ms["quote"] = "我要的是可核对的证据，不是吓自己的故事。"
+
+    ms, blockers, drivers = _apply_story_variant(arch, ms, blockers, drivers, reuse_idx)
     return ms, blockers, drivers
+
 
 def _factor_map(factors: List[Factor]) -> Dict[str, Factor]:
     return {f.id: f for f in factors}
@@ -531,18 +915,18 @@ def _build_factor_weights(
     return weights
 
 
-def _react_from_archetype(arch: Dict, primary_name: str) -> ReactTemplates:
+def _react_from_archetype(arch: Dict, primary_name: str, motive: str = "") -> ReactTemplates:
     job = get_job((arch.get("jtbd") or {}).get("job_id", ""))
     job_label = job.name if job else arch.get("segment", "这件事")
     step_id = (arch.get("jtbd") or {}).get("current_step_id", "")
     sub_map = {s.id: s for s in load_sub_jobs()}
     step = sub_map[step_id].name if step_id in sub_map else "当前步骤"
-    # 用动机短句，避免把维度名（可能含「室友」）原样塞进所有人的反应模板
-    motive = ((arch.get("mindset") or {}).get("core_motive") or primary_name)[:28]
+    # 用已适配的动机短句，避免复用时仍露出原型种子原文
+    bit = (motive or (arch.get("mindset") or {}).get("core_motive") or primary_name)[:28]
     return ReactTemplates(
-        advance=f"听到{{{{topic}}}}，这正好推进我在「{job_label}」上的任务（我卡在{step}），尤其是{motive}…想深入了解。",
+        advance=f"听到{{{{topic}}}}，这正好推进我在「{job_label}」上的任务（我卡在{step}），尤其是{bit}…想深入了解。",
         hesitate=f"{{{{topic}}}}有点相关，但我还卡在「{step}」，得再想想。",
-        reject=f"推广没解开我真正卡点（{step} / {motive}…），不太信。",
+        reject=f"推广没解开我真正卡点（{step} / {bit}…），不太信。",
         na=f"跟我现在的任务「{job_label}」关系不大。",
     )
 
@@ -576,6 +960,7 @@ _OUTCOME_FACTOR_HINTS: Dict[str, List[str]] = {
     "O7": ["B3", "B7"],
     "O8": ["B11", "A9", "B4"],
     "O9": ["A10"],
+    "O10": ["A11", "B6"],
 }
 
 # 阶段越靠前，诊断/确认类越不满意；越靠后，适配/售后类越突出
@@ -733,6 +1118,9 @@ def _persona_from_archetype(
     index: int,
     factors: List[Factor],
     used_names: set,
+    *,
+    reuse_idx: int = 0,
+    used_motives: Optional[set] = None,
 ) -> Persona:
     seed_name = arch["seed_name"]
     preferred = SEED_BY_NAME.get(seed_name) or PERSONA_SEEDS[index % len(PERSONA_SEEDS)]
@@ -748,12 +1136,36 @@ def _persona_from_archetype(
     if _arch_kind(arch) in ("filial", "als_care") and age_lo >= 55:
         age_lo, age_hi = 34, 48
 
+    try_idx = _effective_reuse_idx(arch, seed, reuse_idx)
     ms, blockers, drivers = _adapt_story_to_seed(
-        arch, seed, subject=subject, family=family
+        arch, seed, subject=subject, family=family, reuse_idx=try_idx
     )
+    # 同批动机撞车时再换一档变体
+    if used_motives is not None:
+        guard = 0
+        while ms.get("core_motive") in used_motives and guard < 10:
+            try_idx += 1
+            ms, blockers, drivers = _adapt_story_to_seed(
+                arch, seed, subject=subject, family=family, reuse_idx=try_idx
+            )
+            guard += 1
+        if ms.get("core_motive") in used_motives:
+            ms = dict(ms)
+            ms["core_motive"] = (
+                (ms.get("core_motive") or "").rstrip("。")
+                + f"——按{seed['name']}自家情况再比一比。"
+            )
+            ms["fear"] = ((ms.get("fear") or "").rstrip("。") + f"（{seed['name']}版）。")
+            if ms.get("quote"):
+                ms["quote"] = (ms["quote"].rstrip("。") + f"（{seed['name']}）")
+        used_motives.add(ms.get("core_motive", ""))
+
+    # 公务员等误挂到经济受限时，segment 文案可保留但叙事已在 adapt 纠正
+    segment = arch["segment"]
+
     dom = _dominant_from_archetype(arch, factors, role=role, subject=subject)
     primary_name = dom[0].name if dom else "这件事"
-    jtbd = _build_jtbd(arch, salt=f"{seed['name']}|{index}|{family}")
+    jtbd = _build_jtbd(arch, salt=f"{seed['name']}|{index}|{family}|{try_idx}")
     # job_owner 与角色对齐
     if _arch_kind(arch) in ("filial", "als_care"):
         jtbd.job_owner = "子女"
@@ -764,7 +1176,7 @@ def _persona_from_archetype(
         id=_persona_id(index + 1),
         name=seed["name"],
         emoji=seed["emoji"],
-        segment=arch["segment"],
+        segment=segment,
         role=role,
         subject=subject,
         age=random.randint(age_lo, age_hi),
@@ -782,7 +1194,7 @@ def _persona_from_archetype(
         blockers=blockers,
         drivers=drivers,
         decision_style=arch["decision_style"],
-        react=_react_from_archetype(arch, primary_name),
+        react=_react_from_archetype(arch, primary_name, motive=ms.get("core_motive", "")),
         jtbd=jtbd,
         evidence_refs=["synthetic", arch.get("key", "archetype")],
     )
@@ -816,7 +1228,21 @@ def generate_personas_fallback(
     )
     archetypes = archetypes[:count]
     used_names: set = set()
-    return [
-        _persona_from_archetype(arch, i, factors, used_names)
-        for i, arch in enumerate(archetypes)
-    ]
+    used_motives: set = set()
+    key_seen: Dict[str, int] = {}
+    out: List[Persona] = []
+    for i, arch in enumerate(archetypes):
+        k = arch.get("key", "")
+        reuse_idx = key_seen.get(k, 0)
+        key_seen[k] = reuse_idx + 1
+        out.append(
+            _persona_from_archetype(
+                arch,
+                i,
+                factors,
+                used_names,
+                reuse_idx=reuse_idx,
+                used_motives=used_motives,
+            )
+        )
+    return out

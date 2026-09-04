@@ -4,9 +4,16 @@ import json
 from datetime import datetime
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
-from schemas import PersonaEvolution, SimulateRequest, SimulateResponse, VerificationRequest
+from schemas import (
+    ExportCampaignRequest,
+    PersonaEvolution,
+    SimulateRequest,
+    SimulateResponse,
+    VerificationRequest,
+)
+from services.export_campaign import build_campaign_workbook
 from services.factor_store import load_factors_db
 from services.llm_simulate import simulate_campaign_llm
 from services.memory import (
@@ -18,7 +25,7 @@ from services.memory import (
     reset_evolution,
     reset_persona_journey,
 )
-from services.persona_store import get_persona_by_id, get_personas, set_personas
+from services.persona_store import get_persona_by_id, get_personas, personas_write_meta, set_personas
 from services.simulate import simulate_campaign
 
 router = APIRouter(prefix="/api", tags=["personas", "simulate"])
@@ -29,11 +36,57 @@ def list_personas():
     return get_personas()
 
 
+@router.post("/personas/reload")
+def reload_personas_from_disk():
+    """强制从 data/personas.json 重新加载（排查内存与磁盘不一致）。"""
+    from services.persona_store import load_persisted_personas, personas_write_meta
+
+    personas = load_persisted_personas()
+    meta = personas_write_meta()
+    meta["reloaded"] = True
+    meta["count"] = len(personas)
+    return meta
+
+
+@router.get("/personas/meta")
+def personas_meta():
+    """排查人格库是否被覆盖：最近一次写盘原因与人数。"""
+    return personas_write_meta()
+
+
 @router.get("/personas/{persona_id}/memories", response_model=PersonaEvolution)
 def persona_memories(persona_id: str):
     if not get_persona_by_id(persona_id):
         raise HTTPException(status_code=404, detail="心智不存在")
     return list_all_memories(persona_id)
+
+
+@router.post("/export/campaign")
+def export_campaign_excel(req: ExportCampaignRequest):
+    """导出：行动话术 + 结果总览 + 反馈 + 画像 + 关注点矩阵。"""
+    if not req.results:
+        raise HTTPException(status_code=400, detail="暂无测试结果可导出，请先运行 Campaign 测试")
+    personas = get_personas()
+    try:
+        data = build_campaign_workbook(
+            campaign=req.campaign,
+            results=req.results,
+            personas=personas,
+            campaign_hits=req.campaign_hits,
+            interventions=req.interventions,
+            use_llm=req.use_llm,
+            use_memory=req.use_memory,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"导出失败：{e}") from e
+
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"MindSim_Campaign_{stamp}.xlsx"
+    return Response(
+        content=data,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @router.post("/simulate", response_model=SimulateResponse)
@@ -78,7 +131,7 @@ async def run_simulate(req: SimulateRequest):
             persona = persona_map.get(result.persona_id)
             if persona:
                 record_campaign_experience(persona, req.campaign, result)
-        set_personas(list(persona_map.values()))
+        set_personas(list(persona_map.values()), reason="simulate_memory")
 
     return SimulateResponse(
         results=results,
@@ -113,13 +166,7 @@ def reset_all_memories():
     for p in personas:
         reset_persona_journey(p)
     if personas:
-        set_personas(personas)
-    return {
-        "ok": True,
-        "cleared_memories": cleared,
-        "personas_reset": len(personas),
-        "message": f"已清除 {cleared} 条记忆，{len(personas)} 位消费者已恢复 Day 0 状态",
-    }
+        set_personas(personas, reason="memories_reset_all")
 
 
 @router.post("/personas/{persona_id}/memories/reset")
@@ -131,13 +178,7 @@ def reset_persona_memories(persona_id: str):
     cleared = reset_evolution(persona_id)
     reset_persona_journey(persona)
     personas = get_personas()
-    set_personas(personas)
-    return {
-        "ok": True,
-        "persona_id": persona_id,
-        "cleared_memories": cleared,
-        "message": f"已清除 {persona.name} 的 {cleared} 条记忆",
-    }
+    set_personas(personas, reason=f"memories_reset_{persona_id}")
 
 
 @router.get("/memories/export")

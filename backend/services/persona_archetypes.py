@@ -289,7 +289,7 @@ PERSONA_ARCHETYPES: List[Dict] = [
     {
         "key": "doctor_self",
         "seed_name": "周医生",
-        "segment": "健康焦虑自用型",
+        "segment": "专业验证型",
         "role": "本人",
         "subject": "本人",
         "stage": "决策纠结",
@@ -302,8 +302,14 @@ PERSONA_ARCHETYPES: List[Dict] = [
             "job_id": "J3",
             "job_owner": "本人",
             "entry_situation": "最长呼吸暂停数十秒",
-            "current_step_id": "e",
-            "desired_outcome_ids": ["O1", "O2", "O7"],
+            # 专业验证：卡在「核对数据与报告」，不是「预算内选对」
+            "current_step_id": "p",
+            "desired_outcome_ids": ["O2", "O7", "O3"],
+            "outcome_scores": {
+                "O2": {"importance": 10, "satisfaction": 2},
+                "O7": {"importance": 7, "satisfaction": 4},
+                "O3": {"importance": 6, "satisfaction": 5},
+            },
             "forces": {
                 "push": ["A3", "A5"],
                 "pull": ["B1"],
@@ -394,7 +400,7 @@ PERSONA_ARCHETYPES: List[Dict] = [
     {
         "key": "roommate_young",
         "seed_name": "小杨",
-        "segment": "关系驱动型",
+        "segment": "场景干扰型",
         "role": "本人(室友影响)",
         "subject": "本人(受室友影响)",
         "stage": "未察觉",
@@ -431,7 +437,8 @@ PERSONA_ARCHETYPES: List[Dict] = [
         # 真正的 J6：自己打呼丢脸（自用+社交形象，不放进「关系驱动」以免和市场部「伴侣关系」口径打架）
         "key": "shame_self",
         "seed_name": "小徐",
-        "segment": "健康焦虑自用型",
+        # 社交羞耻/合租尴尬：归场景干扰，勿标成健康焦虑（否则与 J6·O10 诉求错位）
+        "segment": "场景干扰型",
         "role": "本人",
         "subject": "本人",
         "stage": "察觉",
@@ -445,7 +452,12 @@ PERSONA_ARCHETYPES: List[Dict] = [
             "job_owner": "本人",
             "entry_situation": "宿舍/合租尴尬",
             "current_step_id": "c",
-            "desired_outcome_ids": ["O1", "O5"],
+            "desired_outcome_ids": ["O10", "O8", "O3"],
+            "outcome_scores": {
+                "O10": {"importance": 10, "satisfaction": 2},
+                "O8": {"importance": 7, "satisfaction": 4},
+                "O3": {"importance": 6, "satisfaction": 5},
+            },
             "forces": {
                 "push": ["A11"],
                 "pull": ["B6"],
@@ -466,7 +478,8 @@ PERSONA_ARCHETYPES: List[Dict] = [
     {
         "key": "elderly_self",
         "seed_name": "赵大爷",
-        "segment": "长期照护型",
+        # 本人自用·共病焦虑，不是照护他人 → 健康焦虑自用型（勿标长期照护）
+        "segment": "健康焦虑自用型",
         "role": "本人",
         "subject": "本人",
         "stage": "就医确诊",
@@ -542,7 +555,10 @@ def pick_archetypes(
     job_ids: Optional[List[str]] = None,
     entry_situations: Optional[List[str]] = None,
 ) -> List[Dict]:
-    """按 Job 轮询选取原型；人数超过原型数时复用（生成层负责换姓名）。"""
+    """选取原型：优先铺满不同 key，再按「原型复用次数 → Job 复用次数」均衡补齐。
+
+    生成层须对复用实例做叙事差异化（同 key 不可复述同一动机句）。
+    """
     import copy
 
     pool = PERSONA_ARCHETYPES[:]
@@ -566,17 +582,18 @@ def pick_archetypes(
     if not pool:
         pool = PERSONA_ARCHETYPES[:]
 
-    by_job: Dict[str, List[Dict]] = {}
-    for a in pool:
-        by_job.setdefault(a.get("jtbd", {}).get("job_id", "Jx"), []).append(a)
-    keys = list(by_job.keys())
     chosen: List[Dict] = []
-    si = 0
+    key_usage: Dict[str, int] = {a["key"]: 0 for a in pool}
+    job_usage: Dict[str, int] = {}
+
     while len(chosen) < count:
-        key = keys[si % len(keys)]
-        bucket = by_job[key]
-        counts = {a["key"]: sum(1 for c in chosen if c.get("key") == a["key"]) for a in bucket}
-        arch = min(bucket, key=lambda a: counts.get(a["key"], 0))
+        def _score(a: Dict) -> tuple:
+            jid = (a.get("jtbd") or {}).get("job_id", "Jx")
+            return (key_usage[a["key"]], job_usage.get(jid, 0), a["key"])
+
+        arch = min(pool, key=_score)
         chosen.append(copy.deepcopy(arch))
-        si += 1
+        key_usage[arch["key"]] += 1
+        jid = (arch.get("jtbd") or {}).get("job_id", "Jx")
+        job_usage[jid] = job_usage.get(jid, 0) + 1
     return chosen[:count]

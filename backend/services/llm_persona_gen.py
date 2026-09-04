@@ -10,11 +10,12 @@ from config import get_api_key, get_base_url, get_model_name, llm_configured
 from openai import OpenAI
 
 from schemas import Factor, Persona
-from services.job_store import load_jobs, load_outcomes, load_sub_jobs
+from services.job_store import load_jobs, load_outcomes, load_sub_jobs, resolve_step_name
 from services.fallback_gen import generate_personas_fallback
 from services.persona_blueprint import archetype_seed_names, build_blueprints
 from services.persona_coherence import (
     fix_persona_coherence,
+    validate_against_blueprint,
     validate_persona,
     validate_persona_uniqueness,
 )
@@ -57,15 +58,33 @@ def _call_llm(client: OpenAI, prompt: str, *, temperature: float, max_tokens: in
     return content
 
 
+def _normalize_current_step(persona: Persona) -> Persona:
+    """LLM 常把 current_step 填成字母 id，统一成中文步骤名。"""
+    persona.jtbd.current_step = resolve_step_name(
+        persona.jtbd.current_step, persona.jtbd.job_id
+    )
+    return persona
+
+
 def _qc_issues(
     persona: Persona,
     factors: List[Factor],
     *,
     used_names: set[str],
+    blueprint=None,
 ) -> List[str]:
     persona = fix_persona_coherence(persona, factors)
+    persona = _normalize_current_step(persona)
     issues = validate_persona(persona, factors)
     issues.extend(validate_persona_uniqueness(persona, used_names=used_names))
+    issues.extend(validate_against_blueprint(persona, blueprint))
+    step = (persona.jtbd.current_step or "").strip()
+    if step and len(step) <= 2 and step.isalpha():
+        issues.append(f"current_step「{step}」仍是字母编码，须改为中文步骤名")
+    names = {s.name for s in load_sub_jobs()}
+    if step and step not in names and resolve_step_name(step, persona.jtbd.job_id) == step:
+        if len(step) <= 4:
+            issues.append(f"current_step「{step}」不在子任务词典中")
     return issues
 
 
@@ -82,15 +101,101 @@ def _hard_issues(issues: List[str]) -> List[str]:
         "预设原型",
         "未知维度",
         "非法",
+        "字母编码",
+        "不在子任务词典",
+        "蓝图",
+        "缺少室友",
     )
     return [i for i in issues if any(m in i for m in hard_markers)]
 
 
 def _normalize_factor_weights(persona: Persona, factors: List[Factor]) -> Persona:
+    """补齐缺失权重，并清洗 LLM 偶发的非法键（如「04」而非「A4」/「B4」）。"""
+    valid = {f.id for f in factors}
+    cleaned: dict[str, int] = {}
+    for code, weight in (persona.factor_weights or {}).items():
+        key = str(code).strip().upper()
+        if key in valid:
+            cleaned[key] = int(weight)
+            continue
+        # 「04」「4」→ 优先映射到主导维度里出现的 A4/B4，否则丢弃
+        m = re.fullmatch(r"0*([1-9]|1[01])", key)
+        if m:
+            n = m.group(1)
+            candidates = [f"A{n}", f"B{n}"]
+            dom = {d.code for d in (persona.dominant_features or [])}
+            hit = next((c for c in candidates if c in dom and c in valid), None)
+            if not hit:
+                hit = next((c for c in candidates if c in valid), None)
+            if hit:
+                cleaned[hit] = max(cleaned.get(hit, 0), int(weight))
+                continue
+        # 完全无法识别的键直接丢弃，避免整批生成失败
     for f in factors:
-        if f.id not in persona.factor_weights:
-            persona.factor_weights[f.id] = 0
+        if f.id not in cleaned:
+            cleaned[f.id] = 0
+    persona.factor_weights = cleaned
+
+    # 主导维度非法编码一并丢掉
+    persona.dominant_features = [
+        d for d in (persona.dominant_features or []) if d.code in valid
+    ]
     return persona
+
+
+def _enforce_blueprint_structure(persona: Persona, blueprint, factors: List[Factor]) -> Persona:
+    """通过 QC 后仍强制对齐 Job/分群/角色骨架，杜绝「室友→J5」类漂移入库。"""
+    from services.job_store import get_job
+    from services.persona_coherence import _replace_outcomes
+
+    if blueprint is None:
+        return fix_persona_coherence(persona, factors)
+
+    bp_job = getattr(blueprint, "job_id", "") or ""
+    bp_seg = getattr(blueprint, "segment", "") or ""
+    bp_role = getattr(blueprint, "role_hint", "") or ""
+    bp_subject = getattr(blueprint, "subject_hint", "") or ""
+    bp_owner = getattr(blueprint, "job_owner", "") or ""
+    bp_outcomes = list(getattr(blueprint, "desired_outcome_ids", None) or [])
+
+    if bp_job and persona.jtbd.job_id != bp_job:
+        persona.jtbd.job_id = bp_job
+        job = get_job(bp_job)
+        if job:
+            persona.jtbd.core_job = job.name
+    if bp_owner:
+        persona.jtbd.job_owner = bp_owner
+    if bp_seg:
+        persona.segment = bp_seg
+    if "室友" in bp_role:
+        persona.role = bp_role
+        if bp_subject:
+            persona.subject = bp_subject
+        if not any(x in (persona.family or "") for x in ("室友", "合租", "宿舍")):
+            persona.family = "合租，室友打鼾严重影响夜间睡眠"
+    if bp_outcomes:
+        existing = {d.id: d for d in persona.jtbd.desired_outcomes}
+        # 丢掉蓝图未授权且与角色冲突的 Outcome（如室友身上的 O4）
+        allowed = set(bp_outcomes)
+        if "室友" in bp_role:
+            allowed.discard("O4")
+        kept = [existing[oid] for oid in bp_outcomes if oid in existing]
+        if len(kept) < 2:
+            _replace_outcomes(persona, bp_job)
+        else:
+            persona.jtbd.desired_outcomes = kept
+            # 若仍含冲突 id，再滤一次
+            persona.jtbd.desired_outcomes = [
+                d for d in persona.jtbd.desired_outcomes if d.id in allowed or d.id in bp_outcomes
+            ]
+            if "室友" in bp_role:
+                persona.jtbd.desired_outcomes = [
+                    d for d in persona.jtbd.desired_outcomes if d.id != "O4"
+                ]
+                if not persona.jtbd.desired_outcomes:
+                    _replace_outcomes(persona, bp_job or "J1")
+
+    return fix_persona_coherence(persona, factors)
 
 
 def _generate_one_persona(
@@ -148,13 +253,18 @@ def _generate_one_persona(
         raw["id"] = pid
         persona = Persona.model_validate(raw)
         persona = _normalize_factor_weights(persona, factors)
+        persona = _normalize_current_step(persona)
         persona = fix_persona_coherence(persona, factors)
         if "llm_generated" not in persona.evidence_refs:
             persona.evidence_refs = ["llm_generated", *persona.evidence_refs]
 
-        issues = _qc_issues(persona, factors, used_names=used_names)
+        issues = _qc_issues(
+            persona, factors, used_names=used_names, blueprint=blueprint
+        )
         hard = _hard_issues(issues)
         if not hard:
+            # 结构字段最终对齐蓝图，防止 QC 软过但仍漂
+            persona = _enforce_blueprint_structure(persona, blueprint, factors)
             print(f"[LLM生成] {pid} ✓ 质检通过", flush=True)
             return persona
 

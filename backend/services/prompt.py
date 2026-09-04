@@ -146,9 +146,12 @@ def build_single_persona_prompt(
 
 【生成顺序】
 1. 严格按蓝图 job_id / job_owner / entry_situation / current_step_id 设定 jtbd
+   - **current_step 必须写中文步骤名**（查 sub_jobs.name，如「核对数据与报告口径」），**禁止**只填字母 id（如 e、a、p）
 2. segment、role、subject 与蓝图 role_hint / subject_hint **同类但可改写**（如换具体亲属、换职业场景）
 3. 创造全新人口学：age/gender/city/occupation/family/income — 须与 role/subject 逻辑自洽
 4. desired_outcomes 从蓝图 desired_outcome_ids 中选 3-5 条，importance/satisfaction 拉开差距（最急缺口 satisfaction 低）
+   - 专业验证型：核心务必是 O2（疗效/数据可核对），O1「搞清严不严重」不要当第一优先
+   - 羞耻/体面型（J6）：核心用 O10「体面不丢人」，不要用 O5「照护不伤感情」
 5. dominant_features 与 forces 的 factor id 必须来自 factors，且与角色匹配（J7→A8，J4→A10，伴侣→A1 等）
 6. mindset 与 react 第一人称，口语化，体现 creativity_seed 带来的随机生活细节
 7. osa：未确诊/察觉阶段 ahi 填 "—"；确诊后才有数值
@@ -158,7 +161,14 @@ def build_single_persona_prompt(
 - 子女(为父母)：年龄 28-52，family 须含父母，subject 为父亲/母亲(患者|重症)
 - 伴侣推动：性别与 subject 对应（女→丈夫，男→妻子）
 - J4 重症：family 须体现渐冻/慢阻肺/呼吸支持/重症
-- J6 羞耻：本人自用，非室友受害者叙事
+- J6 羞耻：本人自用（自己打呼丢脸），非「被室友吵醒的受害者」叙事；分群用场景干扰型，不要标健康焦虑
+- 室友影响（role 含室友）：job_id 必须是 J1（恢复睡眠），job_owner=本人，family 须含合租/室友，
+  desired_outcomes 用 O1/O3/O6，**禁止** J5 / O4 / job_owner=伴侣 / 已婚带娃无室友的家庭设定；
+  mindset.quote / job_statement / react **禁止**出现「两个孩子」「照顾孩子」「分房」「老公/妻子打呼」等伴侣家庭叙事
+- 本人自用（J2/J3）：分群用健康焦虑自用型，**禁止**标成长期照护型（长期照护留给子女/重症照护）
+- J6 社交羞耻：分群必须是场景干扰型，**禁止**健康焦虑自用型；role 为本人（自己打呼丢脸），不是室友受害者
+- 分群↔角色互斥：长期照护型仅限子女/重症照护；关系驱动型仅限伴侣/家人推动；室友影响仅限场景干扰型
+- 生活纹理只作细节调味，不得推翻蓝图的 job_id / role / segment
 
 【随机创意提示】
 - 城市层级参考：{bp.get("city_tier")}

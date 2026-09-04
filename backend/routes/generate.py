@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from fastapi import APIRouter, HTTPException
 
 from schemas import GenerateRequest, Persona
@@ -25,15 +27,44 @@ def _validate_personas(personas: list[Persona], factors) -> list[Persona]:
     valid_outcomes = {o.id for o in load_outcomes()}
     cleaned: list[Persona] = []
     for p in personas:
+        # 清洗非法维度编码（LLM 偶发写出「04」而非「A4」）——丢弃/纠偏，不整批失败
+        fixed_dom = []
         for d in p.dominant_features:
-            if d.code not in valid_ids:
-                raise ValueError(f"心智 {p.id} 含非法维度编码 {d.code}")
-        for code in p.factor_weights:
-            if code not in valid_ids:
-                raise ValueError(f"心智 {p.id} factor_weights 含非法编码 {code}")
+            code = str(d.code).strip().upper()
+            if code in valid_ids:
+                d.code = code
+                fixed_dom.append(d)
+                continue
+            m = re.fullmatch(r"0*([1-9]|1[01])", code)
+            if m:
+                n = m.group(1)
+                for cand in (f"A{n}", f"B{n}"):
+                    if cand in valid_ids:
+                        d.code = cand
+                        fixed_dom.append(d)
+                        break
+        p.dominant_features = fixed_dom
+
+        fixed_w: dict[str, int] = {}
+        for code, weight in (p.factor_weights or {}).items():
+            key = str(code).strip().upper()
+            if key in valid_ids:
+                fixed_w[key] = int(weight)
+                continue
+            m = re.fullmatch(r"0*([1-9]|1[01])", key)
+            if m:
+                n = m.group(1)
+                dom = {d.code for d in p.dominant_features}
+                hit = next((c for c in (f"A{n}", f"B{n}") if c in dom and c in valid_ids), None)
+                if not hit:
+                    hit = next((c for c in (f"A{n}", f"B{n}") if c in valid_ids), None)
+                if hit:
+                    fixed_w[hit] = max(fixed_w.get(hit, 0), int(weight))
         for f in factors:
-            if f.id not in p.factor_weights:
-                p.factor_weights[f.id] = 0
+            if f.id not in fixed_w:
+                fixed_w[f.id] = 0
+        p.factor_weights = fixed_w
+
         p = fix_persona_coherence(p, factors)
         if p.jtbd.job_id and p.jtbd.job_id not in valid_jobs:
             raise ValueError(f"心智 {p.id} job_id {p.jtbd.job_id} 不在 jobs 内")
@@ -102,4 +133,4 @@ def generate_personas(req: GenerateRequest):
         )
 
     reset_evolution()
-    return set_personas(personas)
+    return set_personas(personas, reason="generate")

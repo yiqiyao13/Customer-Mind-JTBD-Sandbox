@@ -209,6 +209,16 @@ class SimulateResponse(BaseModel):
     interventions: List[str] = Field(default_factory=list)
 
 
+class ExportCampaignRequest(BaseModel):
+    """将本次测试的行动话术、结果与对应画像打包导出 Excel。"""
+    campaign: str = ""
+    results: List[SimulateResult] = Field(default_factory=list)
+    campaign_hits: List[str] = Field(default_factory=list)
+    interventions: List[str] = Field(default_factory=list)
+    use_llm: bool = False
+    use_memory: bool = False
+
+
 class MemoryEntry(BaseModel):
     id: str
     day: int

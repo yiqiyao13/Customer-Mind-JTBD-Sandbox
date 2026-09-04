@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Tuple
 
 from schemas import Factor, Outcome, Persona, SimulateResult
-from services.job_store import load_outcomes, next_step_name
+from services.job_store import load_outcomes, next_step_name, resolve_step_name
 
 # 阈值：抬高推进门槛，避免「试戴+国补」人人满分
 ADVANCE_THRESHOLD = 14
@@ -28,7 +28,10 @@ INTERVENTION_MAP: Dict[str, dict] = {
     "data_visibility": {
         "outcomes": ["O2"],
         "forces": [("B1", "pull", 3)],
-        "keywords": ["数据", "报告", "小程序", "app", "同步", "AHI", "可视化", "监测记录"],
+        "keywords": [
+            "数据", "报告", "小程序", "app", "同步", "AHI", "可视化", "监测记录",
+            "算法", "口径", "可导出", "原始数据", "漏气补偿", "疗效验证", "可核对",
+        ],
     },
     "trial": {
         "outcomes": ["O3", "O8"],
@@ -87,9 +90,31 @@ INTERVENTION_MAP: Dict[str, dict] = {
         ],
     },
     "shame_relief": {
-        "outcomes": ["O5", "O1"],
-        "forces": [("B6", "pull", 2)],
-        "keywords": ["体面", "不丢人", "隐形", "名人", "明星", "小巧"],
+        "outcomes": ["O10"],
+        "forces": [("B6", "pull", 2), ("A11", "anxiety", -2)],
+        "keywords": ["体面", "不丢人", "隐形", "名人", "明星", "小巧", "外观低调", "匿名"],
+    },
+    # 恢复连续睡眠 / 告别被吵醒：呼吸机最根本的价值主张
+    "sleep_continuity": {
+        "outcomes": ["O1", "O3"],
+        "forces": [("A1", "push", 2), ("A4", "push", 1)],
+        "keywords": [
+            "安静整觉", "安静的整觉", "整觉", "连续睡眠", "不被打断",
+            "告别鼾声", "鼾声打断", "鼾声", "打呼吵醒", "室友打呼",
+            "睡整晚", "睡个好觉", "睡得好", "改善睡眠", "一觉到天亮",
+            "不再被吵醒", "不被吵醒", "被吵醒", "睡不着", "吵得你睡",
+            "安静睡眠", "还你一个安静", "告别吵醒", "睡个整觉",
+        ],
+    },
+    # 先诊断/搞清严重度：正向引导，不是劝退
+    "diagnosis_clarity": {
+        "outcomes": ["O1"],
+        "forces": [("B7", "pull", 1)],
+        "keywords": [
+            "睡眠监测", "多导睡眠", "筛查", "先查清楚", "先搞清楚",
+            "搞清楚是不是病", "到底是不是病", "有多严重", "先诊断",
+            "搞清楚到底", "再决定买不买", "再决定用不用买",
+        ],
     },
     "material_hygiene": {
         "outcomes": ["O3"],
@@ -108,6 +133,7 @@ ENTRY_THEME_TO_JOBS = {
 }
 
 # 劝阻 / 反向话术信号：与「跑题无关」区分，命中则倾向「拒绝」
+# 注意：勿用过短子串；「不是病」会误伤「是不是病」——见 detect_negative_signals 遮罩
 NEGATIVE_SIGNAL_KEYWORDS = [
     "不用买", "不要买", "别买", "不买也行", "没必要买", "没必要花",
     "用不着", "不需要呼吸机", "不用花", "别花这个钱", "省省吧",
@@ -115,6 +141,31 @@ NEGATIVE_SIGNAL_KEYWORDS = [
     "不是大毛病", "不是病", "小题大做", "忍忍就行", "忍一忍",
     "戴了也没用", "治不治无所谓", "打呼噜正常", "打鼾正常",
 ]
+
+# 诊断/延后决策语境：先遮罩，再匹配负面词，避免「是不是病」「用不用买」误伤
+# 较长短语优先（detect 时按长度降序替换）
+_DIAGNOSTIC_SAFE_PHRASES = (
+    "搞清楚到底是不是病",
+    "搞清楚是不是病",
+    "到底是不是病",
+    "是不是病",
+    "先搞清楚再决定",
+    "先搞清楚",
+    "先查清楚",
+    "再决定买不买",
+    "再决定用不用买",
+    "决定买不买",
+    "决定用不用买",
+    "用不用买",
+    "买不买",
+    "有多严重",
+    "先做个睡眠监测",
+    "做个睡眠监测",
+    "睡眠监测",
+    "多导睡眠",
+    "先诊断再",
+    "先筛查",
+)
 
 # 较强正向干预：即使话术里夹杂负面词，仍可能被这些拉回犹豫/推进
 STRONG_POSITIVE_INTERVENTIONS = frozenset({
@@ -124,6 +175,8 @@ STRONG_POSITIVE_INTERVENTIONS = frozenset({
     "life_support",
     "after_sales",
     "mask_fit_support",
+    "sleep_continuity",
+    "diagnosis_clarity",
 })
 
 INTERVENTION_LABELS = {
@@ -138,6 +191,8 @@ INTERVENTION_LABELS = {
     "after_sales": "售后保障",
     "life_support": "重症呼吸支持",
     "shame_relief": "减轻社交压力",
+    "sleep_continuity": "连续睡眠/告别吵醒",
+    "diagnosis_clarity": "先诊断/搞清严重度",
     "material_hygiene": "材质与卫生",
 }
 
@@ -155,6 +210,16 @@ def identify_factors(campaign: str, factors: List[Factor]) -> List[str]:
     return hits
 
 
+# 「一起试戴」等家庭复合词里的「试戴」不应再单独触发 trial
+_FAMILY_EMBEDDED_TRIAL_PHRASES = (
+    "一起试戴",
+    "一起看设备",
+    "全家一起选",
+    "夫妻一起选",
+    "家人陪同试戴",
+)
+
+
 def detect_interventions(
     campaign: str,
     explicit: Optional[List[str]] = None,
@@ -168,12 +233,32 @@ def detect_interventions(
             if kw.lower() in text:
                 active.append(key)
                 break
+    # 去掉被家庭话术「借壳」触发的 trial
+    if "trial" in active and "family_participation" in active:
+        stripped = text
+        for phr in _FAMILY_EMBEDDED_TRIAL_PHRASES:
+            stripped = stripped.replace(phr.lower(), " ")
+        trial_kws = INTERVENTION_MAP["trial"].get("keywords", [])
+        if not any(kw.lower() in stripped for kw in trial_kws):
+            active = [k for k in active if k != "trial"]
     return active
 
 
 def detect_negative_signals(campaign: str) -> List[str]:
-    text = (campaign or "").lower()
-    return [kw for kw in NEGATIVE_SIGNAL_KEYWORDS if kw.lower() in text]
+    """劝阻信号检测：先遮罩诊断/延后决策语境，再做子串匹配。
+
+    避免「搞清楚到底是不是病」「再决定买不买」被「不是病」「不用买」误伤。
+    """
+    text = campaign or ""
+    masked = text
+    for phrase in sorted(_DIAGNOSTIC_SAFE_PHRASES, key=len, reverse=True):
+        if phrase in masked:
+            masked = masked.replace(phrase, "〔诊〕")
+    # 额外：否定问句「是不是病」残留（顿号/标点打断长短语时）
+    for frag in ("是不是病", "用不用买", "买不买"):
+        masked = masked.replace(frag, "〔诊〕")
+    lowered = masked.lower()
+    return [kw for kw in NEGATIVE_SIGNAL_KEYWORDS if kw.lower() in lowered]
 
 
 def intervention_label(key: str) -> str:
@@ -181,13 +266,16 @@ def intervention_label(key: str) -> str:
 
 
 def _interventions_for_persona(active: List[str], persona: Persona) -> List[str]:
-    """保命干预仅对重症照护 Job 生效，避免普通共病人群被 ALS/慢阻肺话术拖进犹豫。"""
+    """按人设过滤不适用的干预，避免「夫妻话术」推动室友受害者等反向命中。"""
+    role = persona.role or ""
     out: List[str] = []
     for key in active:
         if key == "life_support" and persona.jtbd.job_id != "J4":
             continue
         if key == "filial_care" and persona.jtbd.job_id not in ("J7", "J4"):
-            # 孝道干预主要服务子女照护；重症照护可共享「给父母」语境
+            continue
+        # 室友受害者：夫妻/分房话术完全不适用
+        if key == "family_participation" and "室友" in role:
             continue
         out.append(key)
     return out
@@ -221,11 +309,56 @@ def _force_deltas(active: List[str]) -> List[Tuple[str, str, int]]:
 
 
 def _required_outcome(persona: Persona):
-    """最该先被话术回应的 Outcome = 缺口最大（在乎−满意），而非随便一个低满意项。"""
+    """关键 Outcome：缺口（importance−satisfaction）优先，Job/分群偏好仅作同分加权。
+
+    避免「分群标签写错 → 关键缺口被硬锁成错误 Outcome」的连锁误判。
+    """
     dos = persona.jtbd.desired_outcomes
     if not dos:
         return None
-    return max(dos, key=lambda d: (d.importance - d.satisfaction, d.importance))
+
+    preferred: List[str] = []
+    jid = persona.jtbd.job_id or ""
+    seg = persona.segment or ""
+    role = persona.role or ""
+    drivers = " ".join(persona.drivers or [])
+    dom = {d.code for d in (persona.dominant_features or [])}
+
+    # Job / 角色优先（比 segment 标签更可靠）
+    if jid == "J6" or "社交尊严" in drivers or "A11" in dom:
+        preferred = ["O10", "O8"]
+    elif jid == "J5" and "室友" not in role:
+        preferred = ["O4", "O3"]
+    elif jid == "J1" or "室友" in role or seg == "场景干扰型":
+        preferred = ["O1", "O3", "O6"]
+    elif jid == "J4":
+        preferred = ["O9", "O7"]
+    elif jid == "J7" or "子女" in role:
+        preferred = ["O5", "O7"]
+    elif seg == "专业验证型" or any(
+        x in drivers for x in ("AHI数据", "疗效可验证", "数据可见性", "算法")
+    ):
+        preferred = ["O2"]
+    elif seg == "经济受限型" or jid == "J2":
+        preferred = ["O6", "O8"] if seg == "经济受限型" else ["O2", "O3", "O8"]
+    elif jid == "J3" or seg == "健康焦虑自用型":
+        preferred = ["O2", "O3"]
+    elif seg == "关系驱动型" and "伴侣" in role:
+        preferred = ["O4", "O3"]
+    elif seg == "长期照护型" and ("子女" in role or "照护" in role):
+        preferred = ["O5", "O7"]
+
+    pref_set = set(preferred)
+
+    def _score(d):
+        gap = d.importance - d.satisfaction
+        # 同分时：在偏好列表里的靠前；仍不覆盖更大缺口
+        pref_bonus = 0
+        if d.id in pref_set:
+            pref_bonus = 1 + max(0, 3 - preferred.index(d.id))
+        return (gap, pref_bonus, d.importance)
+
+    return max(dos, key=_score)
 
 
 def _outcome_short(oid: str, outcomes: List[Outcome]) -> str:
@@ -406,10 +539,8 @@ def decide_for(
     # 重症维度不对普通 OSA/共病人群计分
     if persona.jtbd.job_id != "J4":
         hit_ids = [h for h in hit_ids if h != "A10"]
-    active = _interventions_for_persona(
-        detect_interventions(campaign, interventions),
-        persona,
-    )
+    active_global = detect_interventions(campaign, interventions)
+    active = _interventions_for_persona(active_global, persona)
     negative_hits = detect_negative_signals(campaign)
     has_strong_positive = any(k in STRONG_POSITIVE_INTERVENTIONS for k in active)
     # 劝阻话术主导时，清掉可能误触发的「改善」，避免爬山式误匹配又把关系算改善
@@ -474,6 +605,10 @@ def decide_for(
         else:
             score -= weight_map.get(fid, 3) * 0.35
 
+    # 话术触发的干预对该人设全部不适用（如室友听到夫妻话术）→ 无关，
+    # 不要靠 factor 关键词（A1/B4）漂成犹豫/推进
+    interventions_irrelevant = bool(active_global) and not active
+
     if negative_hits and not has_strong_positive:
         # 劝阻 / 反向宣传 → 拒绝（不是无关）
         decision = "reject"
@@ -483,14 +618,26 @@ def decide_for(
         improved = []
         unresolved = [do.id for do in persona.jtbd.desired_outcomes]
         score = -5
-    elif not active and not hit_ids:
-        # 完全跑题、没提产品与痛点 → 无关
+    elif interventions_irrelevant or (not active and not hit_ids):
+        # 完全跑题，或干预与人设互斥 → 无关
         decision = "na"
         next_step = persona.jtbd.current_step
         topic = "这个活动"
+        improved = []
+        unresolved = [do.id for do in persona.jtbd.desired_outcomes]
     else:
         required_addressed = True if not required else required.id in improved
         coverage_ok = _high_importance_coverage(persona, improved_set)
+
+        # 诊断话术只打 O1：对卡在「搞清楚是不是病」的人，单点命中关键缺口即可算覆盖
+        if (
+            "diagnosis_clarity" in active
+            and required
+            and required.id == "O1"
+            and required.id in improved_set
+        ):
+            coverage_ok = True
+            score += 3.0
 
         anxiety_eased = any(
             f == fid and force == "anxiety" and delta < 0
@@ -537,6 +684,20 @@ def decide_for(
             next_step = persona.jtbd.current_step
         else:
             decision = "reject"
+            next_step = persona.jtbd.current_step
+
+        # 正向「先诊断」话术：遮罩后无真实劝阻时，不得因未覆盖其 Outcome 而 reject
+        if (
+            "diagnosis_clarity" in active
+            and not negative_hits
+            and decision == "reject"
+        ):
+            decision = "hesitate"
+            next_step = persona.jtbd.current_step
+
+        # 「改善睡眠」价值主张：有 Outcome 命中至少犹豫；零重叠（如重症保命）→ 无关，勿 reject
+        if "sleep_continuity" in active and not negative_hits and decision == "reject":
+            decision = "hesitate" if improved else "na"
             next_step = persona.jtbd.current_step
 
         if improved:

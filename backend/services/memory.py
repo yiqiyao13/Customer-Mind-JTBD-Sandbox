@@ -348,7 +348,7 @@ def import_memory_bundle(data: dict, *, replace: bool = True) -> dict:
             persona_updates += 1
 
         if persona_updates:
-            set_personas(updated_list)
+            set_personas(updated_list, reason="memory_import")
 
     return {
         "imported_personas": len(imported),

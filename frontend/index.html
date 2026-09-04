@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>消费者心智模拟 · MindSim</title>
-  <link rel="stylesheet" href="/static/css/app.css?v=20260901c" />
+  <link rel="stylesheet" href="/static/css/app.css?v=20260904f" />
 </head>
 <body>
   <nav class="topnav">
@@ -66,7 +66,7 @@
         <label class="toggle-label"><input type="checkbox" id="use-memory" /> 消费者有记忆</label>
         <button class="btn btn-primary" id="btn-simulate">运行测试</button>
       </div>
-      <div class="hint-box" id="sim-mode-hint">静态 + 独立思考：每次独立判断，不积累记忆。</div>
+      <div class="hint-box" id="sim-mode-hint">独立思考：反馈文案更口语；关闭则走规则引擎（分数/标签更稳定）。</div>
       <p class="status" id="campaign-hits" style="margin-top:0.5rem"></p>
     </section>
 
@@ -92,17 +92,22 @@
     <!-- 结果 -->
     <section class="card" style="margin-top:1rem">
       <div class="card-header">
-        <h2><span class="dot"></span>测试结果</h2>
-        <span class="status" id="result-count"></span>
+        <h2><span class="dot"></span>多人总览</h2>
+        <div class="row" style="gap:0.5rem;align-items:center">
+          <span class="status" id="result-count"></span>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-export-excel" disabled title="将行动话术、画像、反馈与判定结果打包为 Excel">导出 Excel</button>
+        </div>
       </div>
+      <p class="status" style="margin:0 0 0.65rem">上方矩阵看判定与关注点；下方为紧凑名单，点「展开」看原文，点人名打开右侧画像。</p>
       <div id="result-heatmap" class="heatmap-wrap"></div>
-      <div id="result-grid" class="result-grid">
-        <div class="empty">运行 Campaign 测试后，逐人反馈将显示在这里</div>
+      <div id="result-summary" class="result-summary" hidden></div>
+      <div id="result-grid" class="result-list">
+        <div class="empty">运行 Campaign 测试后，总览将显示在这里</div>
       </div>
     </section>
   </div>
 
-  <script src="/static/js/app.js?v=20260901c"></script>
+  <script src="/static/js/app.js?v=20260904h"></script>
   <script>
     function updatePersonaCount() {
       const el = document.getElementById('persona-count');
@@ -158,12 +163,13 @@
         personas = await api('/api/personas');
         renderPersonaList();
         const n = personas.length;
+        const useLlm = document.getElementById('use-llm-simulate').checked;
         btn.textContent = `推演中（${n} 人）…`;
         const data = await api('/api/simulate', {
           method: 'POST',
           body: JSON.stringify({
             campaign: document.getElementById('campaign-text').value,
-            use_llm: document.getElementById('use-llm-simulate').checked,
+            use_llm: useLlm,
             use_memory: document.getElementById('use-memory').checked,
           }),
         });
@@ -183,6 +189,21 @@
     document.getElementById('btn-sample').addEventListener('click', () => {
       document.getElementById('campaign-text').value =
         '瑞思迈 AirSense 11 限时优惠，支持30天试戴体验，医院睡眠中心同款，面罩免费适配，还有国补15%补贴，进口品质值得信赖。';
+    });
+
+    document.getElementById('btn-export-excel')?.addEventListener('click', async () => {
+      const btn = document.getElementById('btn-export-excel');
+      btn.disabled = true;
+      const prev = btn.textContent;
+      btn.textContent = '导出中…';
+      try {
+        await exportCampaignExcel();
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        btn.textContent = prev;
+        btn.disabled = !lastSimResults.length;
+      }
     });
 
     document.getElementById('btn-reset-all-memories').addEventListener('click', async () => {
@@ -241,8 +262,13 @@
     initEntryThemes();
     updateSimModeHint();
     loadFactors();
-    loadPersonas();
-    loadOutcomes().then(() => loadJobsMap({ renderMap: false }));
+    // personas + outcomes 都就绪后再渲染画像，避免刷新丢列表 / outcome 描述竞态
+    Promise.all([loadPersonas(), loadOutcomes()]).then(() => {
+      updatePersonaCount();
+      renderPersonaList();
+      if (!selectedId && personas[0]) selectPersona(personas[0].id, { scrollTo: 'detail' });
+      return loadJobsMap({ renderMap: false });
+    });
   </script>
 </body>
 </html>

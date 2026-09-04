@@ -7,6 +7,8 @@ let jobTrees = [];
 let jobsById = {};
 let selectedId = null;
 let lastSimResults = []; // 最近一次测试结果，用于画像↔反馈联动
+/** 最近一次测试元信息，供 Excel 导出 */
+let lastSimMeta = { campaign_hits: [], interventions: [], use_llm: false, use_memory: false };
 const filters = { segment: new Set(), role: new Set(), stage: new Set(), factor: new Set() };
 const selectedEntryThemes = new Set();
 
@@ -320,7 +322,7 @@ function renderFactorFilters() {
 }
 
 function initFilters() {
-  chipGroup('filter-segments', ['关系驱动型','健康焦虑自用型','经济受限型','长期照护型','依从挣扎型'], 'segment');
+  chipGroup('filter-segments', ['关系驱动型','健康焦虑自用型','专业验证型','场景干扰型','经济受限型','长期照护型','依从挣扎型'], 'segment');
   chipGroup('filter-roles', ['本人','伴侣(推动者)','家人推动者(伴侣)','子女(为父母)','伴侣照护者','本人(室友影响)'], 'role');
   chipGroup('filter-stages', ['未察觉','察觉','就医确诊','决策纠结','购买','适应','依从习惯','复购更换','闲置转让'], 'stage');
 }
@@ -338,12 +340,13 @@ function selectPersona(id, { scrollTo = 'detail' } = {}) {
   if (scrollTo === 'detail') {
     document.getElementById('persona-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } else if (scrollTo === 'result') {
-    document.querySelector(`.result-card[data-pid="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.querySelector(`.result-row[data-pid="${id}"], .result-card[data-pid="${id}"]`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
 
 function highlightLinkedResults() {
-  document.querySelectorAll('.result-card').forEach(card => {
+  document.querySelectorAll('.result-row, .result-card').forEach(card => {
     card.classList.toggle('linked-active', card.dataset.pid === selectedId);
   });
   document.querySelectorAll('.heatmap tbody tr[data-pid]').forEach(tr => {
@@ -390,7 +393,7 @@ function renderPersonaList() {
 /** 兜底短名：即使 /api/outcomes 尚未加载，也绝不把 O3 亮给市场部 */
 const OUTCOME_LABELS = {
   O1: '搞清严不严重',
-  O2: '疗效有确认感',
+  O2: '疗效/数据可核对',
   O3: '戴得住用不下去',
   O4: '伴侣睡眠/关系',
   O5: '照护不伤感情',
@@ -398,12 +401,13 @@ const OUTCOME_LABELS = {
   O7: '售后渠道靠得住',
   O8: '别买了闲置',
   O9: '重症呼吸支持到位',
+  O10: '体面不丢人',
 };
 
 /** 完整描述兜底：outcomes 尚未加载时不能回退到短名，否则标题/描述会重复 */
 const OUTCOME_NAMES = {
   O1: '最小化「不确定是否生病/多严重」的不确定性',
-  O2: '最大化「治疗能改善健康/白天状态」的确认感',
+  O2: '最大化「疗效改善与算法报告可验证、可核对」的确认感',
   O3: '最小化「设备不适/漏气/噪音用不下去」的风险',
   O4: '最大化「伴侣睡眠与家庭关系改善」的可预期性',
   O5: '最小化「照护变成催促/冲突」的风险',
@@ -411,6 +415,7 @@ const OUTCOME_NAMES = {
   O7: '最小化「长期无人指导/渠道不可信」的风险',
   O8: '最小化「买了闲置浪费」的风险',
   O9: '最小化「重症呼吸支持不到位危及生命」的风险',
+  O10: '最小化「治疗过程被嘲笑/社交形象受损」的风险',
 };
 
 const INTERVENTION_LABELS = {
@@ -475,21 +480,29 @@ function renderDetail() {
         <span class="decision ${sim.decision}">${decisionLabel(sim.decision)}</span>
       </div>
       <p class="sim-link-reaction">${sim.reaction}</p>
+      ${sim.reasoning ? `<p class="sim-link-reason">${sim.reasoning}</p>` : ''}
       <p class="status" style="margin-top:0.4rem">
         意愿 <strong>${sim.willingness}/10</strong> ·
         已改善：${formatOutcomeList(sim.outcome_improved)} ·
         未解决：${formatOutcomeList(sim.unresolved_outcomes)}
         ${sim.next_step ? ` · 下一步：<strong>${sim.next_step}</strong>` : ''}
+        · ${sim.mode === 'llm' ? 'LLM' : '规则'}
       </p>
-      <button type="button" class="btn btn-ghost btn-sm" id="btn-jump-result">在结果区查看此卡 ↓</button>
+      <div class="verify-row sim-link-verify">
+        <span class="status">真实验证</span>
+        <button class="btn btn-ghost btn-sm btn-verify" data-status="verified" data-pid="${p.id}" data-decision="${sim.decision}">已验证</button>
+        <button class="btn btn-ghost btn-sm btn-verify" data-status="unverified" data-pid="${p.id}" data-decision="${sim.decision}">未验证</button>
+        <button class="btn btn-ghost btn-sm btn-verify" data-status="opposite" data-pid="${p.id}" data-decision="${sim.decision}">方向相反</button>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="btn-jump-result">在总览矩阵/卡片中定位 ↓</button>
     </div>
   ` : (lastSimResults.length ? `
     <div class="sim-link-panel muted">
-      <p class="status">此人未出现在最近一次测试结果中。</p>
+      <p class="status">此人未出现在最近一次测试结果中。可在下方总览区查看其他人，或重新运行测试。</p>
     </div>
   ` : `
     <div class="sim-link-panel muted">
-      <p class="status">画像可直接查看。运行上方「Campaign 测试」后，这里会显示对此人的话术反馈。</p>
+      <p class="status">点左侧人名即可看画像。运行上方「Campaign 测试」后，<strong>此人的话术反馈会直接显示在这里</strong>（下方矩阵作多人总览）。</p>
     </div>
   `);
 
@@ -571,6 +584,7 @@ function renderDetail() {
   document.getElementById('btn-jump-result')?.addEventListener('click', () => {
     selectPersona(p.id, { scrollTo: 'result' });
   });
+  bindVerifyButtons(document.getElementById('persona-detail'), document.getElementById('campaign-text')?.value || '');
   document.getElementById('btn-reset-one-memory')?.addEventListener('click', async (ev) => {
     ev.stopPropagation();
     if (!confirm(`确定清除 ${p.name} 的记忆？`)) return;
@@ -582,6 +596,34 @@ function renderDetail() {
     } catch (e) {
       alert(e.message);
     }
+  });
+}
+
+function bindVerifyButtons(root, campaign) {
+  if (!root) return;
+  root.querySelectorAll('.btn-verify').forEach(btn => {
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', async (ev) => {
+      ev.stopPropagation();
+      const note = prompt('可选：输入短证据（销售/退货/停用等）', '') || '';
+      try {
+        await api('/api/verify', {
+          method: 'POST',
+          body: JSON.stringify({
+            persona_id: btn.dataset.pid,
+            campaign,
+            status: btn.dataset.status,
+            note,
+            decision: btn.dataset.decision,
+          }),
+        });
+        btn.textContent = '✓ ' + btn.textContent;
+        btn.disabled = true;
+      } catch (e) {
+        alert(e.message);
+      }
+    });
   });
 }
 
@@ -610,16 +652,22 @@ async function loadMemories(personaId) {
 
 function clearResults(message) {
   lastSimResults = [];
+  lastSimMeta = { campaign_hits: [], interventions: [], use_llm: false, use_memory: false };
   const countEl = document.getElementById('result-count');
   if (countEl) countEl.textContent = '';
   const hm = document.getElementById('result-heatmap');
   if (hm) hm.innerHTML = '';
+  const summaryEl = document.getElementById('result-summary');
+  if (summaryEl) { summaryEl.hidden = true; summaryEl.innerHTML = ''; }
   const el = document.getElementById('result-grid');
   if (el) {
+    el.className = 'result-list';
     el.innerHTML = `<div class="empty">${message || '运行 Campaign 测试后，逐人反馈将显示在这里'}</div>`;
   }
   const hitsEl = document.getElementById('campaign-hits');
   if (hitsEl) hitsEl.textContent = '';
+  const exportBtn = document.getElementById('btn-export-excel');
+  if (exportBtn) exportBtn.disabled = true;
   renderPersonaList();
   if (selectedId) renderDetail();
 }
@@ -635,11 +683,7 @@ function renderHeatmap(results) {
     ...(r.outcome_improved || []),
     ...(r.unresolved_outcomes || []),
   ]))];
-  if (!outcomeIds.length) {
-    el.innerHTML = `<p class="status">共 ${results.length} 人 · 本次未产出 Outcome 映射（可检查话术是否命中干预）</p>`;
-    return;
-  }
-  const header = outcomeIds.map(o => {
+  const headerOutcomes = outcomeIds.map(o => {
     const short = outcomeLabel(o);
     const full = outcomeName(o);
     return `<th class="hm-col" title="${full}（${o}）"><span class="hm-label">${short}</span></th>`;
@@ -656,13 +700,23 @@ function renderHeatmap(results) {
       return '<td class="hm-na">—</td>';
     }).join('');
     const active = r.persona_id === selectedId ? ' linked-active' : '';
-    return `<tr class="hm-row${active}" data-pid="${r.persona_id}" title="点击查看 ${r.persona_name} 的画像"><th class="hm-name">${r.persona_name}</th>${cells}</tr>`;
+    const dec = r.decision || '';
+    const decLabel = decisionLabel(dec);
+    const w = r.willingness != null ? `${r.willingness}/10` : '';
+    return `<tr class="hm-row${active}" data-pid="${r.persona_id}" title="点击查看 ${r.persona_name} 的画像">
+      <th class="hm-name">${r.persona_name}</th>
+      <td class="hm-decision ${dec}" title="判定：${decLabel}${w ? ` · 意愿 ${w}` : ''}"><span class="hm-dec-tag ${dec}">${decLabel}</span>${w ? `<small class="hm-w">${w}</small>` : ''}</td>
+      ${cells}
+    </tr>`;
   }).join('');
+  const outcomeHint = outcomeIds.length
+    ? '· 右侧列为关注点改善/未解'
+    : '· 本次未产出 Outcome 映射';
   el.innerHTML = `
-    <p class="status" style="margin-bottom:0.4rem">消费者关注点对照（行=人 · 列=TA想达成的结果）· 共 ${results.length} 人 · <em>点击行可打开画像</em></p>
+    <p class="status" style="margin-bottom:0.4rem">消费者对照（行=人 · <strong>判定</strong>在人名右侧）· 共 ${results.length} 人 ${outcomeHint} · <em>点击行可打开画像</em></p>
     <div class="heatmap-scroll">
       <table class="heatmap">
-        <thead><tr><th class="hm-name">消费者</th>${header}</tr></thead>
+        <thead><tr><th class="hm-name">消费者</th><th class="hm-decision-h">判定</th>${headerOutcomes}</tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
@@ -674,6 +728,14 @@ function renderHeatmap(results) {
 
 function renderResults(data) {
   lastSimResults = data.results || [];
+  lastSimMeta = {
+    campaign_hits: data.campaign_hits || [],
+    interventions: data.interventions || [],
+    use_llm: !!document.getElementById('use-llm-simulate')?.checked,
+    use_memory: !!document.getElementById('use-memory')?.checked,
+  };
+  const exportBtn = document.getElementById('btn-export-excel');
+  if (exportBtn) exportBtn.disabled = !lastSimResults.length;
   const n = lastSimResults.length;
   const countEl = document.getElementById('result-count');
   if (countEl) {
@@ -693,81 +755,102 @@ function renderResults(data) {
     hitsEl.textContent = parts.join(' · ') || '点击下方卡片或热力图行，可联动打开画像';
   }
   renderHeatmap(lastSimResults);
+  const summaryEl = document.getElementById('result-summary');
   const el = document.getElementById('result-grid');
   if (!el) return;
   if (!lastSimResults.length) {
     el.innerHTML = '<div class="empty">运行测试后，结果将显示在这里</div>';
+    if (summaryEl) { summaryEl.hidden = true; summaryEl.innerHTML = ''; }
     renderPersonaList();
     return;
   }
+
+  const counts = { advance: 0, hesitate: 0, reject: 0, na: 0 };
+  lastSimResults.forEach(r => { if (counts[r.decision] != null) counts[r.decision]++; });
+  if (summaryEl) {
+    summaryEl.hidden = false;
+    summaryEl.innerHTML = `
+      <span class="rs-chip advance">推进 <strong>${counts.advance}</strong></span>
+      <span class="rs-chip hesitate">犹豫 <strong>${counts.hesitate}</strong></span>
+      <span class="rs-chip reject">拒绝 <strong>${counts.reject}</strong></span>
+      <span class="rs-chip na">无关 <strong>${counts.na}</strong></span>
+      <span class="rs-hint">点人名 → 画像；点「展开」→ 看完整反馈</span>
+    `;
+  }
+
   const mem = document.getElementById('use-memory')?.checked;
   const campaign = document.getElementById('campaign-text')?.value || '';
+  el.className = 'result-list';
   el.innerHTML = lastSimResults.map(r => {
     const p = personas.find(x => x.id === r.persona_id);
     const job = p?.jtbd?.core_job || '';
     const step = p?.jtbd?.current_step || '';
-    const motive = (p?.mindset?.core_motive || '').slice(0, 42);
+    const snip = String(r.reaction || '').replace(/\s+/g, ' ').trim();
+    const snipShort = snip.length > 72 ? `${snip.slice(0, 72)}…` : snip;
     const active = r.persona_id === selectedId ? ' linked-active' : '';
+    const willPct = Math.max(0, Math.min(100, (Number(r.willingness) || 0) * 10));
     return `
-    <div class="result-card${active}" data-pid="${r.persona_id}" role="button" tabindex="0" title="点击查看完整画像">
-      <div class="row" style="justify-content:space-between;margin-bottom:0.45rem">
-        <strong>${p?.emoji || ''} ${r.persona_name}</strong>
+    <article class="result-row${active}" data-pid="${r.persona_id}">
+      <div class="result-row-main">
+        <button type="button" class="result-row-id" data-open-persona="${r.persona_id}" title="打开画像">
+          <span class="rr-emoji">${p?.emoji || ''}</span>
+          <span class="rr-name">${r.persona_name}</span>
+        </button>
         <span class="decision ${r.decision}">${decisionLabel(r.decision)}</span>
+        <div class="rr-will" title="意愿 ${r.willingness}/10">
+          <span class="rr-will-num">${r.willingness}<small>/10</small></span>
+          <span class="rr-will-track"><span class="rr-will-fill ${r.decision}" style="width:${willPct}%"></span></span>
+        </div>
+        <p class="rr-snip">${snipShort || '（无反馈文案）'}</p>
+        <button type="button" class="btn btn-ghost btn-sm rr-toggle" aria-expanded="false">展开</button>
       </div>
-      ${job || step ? `<p class="result-persona-ctx">${job}${step ? ` · 卡在「${step}」` : ''}</p>` : ''}
-      ${motive ? `<p class="result-persona-motive">${motive}${motive.length >= 42 ? '…' : ''}</p>` : ''}
-      <p class="result-reaction">${r.reaction}</p>
-      ${r.reasoning ? `<p class="status" style="font-style:italic;margin-top:0.4rem">💭 ${r.reasoning}</p>` : ''}
-      <p class="status" style="margin-top:0.4rem">
-        ${r.next_step ? `下一步：<strong>${r.next_step}</strong> · ` : ''}
-        已改善：${formatOutcomeList(r.outcome_improved)} ·
-        未解决：${formatOutcomeList(r.unresolved_outcomes)}
-      </p>
-      <p class="status" style="margin-top:0.35rem">意愿 ${r.willingness}/10 · ${r.mode === 'llm' ? 'LLM' : '规则'} · ${mem ? '有记忆' : '静态'} · <span class="link-hint">查看画像 →</span></p>
-      <div class="verify-row">
-        <span class="status">真实验证</span>
-        <button class="btn btn-ghost btn-sm btn-verify" data-status="verified" data-pid="${r.persona_id}" data-decision="${r.decision}">已验证</button>
-        <button class="btn btn-ghost btn-sm btn-verify" data-status="unverified" data-pid="${r.persona_id}" data-decision="${r.decision}">未验证</button>
-        <button class="btn btn-ghost btn-sm btn-verify" data-status="opposite" data-pid="${r.persona_id}" data-decision="${r.decision}">方向相反</button>
+      <div class="result-row-detail" hidden>
+        ${job || step ? `<p class="result-persona-ctx">${job}${step ? ` · 卡在「${step}」` : ''}</p>` : ''}
+        <p class="result-reaction">${r.reaction || ''}</p>
+        ${r.reasoning ? `<p class="rr-reason">${r.reasoning}</p>` : ''}
+        <p class="status" style="margin-top:0.45rem">
+          ${r.next_step ? `下一步：<strong>${r.next_step}</strong> · ` : ''}
+          已改善：${formatOutcomeList(r.outcome_improved)} ·
+          未解决：${formatOutcomeList(r.unresolved_outcomes)}
+        </p>
+        <p class="status" style="margin-top:0.3rem">${r.mode === 'llm' ? 'LLM' : '规则'} · ${mem ? '有记忆' : '静态'}</p>
+        <div class="verify-row">
+          <span class="status">真实验证</span>
+          <button class="btn btn-ghost btn-sm btn-verify" data-status="verified" data-pid="${r.persona_id}" data-decision="${r.decision}">已验证</button>
+          <button class="btn btn-ghost btn-sm btn-verify" data-status="unverified" data-pid="${r.persona_id}" data-decision="${r.decision}">未验证</button>
+          <button class="btn btn-ghost btn-sm btn-verify" data-status="opposite" data-pid="${r.persona_id}" data-decision="${r.decision}">方向相反</button>
+        </div>
       </div>
-    </div>`;
+    </article>`;
   }).join('');
 
-  el.querySelectorAll('.result-card').forEach(card => {
-    card.addEventListener('click', (ev) => {
-      if (ev.target.closest('.btn-verify')) return;
-      selectPersona(card.dataset.pid, { scrollTo: 'detail' });
+  el.querySelectorAll('[data-open-persona]').forEach(btn => {
+    btn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      selectPersona(btn.dataset.openPersona, { scrollTo: 'detail' });
     });
-    card.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Enter' || ev.key === ' ') {
-        ev.preventDefault();
-        selectPersona(card.dataset.pid, { scrollTo: 'detail' });
-      }
+  });
+  el.querySelectorAll('.result-row').forEach(row => {
+    row.addEventListener('click', (ev) => {
+      if (ev.target.closest('.btn-verify, .rr-toggle, [data-open-persona]')) return;
+      selectPersona(row.dataset.pid, { scrollTo: 'detail' });
+    });
+  });
+  el.querySelectorAll('.rr-toggle').forEach(btn => {
+    btn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const row = btn.closest('.result-row');
+      const detail = row?.querySelector('.result-row-detail');
+      if (!detail) return;
+      const open = detail.hidden;
+      detail.hidden = !open;
+      btn.textContent = open ? '收起' : '展开';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      row.classList.toggle('is-open', open);
     });
   });
 
-  el.querySelectorAll('.btn-verify').forEach(btn => {
-    btn.addEventListener('click', async (ev) => {
-      ev.stopPropagation();
-      const note = prompt('可选：输入短证据（销售/退货/停用等）', '') || '';
-      try {
-        await api('/api/verify', {
-          method: 'POST',
-          body: JSON.stringify({
-            persona_id: btn.dataset.pid,
-            campaign,
-            status: btn.dataset.status,
-            note,
-            decision: btn.dataset.decision,
-          }),
-        });
-        btn.textContent = '✓ ' + btn.textContent;
-        btn.disabled = true;
-      } catch (e) {
-        alert(e.message);
-      }
-    });
-  });
+  bindVerifyButtons(el, campaign);
 
   renderPersonaList();
   if (selectedId) renderDetail();
@@ -778,29 +861,60 @@ function updateSimModeHint() {
   const el = document.getElementById('sim-mode-hint');
   if (!el) return;
   const mem = document.getElementById('use-memory')?.checked;
-  const repro = document.getElementById('reproducible-mode')?.checked;
-  const llm = document.getElementById('use-llm-simulate')?.checked && !repro;
-  if (repro) {
-    el.innerHTML = '<strong>可复现模式</strong>：同一话术 + 同一批人，判定与意愿分锁定为规则引擎结果（推进需关键缺口被回应且分数达标）。适合做 campaign 对比决策。';
-  } else if (mem && llm) {
+  const llm = document.getElementById('use-llm-simulate')?.checked;
+  if (mem && llm) {
     el.textContent = '记忆 + 独立思考：参考过往经历；LLM 文案可能略有波动，判定已与规则门控对齐。';
   } else if (mem) {
-    el.textContent = '记忆 + 规则：写入时间线，按 Outcome/Force 推演，结果可复现。';
+    el.textContent = '记忆 + 规则：写入时间线，按 Outcome/Force 推演；同一输入结果稳定。';
   } else if (llm) {
-    el.textContent = '独立思考：反馈文案更口语；若需完全一致的分数/标签，请勾选「可复现模式」。';
+    el.textContent = '独立思考：反馈文案更口语；关闭此项则走规则引擎（分数/标签更稳定）。';
   } else {
     el.textContent = '规则模式：以「是否推动任务进展」判定，同一输入结果稳定。';
   }
 }
 
 async function downloadMemories() {
-  const res = await fetch('/api/memories/export');
+  const res = await fetch(API + '/api/memories/export');
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || res.statusText);
   }
   const blob = await res.blob();
   let filename = 'mindsim_memories.json';
+  const disp = res.headers.get('Content-Disposition') || '';
+  const m = disp.match(/filename="?([^";]+)"?/);
+  if (m) filename = m[1];
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/** 将本次行动话术 + 画像 + 反馈 + 判定结果打包为 Excel 下载 */
+async function exportCampaignExcel() {
+  if (!lastSimResults.length) {
+    throw new Error('暂无测试结果，请先运行 Campaign 测试');
+  }
+  const res = await fetch(API + '/api/export/campaign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      campaign: document.getElementById('campaign-text')?.value || '',
+      results: lastSimResults,
+      campaign_hits: lastSimMeta.campaign_hits || [],
+      interventions: lastSimMeta.interventions || [],
+      use_llm: !!lastSimMeta.use_llm,
+      use_memory: !!lastSimMeta.use_memory,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const detail = err.detail;
+    throw new Error(typeof detail === 'string' ? detail : (detail?.[0]?.msg || res.statusText));
+  }
+  const blob = await res.blob();
+  let filename = 'MindSim_Campaign.xlsx';
   const disp = res.headers.get('Content-Disposition') || '';
   const m = disp.match(/filename="?([^";]+)"?/);
   if (m) filename = m[1];

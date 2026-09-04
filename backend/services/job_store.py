@@ -51,12 +51,33 @@ def get_outcome(outcome_id: str) -> Outcome | None:
     return None
 
 
+def resolve_step_name(step: str, job_id: str = "") -> str:
+    """把 LLM 偶发填的 step id（如 e/a）归一成中文步骤名；已是中文则原样返回。"""
+    step = (step or "").strip()
+    if not step:
+        return step
+    sub_jobs = load_sub_jobs()
+    by_id = {s.id: s.name for s in sub_jobs}
+    names = {s.name for s in sub_jobs}
+    if step in names:
+        return step
+    if step in by_id:
+        return by_id[step]
+    # 蓝图偶发写成 "e 预算内选对"
+    for sid, name in by_id.items():
+        if step.startswith(sid + " ") or step.startswith(sid + "：") or step.startswith(sid + ":"):
+            return name
+    return step
+
+
 def next_step_name(current_step: str, job_id: str) -> str:
     """按 Job 的 step_ids 顺序推进到下一步名称；已是末步则保持。"""
     job = get_job(job_id)
     sub_jobs = {s.id: s for s in load_sub_jobs()}
     if not job:
-        return current_step
+        return resolve_step_name(current_step, job_id)
+
+    current_step = resolve_step_name(current_step, job_id)
 
     # current_step 可能是名称或 id
     current_id = None
