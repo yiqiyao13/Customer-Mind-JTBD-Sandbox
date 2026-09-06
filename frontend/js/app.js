@@ -68,7 +68,7 @@ function outcomeMeter(kind, value, label) {
   `;
 }
 
-function renderOutcomeCard(d, { simMark = '' } = {}) {
+function renderOutcomeCard(d, { simMark = '', simState = '' } = {}) {
   const short = outcomeLabel(d.id);
   const full = outcomeName(d.id);
   const want = Number(d.importance) || 0;
@@ -76,7 +76,7 @@ function renderOutcomeCard(d, { simMark = '' } = {}) {
   const gap = Math.max(0, want - have);
   const gapPct = (gap / 10) * 100;
   return `
-    <article class="outcome-card">
+    <article class="outcome-card${simState ? ` sim-${simState}` : ''}">
       <header class="outcome-card-head">
         <h4 class="outcome-card-title">${short}</h4>
         <div class="outcome-card-tags">
@@ -433,6 +433,127 @@ const INTERVENTION_LABELS = {
   material_hygiene: '材质与卫生',
 };
 
+function interventionLabel(id) {
+  return INTERVENTION_LABELS[id] || id;
+}
+
+function renderBoostChips(ids, size = '') {
+  return (ids || []).map(k =>
+    `<span class="boost-chip${size ? ` ${size}` : ''}">${interventionLabel(k)}</span>`
+  ).join('');
+}
+
+/** Campaign 区：助力点是工作人员主看项，维度降为次要补充 */
+function renderCampaignHitPanel(data) {
+  const ints = data?.interventions || [];
+  const hits = data?.campaign_hits || [];
+  if (!ints.length && !hits.length) {
+    return '<p class="status">点击下方卡片或热力图行，可联动打开画像</p>';
+  }
+  const boost = ints.length
+    ? `<div class="boost-banner">
+        <div class="boost-kicker">工作人员重点核对</div>
+        <div class="boost-banner-inner">
+          <div class="boost-banner-head">
+            <strong>识别到的助力点</strong>
+            <span class="boost-count">${ints.length}</span>
+          </div>
+          <p class="boost-hint">话术命中的卖点 · 先看有没有打到关键卡点</p>
+          <div class="boost-chips">${renderBoostChips(ints)}</div>
+        </div>
+      </div>`
+    : `<div class="boost-banner is-empty">
+        <div class="boost-kicker">工作人员重点核对</div>
+        <div class="boost-banner-inner">
+          <div class="boost-banner-head"><strong>识别到的助力点</strong></div>
+          <p class="boost-hint">本次话术未识别到结构化助力点</p>
+        </div>
+      </div>`;
+  const factorHits = hits.length
+    ? `<div class="factor-hits">
+        <span class="factor-hits-label">命中维度</span>
+        <div class="factor-hit-chips">${hits.map(h => `<span class="factor-hit-chip">${h}</span>`).join('')}</div>
+      </div>`
+    : '';
+  return boost + factorHits;
+}
+
+function renderPersonaBoost(ids, globalIds) {
+  if (ids?.length) {
+    return `<div class="persona-boost">
+      <span class="persona-boost-kicker">助力点</span>
+      <div class="persona-boost-body">
+        <span class="persona-boost-label">对此人生效</span>
+        <div class="boost-chips">${renderBoostChips(ids)}</div>
+      </div>
+    </div>`;
+  }
+  if (globalIds?.length) {
+    return `<div class="persona-boost is-miss">
+      <span class="persona-boost-kicker">助力点</span>
+      <div class="persona-boost-body">
+        <span class="persona-boost-label">对此人未生效</span>
+        <span class="os-empty">话术助力点没有打到此人卡点</span>
+      </div>
+    </div>`;
+  }
+  return '';
+}
+
+function outcomeChipList(ids, emptyText) {
+  if (!ids?.length) return `<span class="os-empty">${emptyText}</span>`;
+  return ids.map(id => `<span class="os-chip">${outcomeLabel(id)}</span>`).join('');
+}
+
+function renderOutcomeStatus(sim) {
+  const improved = sim?.outcome_improved || [];
+  const unresolved = sim?.unresolved_outcomes || [];
+  const next = String(sim?.next_step || '').trim();
+  return `<div class="outcome-status" role="group" aria-label="已改善、未改善与下一步">
+    <div class="os-card yes${improved.length ? '' : ' is-empty'}">
+      <div class="os-card-label">已改善 <span class="os-count">${improved.length}</span></div>
+      <div class="os-card-body">${outcomeChipList(improved, '本次没有改善项')}</div>
+    </div>
+    <div class="os-card no${unresolved.length ? '' : ' is-empty'}">
+      <div class="os-card-label">未改善 <span class="os-count">${unresolved.length}</span></div>
+      <div class="os-card-body">${outcomeChipList(unresolved, '没有未改善项')}</div>
+    </div>
+    <div class="os-card next${next ? '' : ' is-empty'}">
+      <div class="os-card-label">下一步</div>
+      <div class="os-card-body">${next ? `<span class="os-next-step">${next}</span>` : '<span class="os-empty">未给出</span>'}</div>
+    </div>
+  </div>`;
+}
+
+function compactStatusRow(kind, label, items, emptyText) {
+  const chips = items.length
+    ? items.map(text => `<span class="os-pill ${kind}">${text}</span>`).join('')
+    : `<span class="os-pill muted">${emptyText}</span>`;
+  return `<div class="os-compact-row ${kind}">
+    <span class="os-compact-k">${label}</span>
+    <div class="os-compact-chips">${chips}</div>
+  </div>`;
+}
+
+function renderOutcomeStatusCompact(sim) {
+  const improved = (sim?.outcome_improved || []).map(outcomeLabel);
+  const unresolved = (sim?.unresolved_outcomes || []).map(outcomeLabel);
+  const next = String(sim?.next_step || '').trim();
+  return `<div class="os-compact">
+    ${compactStatusRow('yes', '已改善', improved, '无')}
+    ${compactStatusRow('no', '未改善', unresolved, '无')}
+    ${compactStatusRow('next', '下一步', next ? [next] : [], '—')}
+  </div>`;
+}
+
+function renderResultBoostLine(ids) {
+  if (!ids?.length) return '';
+  return `<div class="rr-boost-line">
+    <span class="rr-boost-k">助力点</span>
+    <div class="boost-chips">${renderBoostChips(ids)}</div>
+  </div>`;
+}
+
 function outcomeName(id) {
   return outcomes.find(o => o.id === id)?.name || OUTCOME_NAMES[id] || id;
 }
@@ -479,15 +600,11 @@ function renderDetail() {
         <div class="task-label" style="margin:0">本次测试反馈</div>
         <span class="decision ${sim.decision}">${decisionLabel(sim.decision)}</span>
       </div>
+      ${renderPersonaBoost(sim.interventions, lastSimMeta.interventions)}
+      ${renderOutcomeStatus(sim)}
       <p class="sim-link-reaction">${sim.reaction}</p>
       ${sim.reasoning ? `<p class="sim-link-reason">${sim.reasoning}</p>` : ''}
-      <p class="status" style="margin-top:0.4rem">
-        意愿 <strong>${sim.willingness}/10</strong> ·
-        已改善：${formatOutcomeList(sim.outcome_improved)} ·
-        未解决：${formatOutcomeList(sim.unresolved_outcomes)}
-        ${sim.next_step ? ` · 下一步：<strong>${sim.next_step}</strong>` : ''}
-        · ${sim.mode === 'llm' ? 'LLM' : '规则'}
-      </p>
+      <p class="status sim-link-meta">意愿 <strong>${sim.willingness}/10</strong> · ${sim.mode === 'llm' ? 'LLM' : '规则'}</p>
       <div class="verify-row sim-link-verify">
         <span class="status">真实验证</span>
         <button class="btn btn-ghost btn-sm btn-verify" data-status="verified" data-pid="${p.id}" data-decision="${sim.decision}">已验证</button>
@@ -549,8 +666,9 @@ function renderDetail() {
               const unresolved = sim?.unresolved_outcomes?.includes(d.id);
               const mark = improved
                 ? '<span class="oc-sim-mark yes">本次已改善</span>'
-                : (unresolved ? '<span class="oc-sim-mark no">本次未解决</span>' : '');
-              return renderOutcomeCard(d, { simMark: mark });
+                : (unresolved ? '<span class="oc-sim-mark no">本次未改善</span>' : '');
+              const simState = improved ? 'yes' : (unresolved ? 'no' : '');
+              return renderOutcomeCard(d, { simMark: mark, simState });
             })
             .join('')
         ) || '<p class="status">暂无期望结果</p>'}
@@ -665,7 +783,7 @@ function clearResults(message) {
     el.innerHTML = `<div class="empty">${message || '运行 Campaign 测试后，逐人反馈将显示在这里'}</div>`;
   }
   const hitsEl = document.getElementById('campaign-hits');
-  if (hitsEl) hitsEl.textContent = '';
+  if (hitsEl) hitsEl.innerHTML = '';
   const exportBtn = document.getElementById('btn-export-excel');
   if (exportBtn) exportBtn.disabled = true;
   renderPersonaList();
@@ -745,15 +863,7 @@ function renderResults(data) {
       : '';
   }
   const hitsEl = document.getElementById('campaign-hits');
-  if (hitsEl) {
-    const parts = [];
-    if (data.campaign_hits?.length) parts.push(`维度：${data.campaign_hits.join('、')}`);
-    if (data.interventions?.length) {
-      const labels = data.interventions.map(k => INTERVENTION_LABELS[k] || k);
-      parts.push(`识别到的助力点：${labels.join('、')}`);
-    }
-    hitsEl.textContent = parts.join(' · ') || '点击下方卡片或热力图行，可联动打开画像';
-  }
+  if (hitsEl) hitsEl.innerHTML = renderCampaignHitPanel(data);
   renderHeatmap(lastSimResults);
   const summaryEl = document.getElementById('result-summary');
   const el = document.getElementById('result-grid');
@@ -804,15 +914,16 @@ function renderResults(data) {
         <p class="rr-snip">${snipShort || '（无反馈文案）'}</p>
         <button type="button" class="btn btn-ghost btn-sm rr-toggle" aria-expanded="false">展开</button>
       </div>
+      <div class="result-row-signals">
+        ${renderResultBoostLine(r.interventions)}
+        ${renderOutcomeStatusCompact(r)}
+      </div>
       <div class="result-row-detail" hidden>
         ${job || step ? `<p class="result-persona-ctx">${job}${step ? ` · 卡在「${step}」` : ''}</p>` : ''}
         <p class="result-reaction">${r.reaction || ''}</p>
         ${r.reasoning ? `<p class="rr-reason">${r.reasoning}</p>` : ''}
-        <p class="status" style="margin-top:0.45rem">
-          ${r.next_step ? `下一步：<strong>${r.next_step}</strong> · ` : ''}
-          已改善：${formatOutcomeList(r.outcome_improved)} ·
-          未解决：${formatOutcomeList(r.unresolved_outcomes)}
-        </p>
+        ${renderPersonaBoost(r.interventions, lastSimMeta.interventions)}
+        ${renderOutcomeStatus(r)}
         <p class="status" style="margin-top:0.3rem">${r.mode === 'llm' ? 'LLM' : '规则'} · ${mem ? '有记忆' : '静态'}</p>
         <div class="verify-row">
           <span class="status">真实验证</span>

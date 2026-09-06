@@ -49,28 +49,31 @@ def startup():
         print(f"✓ 已加载 DeepSeek 配置: {env_path}")
 
 
+def _html(path: Path):
+    if path.exists():
+        return FileResponse(
+            path,
+            headers={"Cache-Control": "no-store, max-age=0", "Pragma": "no-cache"},
+        )
+    return None
+
+
 @app.get("/")
 def index():
-    index_path = FRONTEND_DIR / "index.html"
-    if index_path.exists():
-        return FileResponse(index_path)
-    return {"message": "API running. Place frontend/index.html to enable UI."}
+    page = _html(FRONTEND_DIR / "index.html")
+    return page or {"message": "API running. Place frontend/index.html to enable UI."}
 
 
 @app.get("/admin")
 def admin_page():
-    admin_path = FRONTEND_DIR / "admin.html"
-    if admin_path.exists():
-        return FileResponse(admin_path)
-    return {"message": "Admin page not found."}
+    page = _html(FRONTEND_DIR / "admin.html")
+    return page or {"message": "Admin page not found."}
 
 
 @app.get("/jobs")
 def jobs_page():
-    jobs_path = FRONTEND_DIR / "jobs.html"
-    if jobs_path.exists():
-        return FileResponse(jobs_path)
-    return {"message": "Jobs page not found."}
+    page = _html(FRONTEND_DIR / "jobs.html")
+    return page or {"message": "Jobs page not found."}
 
 
 @app.get("/api/health")

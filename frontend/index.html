@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>消费者心智模拟 · MindSim</title>
-  <link rel="stylesheet" href="/static/css/app.css?v=20260904f" />
+  <link rel="stylesheet" href="/static/css/app.css?v=20260906e" />
 </head>
 <body>
   <nav class="topnav">
@@ -67,7 +67,7 @@
         <button class="btn btn-primary" id="btn-simulate">运行测试</button>
       </div>
       <div class="hint-box" id="sim-mode-hint">独立思考：反馈文案更口语；关闭则走规则引擎（分数/标签更稳定）。</div>
-      <p class="status" id="campaign-hits" style="margin-top:0.5rem"></p>
+      <div id="campaign-hits" class="campaign-hits"></div>
     </section>
 
     <!-- 心智 + 详情 -->
@@ -107,7 +107,7 @@
     </section>
   </div>
 
-  <script src="/static/js/app.js?v=20260904h"></script>
+  <script src="/static/js/app.js?v=20260906e"></script>
   <script>
     function updatePersonaCount() {
       const el = document.getElementById('persona-count');
